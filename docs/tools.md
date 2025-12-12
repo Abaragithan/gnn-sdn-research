@@ -1,28 +1,38 @@
-🛠️ Installation of Research Tools on Fedora
-Step 1: Update System
-bash
+## 🛠️ Tools Used for Research 
 
-sudo dnf update -y
+### Operating system
+Fedora 43
 
-Step 2: Install Core Dependencies
-bash
+### Python and development tools
+python3 
+python3-pip 
+python3-devel 
+gcc-c++ 
+make 
+cmake 
+git
 
-# Python and development tools
-sudo dnf install python3 python3-pip python3-devel gcc-c++ make cmake git -y
+### Network tools
 
-# Network tools
-sudo dnf install wireshark tcpdump net-tools iproute -y
+wireshark 
+tcpdump 
+net-tools 
+iproute
 
-# Docker (already installed, verify)
+### Docker
+
+
+
+```bash
 sudo systemctl enable --now docker
 sudo usermod -aG docker $USER
-# Log out and back in
+### Log out and back in
 
 Step 3: Install SDN Tools
 A. Mininet (Network Emulator)
 bash
 
-# Clone and install Mininet
+### Clone and install Mininet
 git clone https://github.com/mininet/mininet.git
 cd mininet
 git checkout -b 2.3.1d6 2.3.1d6  # Stable version
