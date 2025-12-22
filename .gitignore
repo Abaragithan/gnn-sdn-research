@@ -1,0 +1,13 @@
+# Environments
+os-ken-venv/
+ryu_venv/
+venv/
+.env
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Large Data
+data/datasets/*.csv
+models/*.pth
