@@ -1,0 +1,10 @@
+{
+  "ckpt_dir": "./ckpt_dirs_teacher/ckpt_dir_0_9972",
+  "checkpoint": "./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+  "val_teacher": {
+    "loss": 4.713905334472656
+  },
+  "test": {
+    "loss": 5.3733954429626465
+  }
+}

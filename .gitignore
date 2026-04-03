@@ -1,6 +1,4 @@
 # Environments
-os-ken-venv/
-ryu_venv/
 venv/
 .env
 
@@ -9,5 +7,8 @@ __pycache__/
 *.pyc
 
 # Large Data
-data/datasets/*.csv
-models/*.pth
+data/
+ckpt_dir
+ckpt_dirs
+ckpt_dirs_teacher
+few_shot
