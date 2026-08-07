@@ -38,7 +38,7 @@ def generator(data_dir, shuffle, seed):
         HG = network_to_hypergraph(G=G, R=R, T=T, P=P)
 
         ret = hypergraph_to_input_data(HG)
-        num_samples += 1
+        # num_samples += 1
         yield ret
 
 

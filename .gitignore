@@ -8,7 +8,11 @@ __pycache__/
 
 # Large Data
 data/
+simulation/training
+simulation/sim_dataset_v1
 ckpt_dir
 ckpt_dirs
 ckpt_dirs_teacher
 few_shot
+docs/
+logs/

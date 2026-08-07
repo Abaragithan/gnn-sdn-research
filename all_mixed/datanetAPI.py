@@ -312,12 +312,14 @@ class Sample:
         None if no link exist between src and dst
 
         """
-        res = None
-
-        if dst in self.topology_object[src]:
-            res = self.topology_object[src][dst][0]
-
-        return res
+        ########################### changes from original datanetAPI #############################
+        if dst not in self.topology_object[src]:
+            return None
+        if self.topology_object.is_multigraph():
+            return self.topology_object[src][dst][0]
+        return self.topology_object[src][dst]
+    
+        ##########################################################################################
 
     def get_srcdst_link_bandwidth(self, src, dst):
         """
@@ -335,12 +337,13 @@ class Sample:
         Bandwidth in bits/time unit of the link between nodes src-dst or -1 if not connected
 
         """
-        if dst in self.topology_object[src]:
-            cap = float(self.topology_object[src][dst][0]['bandwidth'])
-        else:
-            cap = -1
-
-        return cap
+        ########################### changes from original datanetAPI #############################
+        if dst not in self.topology_object[src]:
+            return -1
+        if self.topology_object.is_multigraph():
+            return float(self.topology_object[src][dst][0]['bandwidth'])
+        return float(self.topology_object[src][dst]['bandwidth'])
+        ##########################################################################################
 
     def get_port_stats(self):
         """
@@ -596,6 +599,7 @@ class DatanetAPI:
             src += 1
         return (R)
 
+    ######################## changes from original datanetAPI ##################################
     def _getRoutingSrcPortDst(self, G):
         """
         Return a dictionary of dictionaries with the format:
@@ -613,11 +617,16 @@ class DatanetAPI:
         """
 
         node_port_dst = {}
+        is_multi = G.is_multigraph()   # ← reliable, built into NetworkX
+        
         for node in G:
             port_dst = {}
             node_port_dst[node] = port_dst
             for destination in G[node].keys():
-                port = G[node][destination][0]['port']
+                if is_multi:
+                    port = G[node][destination][0]['port']   # MultiDiGraph
+                else:
+                    port = G[node][destination]['port']      # DiGraph
                 node_port_dst[node][port] = destination
         return(node_port_dst)
 
@@ -741,6 +750,7 @@ class DatanetAPI:
 
         return graphs_dic
 
+##################################### changes from original datanetAPI ###########################
     def _graph_links_update(self,G,file):
         """
         Updates the graph with the link information of the file
@@ -759,14 +769,16 @@ class DatanetAPI:
         """
 
         try:
-            fd = open(file,"r")
+            fd = open(file, "r")
         except:
-            print ("ERROR: %s not exists" % (file))
+            print("ERROR: %s not exists" % (file))
             exit(-1)
-
         for line in fd:
             aux = line.split(";")
-            G[int(aux[0])][int(aux[1])][0]["bandwidth"] = int(aux[2])
+            if G.is_multigraph():
+                G[int(aux[0])][int(aux[1])][0]["bandwidth"] = int(aux[2])
+            else:
+                G[int(aux[0])][int(aux[1])]["bandwidth"] = int(aux[2])
 
     def __iter__(self):
         """
@@ -865,7 +877,7 @@ class DatanetAPI:
             except (GeneratorExit,SystemExit) as e:
                 raise
             except:
-                #traceback.print_exc()
+                traceback.print_exc()
                 print ("Error in the file: %s   iteration: %d" % (file,it))
 
             ctr += 1

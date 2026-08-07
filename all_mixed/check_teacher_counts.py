@@ -9,17 +9,27 @@ def count_root(root, name):
     delays = []
 
     for scenario in sorted(os.listdir(root)):
+
         scenario_path = os.path.join(root, scenario)
+
+        print(scenario_path)
         if not os.path.isdir(scenario_path):
             continue
 
         try:
+            
             tool = DatanetAPI(scenario_path, shuffle=False)
+            
+            
         except Exception as e:
             print(f"Skipping {scenario_path}: {e}")
             continue
 
         for s in tool:   # s is a Sample object
+
+
+            
+            
             raw += 1
             try:
                 y = float(s.get_global_delay())
@@ -33,8 +43,11 @@ def count_root(root, name):
 
             usable += 1
             delays.append(y)
+            
 
     delays = np.array(delays, dtype=np.float64)
+
+    
 
     print(f"\n{name}: {root}")
     print(f"  Raw samples seen        : {raw}")
@@ -53,6 +66,6 @@ def count_root(root, name):
             print(f"    % < {th:g}: {pct:.3f}%")
 
 if __name__ == "__main__":
-    count_root("../data/all_mixed/train_teacher", "TRAIN_TEACHER")
-    count_root("../data/all_mixed/val_teacher",   "VAL_TEACHER")
-    count_root("../data/all_mixed/test",          "TEST")
+    count_root("../data/sim_data_v1/", "TRAIN_TEACHER")
+    # count_root("../data/research/teacher/val",   "VAL_TEACHER")
+    # count_root("../data/research/teacher/test",          "TEST")
