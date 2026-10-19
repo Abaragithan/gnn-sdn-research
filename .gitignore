@@ -14,5 +14,7 @@ ckpt_dir
 ckpt_dirs
 ckpt_dirs_teacher
 few_shot
-docs/
-logs/
+all_mixed/student/ckpt_dirs_scratch/
+all_mixed/student/ckpt_dirs_kd_alpha0.5/
+log*
+pid*

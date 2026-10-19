@@ -1,0 +1,1 @@
+$$\mathbf{h}_p^{(0)} = \text{ReLU}\left(\mathbf{W}_2 \cdot \mathbf{z} + \mathbf{b}_2\right)$$
