@@ -1,6 +1,6 @@
 # RouteNet-Fermi Research — Full Progress Summary
 
-> Last updated: 2026-08-12 (inference benchmark added) | Synthesized from all experiment logs
+> Last updated: 2026-10-23 (baseline evaluated on the shared OOD test set) | Synthesized from experiment logs and saved results
 
 ---
 
@@ -101,6 +101,11 @@ This confirmed the pre-trained RouteNet model works well on in-distribution data
 |----------|---------|-------------|
 | Validation (50 samples) | 50 | **6.851** |
 | Full Test (878 samples) | 878 | **8.225** |
+| Shared OOD test (200–300 nodes) | 478 | **8.4011** |
+
+The shared-test result reuses checkpoint `15-6.41` and evaluates it on the exact
+200–300-node test split used for teacher and student evaluation. It was run
+after training, without changing the checkpoint or training data.
 
 ### Training — Run 3 (Apr 12, 2026)
 - Same checkpoint `15-6.41`, re-evaluation
@@ -164,11 +169,12 @@ To improve OOD generalization, a **teacher model** was trained on a wider range 
 | Model | Train Topos | Val Loss | OOD Test Loss | Test Topologies |
 |-------|-------------|----------|---------------|-----------------|
 | **Baseline (Run 1)** | 10 only | 6.499 | 9.171 | 50–300 nodes |
-| **Baseline (Run 2)** | 10 only | 6.410 | 8.225 | 50–300 nodes |
+| **Baseline (Run 2; historical broad test)** | 10 only | 6.410 | 8.225 | 50–300 nodes |
+| **Baseline (Run 2; shared OOD test)** | 10 only | 6.410 | **8.4011** | **478 samples; 200–300 nodes** |
 | **Teacher** | 10–170 | **4.714** | **5.373** | 200–300 nodes |
 
 > [!IMPORTANT]
-> The teacher model achieved a **35% reduction in OOD test loss** (8.225 → 5.373), despite testing on only the hardest, largest topologies (200–300 nodes). Exposing the model to intermediate topology sizes dramatically improved generalization.
+> On the common 478-sample 200–300-node test set, the teacher's MAPE is **3.0277 percentage points lower** than the baseline (5.3734% vs 8.4011%), a **36.0% relative reduction**. The earlier broad-test baseline score (8.2249%) is on a different test distribution and is not used for this direct comparison.
 
 ---
 
@@ -269,13 +275,14 @@ With the teacher model established, a **lightweight student model** (`student_de
 | Model | Train Topos | Val MAPE | OOD Test MAPE | Test Set |
 |-------|-------------|----------|---------------|----------|
 | Baseline (Run 1) | 10-node only | 6.50% | 9.17% | 50–300 nodes; prior evaluation |
-| Baseline (Run 2) | 10-node only | 6.41% | 8.23% | 50–300 nodes; prior evaluation |
+| Baseline (Run 2; broad test) | 10-node only | 6.41% | 8.2249% | 878 raw / 877 usable; 50–300 nodes |
+| Baseline (Run 2; shared OOD test) | 10-node only | 6.41% | **8.4011%** | **478 samples; 200–300 nodes** |
 | **Teacher** | 10–170 nodes | **4.7139%** | **5.3734%** | **478 samples; 200–300 nodes** |
 | **Student-Scratch** | 10–170 nodes | **10.6455%** | **11.9244%** | **478 samples; 200–300 nodes** |
 | **Student-KD (α=0.5)** | 10–170 nodes | **9.0444%** | **9.8280%** | **478 samples; 200–300 nodes** |
 
 > [!IMPORTANT]
-> The earlier baseline OOD results (8.23% and 9.17%) used a broader **50–300-node** test set and are not directly comparable with the teacher/student results on the 200–300-node set. Re-evaluate the baseline on the exact 478-sample test set before making a direct comparison. On the common 200–300-node set, KD improves over scratch (9.8280% vs 11.9244%), while the teacher remains more accurate (5.3734%).
+> The earlier baseline OOD results (8.2249% and 9.1707%) used a broader **50–300-node** test set and are not directly comparable with teacher/student results. The baseline has now been evaluated on the same 478-sample 200–300-node test set: it scores 8.4011%, compared with 5.3734% for the teacher, 11.9244% for scratch, and 9.8280% for KD. KD improves over scratch on this common set, while the teacher remains most accurate.
 
 ### Inference Speed & Model Size (Measured — 30 runs, single sample)
 
@@ -292,7 +299,7 @@ With the teacher model established, a **lightweight student model** (`student_de
 ### The Research Narrative
 
 ```
-Baseline (10-node training)  →  8.23% OOD error,  ~178 ms inference
+Baseline (10-node training)  →  8.40% OOD error on shared test, ~178 ms inference
         ↓  train on more topology sizes
 Teacher  (10-170 training)   →  5.37% OOD error,  ~178 ms inference
         ↓  compress the model
@@ -303,6 +310,8 @@ Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD impro
 
 - **Script:** `evaluation/inference_benchmark.py`
 - **Results saved:** `evaluation/inference_benchmark_results.json`
+- **Shared-test baseline evaluation:** `all_mixed/results_baseline_ood.json`
+- **Shared-test baseline console log:** `all_mixed/baseline_ood.log`
 
 ---
 
@@ -329,9 +338,9 @@ Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD impro
 - [x] Inference benchmark — student is **5.2× faster** (34 ms vs 178 ms), **83.3% fewer parameters** (4,505 vs 27,025)
 - [x] **Exp 5 — Student KD training:** Completed with α=0.5, training-reported best val MAPE: **9.6439%** (epoch 19, ckpt-19)
 - [x] **Exp 6 — Student OOD evaluation:** On the same 478-sample, 200–300-node set as teacher: scratch **11.9244%**, KD **9.8280%**; evaluation results saved in `all_mixed/student/results_student.json`.
+- [x] **Exp 7 — Fair baseline OOD evaluation:** Baseline checkpoint `15-6.41` scored **8.4011% MAPE** on the same 478 samples as teacher and students; result and console log saved separately.
 
 ### Immediate Next Steps
-- [ ] **Re-evaluate baseline:** Measure the 10-node-trained baseline on the same 478-sample, 200–300-node test set before comparing it directly with teacher/students.
 - [ ] **Investigate KD validation discrepancy:** Compare the training-reported best val MAPE (9.6439%) with the checkpoint evaluation result (9.0444%) and document the metric provenance.
 - [ ] **Exp 7 — Repeat inference benchmark** after KD to confirm the same latency advantage.
 - [ ] **Jitter/Loss models:** Extend beyond delay prediction

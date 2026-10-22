@@ -75,23 +75,32 @@ the v1 test is held out to 200–300 nodes.
 | Experiment | Training split | Validation / checkpoint selection | Evaluation split and recorded result | Checkpoint |
 |---|---|---|---|---|
 | Baseline Run 1 | Historical `data/all_mixed/train`; 10,000 samples from 10-node-only data. | Historical `data/all_mixed/validation`; training best val MAPE 6.499. A separate 50-sample result (7.474) appears in the log, but its exact invocation/path is not fully clear. | Historical broad `data/all_mixed/test`: 878 raw / 877 usable samples, 50–300 nodes; MAPE 9.1707. | `all_mixed/ckpt_dirs/ckpt_dir_0_10000/03-6.50` |
-| Baseline Run 2 | Same historical 10-node training setup. | Historical `data/all_mixed/validation`; training best val MAPE 6.410. Separate 50-sample evaluation MAPE 6.8509 is logged. | Same broad test: 878 samples reported by evaluator; MAPE 8.2249. | `all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41` |
+| Baseline Run 2 (historical broad test) | Same historical 10-node training setup. | Historical `data/all_mixed/validation`; training best val MAPE 6.410. Separate 50-sample evaluation MAPE 6.8509 is logged. | Broad test: 878 samples reported by evaluator; MAPE 8.2249. | `all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41` |
+| Baseline Run 2 (shared OOD test) | Same trained baseline; no retraining. | Same checkpoint selected from the historical run. | `data/all_mixed_v1/test`: all 478 samples, 200–300-node topologies; MAPE 8.4011. | `all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41` |
 | Teacher | `data/all_mixed_v1/train`; 9,972 samples, topologies 10–170 nodes | `data/all_mixed_v1/validation`; 2,191 samples. Best checkpoint selected at epoch 26; train log val MAPE 4.7139. | `data/all_mixed_v1/test`; 478 samples on 200–300-node topologies; MAPE 5.3734. | `all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26` |
 | Student-Scratch | `data/all_mixed_v1/train`; same 9,972-sample split | `data/all_mixed_v1/validation`; evaluated checkpoint val MAPE 10.6455. | `data/all_mixed_v1/test`; same 478-sample 200–300-node test; MAPE 11.9244. | `all_mixed/student/ckpt_dirs_scratch/ckpt-08` |
 | Student-KD (alpha=0.5) | `data/all_mixed_v1/train`; teacher checkpoint used to provide distillation predictions | `data/all_mixed_v1/validation`; evaluated checkpoint val MAPE 9.0444. The training result JSON separately reports best val MAPE 9.6439; this discrepancy is unresolved. | `data/all_mixed_v1/test`; same 478-sample 200–300-node test; MAPE 9.8280. | `all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19` |
 
-The baseline test results (9.1707 and 8.2249) use the broad
+The historical baseline test results (9.1707 and 8.2249) use the broad
 `data/all_mixed/test` 50–300-node set. They are not directly comparable to
 teacher/student results on the narrower `data/all_mixed_v1/test` 200–300-node
-set. A fair baseline comparison requires evaluating the baseline checkpoint on
-the exact 478-sample v1 OOD test split.
+set. This was addressed by evaluating the same baseline checkpoint
+(`15-6.41`) on all 478 v1 OOD samples: MAPE 8.4011. The matched-set teacher
+score is 5.3734%; scratch and KD student scores are 11.9244% and 9.8280%.
+
+The matched-set baseline run took 9,307 seconds (about 2 h 35 min). Its result
+is saved in `all_mixed/results_baseline_ood.json`, and its captured console
+output is in `all_mixed/baseline_ood.log`. It was run with the modified
+`all_mixed/validation_all.py`, which points at `data/all_mixed_v1/test` and
+writes to the separate `results_baseline_ood.json`; the earlier
+`all_mixed/results_all.json` broad-test result remains unchanged.
 
 ## Script-to-checkpoint provenance
 
 | Purpose | Script(s) associated with recorded result | Checkpoint/output evidence |
 |---|---|---|
 | Baseline training | `all_mixed/few_shot_all.py` | Baseline logs report 10,000 samples and checkpoints under `ckpt_dirs/ckpt_dir_0_10000/`. |
-| Baseline evaluation | `all_mixed/validation_all.py` | Historical logs report `03-6.50` and `15-6.41`; broad test evaluations report 878 samples. |
+| Baseline evaluation | `all_mixed/validation_all.py` | Historical broad test evaluations report 878 samples; matched OOD evaluation used checkpoint `15-6.41`, evaluated 478/478 samples, and saved the result and console log separately. |
 | Teacher training | `all_mixed/train_teacher.py` | Historical log records saves under `ckpt_dirs_teacher/ckpt_dir_0_9972/`, through `ckpt-26`. Current script reads normalized `data/all_mixed_v1/train` and `validation` paths. |
 | Teacher evaluation | `all_mixed/test_teacher.py` | Historical log says `python test_teacher.py`; `all_mixed/results_teacher.json` identifies `ckpt-26`. Current script reads v1 `validation` and `test`. |
 | Alternate teacher scripts | `all_mixed/teacher/train.py`, `all_mixed/teacher/evaluate.py` | These use `all_mixed/teacher/ckpt_dirs/...`. No checkpoints were found in that expected location. They are alternate copies; no evidence ties them to the recorded teacher result. Their data paths now point to v1. |

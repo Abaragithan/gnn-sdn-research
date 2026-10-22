@@ -4,11 +4,11 @@ This plan assumes the written report and final presentation are both due Dec 1, 
 
 ## Current Evidence
 
-The latest progress summary is dated Aug 12, 2026. Check for newer experiment outputs before relying on this snapshot.
+The latest progress summary is dated Oct 23, 2026; check saved outputs before relying on this snapshot.
 
-- Baseline trained on 10-node topologies: OOD test MAPE 8.23% (second run; first run 9.17%).
+- Baseline trained on 10-node topologies: historical broad 50–300-node test MAPE 8.2249% (second run; first run 9.1707%); matched 478-sample 200–300-node OOD MAPE 8.4011% using checkpoint `15-6.41`.
 - Teacher trained on 10-170-node topologies: validation MAPE 4.71%, OOD test MAPE 5.37% on 200-300-node topologies.
-- Student scratch: validation MAPE 10.65%. Student KD (alpha=0.5): validation MAPE 9.64%. Student OOD scores are not recorded.
+- Student scratch: validation MAPE 10.65%, OOD MAPE 11.9244%. Student KD (alpha=0.5): evaluated validation MAPE 9.0444% (training-reported 9.6439%), OOD MAPE 9.8280%.
 - The inference benchmark reports 4,505 student parameters and 34.2 ms mean latency, versus 27,025 parameters and 178.5 ms for the teacher. The progress summary also contains a stale estimate of about 1,241 student parameters; verify and correct it before submission.
 - An evaluator exists at `all_mixed/student/evaluate.py`; it evaluates validation and OOD test sets and writes `results_student.json` relative to its working directory.
 
@@ -16,16 +16,17 @@ The latest progress summary is dated Aug 12, 2026. Check for newer experiment ou
 
 ### Oct 20-23: Evaluate Existing Student Checkpoints
 
-- [ ] Check for newer results and confirm the intended best scratch and KD checkpoints.
+- [x] Check for newer results and confirm the intended best scratch and KD checkpoints.
 - [ ] Confirm that the 200-300-node test split remains untouched by training or model selection.
 - [ ] Record checkpoint paths, seeds, configurations, and expected sample counts.
-- [ ] Run `all_mixed/student/evaluate.py` on both saved models and save the full results.
+- [x] Run `all_mixed/student/evaluate.py` on both saved models and save the full results.
 - [ ] If checkpoint selection is ambiguous, explicitly evaluate the known best checkpoint before interpreting results.
 - [ ] Do not tune models using OOD test results.
 
 ### Oct 24-26: Validate and Interpret the Results
 
 - [ ] Compare baseline, teacher, student scratch, and student KD.
+- [x] Re-evaluate the baseline checkpoint on the same 478-sample OOD test set as teacher and students; result saved to `all_mixed/results_baseline_ood.json` and log to `all_mixed/baseline_ood.log`.
 - [ ] Report MAPE and MAE; include RMSE if useful. Break errors out by topology size as well as overall.
 - [ ] Check for missing or invalid predictions and confirm that metric aggregation is comparable across models.
 - [ ] Account for the test set's different delay range; do not rely on one aggregate percentage alone.
@@ -95,4 +96,4 @@ The latest progress summary is dated Aug 12, 2026. Check for newer experiment ou
 
 - Focus on finishing delay-prediction research and the written report/presentation.
 - Unless required by the supervisor, defer jitter/loss extensions, new larger-topology datasets, broad model-family comparisons, and large hyperparameter sweeps until after Dec 1.
-- Treat student OOD performance as unknown until measured. Preserve the OOD set as held-out evaluation; do not use it for model or hyperparameter selection.
+- Preserve the OOD set as held-out evaluation; do not use it for model or hyperparameter selection.
