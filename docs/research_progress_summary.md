@@ -20,6 +20,20 @@
 
 ## 2. Dataset: `all_mixed` (ch22 Challenge Dataset)
 
+### Current Dataset Roots
+
+```text
+data/
+├── all_mixed/       # Original baseline split: train, validation, broad test
+└── all_mixed_v1/    # Teacher/student split: train, validation, held-out OOD test
+    └── validation_extra/  # Preserved additional split; not used in recorded runs
+```
+
+The original baseline scripts use `data/all_mixed/{train,validation,test}`.
+Teacher/student scripts use `data/all_mixed_v1/{train,validation,test}`.
+The baseline test spans 50–300-node topologies; the v1 test is restricted to
+200–300-node OOD topologies.
+
 ### Original Split
 
 | Split | Samples | Topology Sizes | Notes |
@@ -105,16 +119,16 @@ To improve OOD generalization, a **teacher model** was trained on a wider range 
 ### Teacher Data Split
 
 **Created by:**
-1. Moving test topologies of sizes 50, 75, 100, 130, 170 from `test/` into `train_teacher/`
-2. Moving all original training data (10-node) into `train_teacher/`
-3. Holding out 1 topology per size for `val_teacher/`
+1. Moving test topologies of sizes 50, 75, 100, 130, 170 from `test/` into the teacher training split
+2. Moving all original training data (10-node) into the teacher training split
+3. Holding out 1 topology per size for the teacher validation split
 4. Leaving only 200–300 node topologies in `test/`
 
-| Split | Topologies | Samples | Delay Range |
-|-------|-----------|---------|-------------|
-| **train_teacher** | 6×10, 1×50, 1×75, 1×100, 1×130, 1×170 | 9,972 | 0.010–2.099, mean 0.217 |
-| **val_teacher** | 1×10, 1×50, 1×75, 1×100, 1×130, 1×170 | 2,191 | 0.010–1.874, mean 0.252 |
-| **test (OOD)** | 2×200, 4×240, 2×260, 2×280, 2×300 | 478 | 0.006–0.085, mean 0.017 |
+| Current split | Historical name in result artifacts | Topologies | Samples | Delay Range |
+|---------------|----------------------------------------|-----------|---------|-------------|
+| **train** | `train_teacher` | 6×10, 1×50, 1×75, 1×100, 1×130, 1×170 | 9,972 | 0.010–2.099, mean 0.217 |
+| **validation** | `val_teacher` | 1×10, 1×50, 1×75, 1×100, 1×130, 1×170 | 2,191 | 0.010–1.874, mean 0.252 |
+| **test (OOD)** | `test` | 2×200, 4×240, 2×260, 2×280, 2×300 | 478 | 0.006–0.085, mean 0.017 |
 
 > [!WARNING]
 > The test set delay values (mean 0.017) are an order of magnitude smaller than training delays (mean 0.217). This distribution shift in the target variable itself is a significant challenge.
@@ -174,7 +188,7 @@ With the teacher model established, a **lightweight student model** (`student_de
 | Iterations | 8 | **4** |
 | MP stages / iter | 3 | **2** |
 | **Total MP stages** | **24** | **8 (67% reduction)** |
-| **Parameters** | **~4,945** | **~1,241 (75% reduction)** |
+| **Trainable parameters** | **27,025** | **4,505 (83.3% fewer)** |
 | Readout formula | queue_delay + trans_delay | same (preserved) |
 
 - **Key idea:** Instead of maintaining separate queue embeddings (requiring a 3rd GRU), queues are mean-pooled into their parent link's state before message passing — reducing the graph to a bipartite structure at a fraction of the compute cost.
@@ -217,10 +231,13 @@ With the teacher model established, a **lightweight student model** (`student_de
 | Metric | Value |
 |--------|-------|
 | **Best Val MAPE** | **10.65%** |
-| Test OOD MAPE | ⏳ Not yet evaluated |
+| **OOD Test MAPE** | **11.9244%** |
+| **OOD test set** | **478 samples, 200–300-node topologies** |
+| **Evaluated checkpoint** | `ckpt_dirs_scratch/ckpt-08` |
+| **OOD evaluation time** | **8,938 seconds (~2h 29m)** |
 
 > [!NOTE]
-> The student trained from scratch is **2.26× worse** than the teacher (10.65% vs 4.71%). This is expected — it quantifies the **compression cost** with no knowledge transfer. The model converged cleanly with no instability.
+> On the same 200–300-node OOD set, scratch has **2.22× the teacher's MAPE** (11.9244% vs 5.3734%). This measures the accuracy/efficiency trade-off for the compressed model without knowledge distillation.
 
 ---
 
@@ -234,10 +251,14 @@ With the teacher model established, a **lightweight student model** (`student_de
 ### Results
 - The training successfully completed via Early Stopping at epoch 24.
 - Best weights were restored from **epoch 19**.
-- **Best Val MAPE:** **9.64%**
+- **Training-reported best Val MAPE:** **9.6439%** (`results_kd_alpha0.5.json`)
+- **Evaluated checkpoint:** `ckpt_dirs_kd_alpha0.5/ckpt-19`
+- **Evaluation Val MAPE:** **9.0444%**
+- **OOD Test MAPE:** **9.8280%** on the same **478-sample, 200–300-node** set as the teacher
+- **OOD evaluation time:** **9,032 seconds (~2h 30m)**
 
 > [!NOTE]
-> Knowledge Distillation improved the validation accuracy of the Student model from **10.65%** (Scratch) down to **9.64%**. This partially closes the accuracy gap caused by compressing the model from 24 to 8 message-passing stages.
+> The evaluated KD checkpoint's validation MAPE is 9.0444%, versus 10.6455% for scratch. This differs from the 9.6439% training-reported best validation value; retain both values with their provenance rather than treating them as interchangeable.
 
 ---
 
@@ -245,17 +266,16 @@ With the teacher model established, a **lightweight student model** (`student_de
 
 ### Accuracy
 
-| Model | Train Topos | Val MAPE | OOD Test MAPE | Test Topologies |
-|-------|-------------|----------|---------------|-----------------|
-| Baseline (Run 1) | 10-node only | 6.50% | 9.17% | 50–300 nodes |
-| Baseline (Run 2) | 10-node only | 6.41% | 8.23% | 50–300 nodes |
-| **Teacher** | 10–170 nodes | **4.71%** | **5.37%** | 200–300 nodes |
-| **Student-Scratch** | 10–170 nodes | 10.65% | ⏳ TBD (Running) | 200–300 nodes |
-| **Student-KD (α=0.5)** | 10–170 nodes | **9.64%** | ⏳ TBD (Running) | 200–300 nodes |
+| Model | Train Topos | Val MAPE | OOD Test MAPE | Test Set |
+|-------|-------------|----------|---------------|----------|
+| Baseline (Run 1) | 10-node only | 6.50% | 9.17% | 50–300 nodes; prior evaluation |
+| Baseline (Run 2) | 10-node only | 6.41% | 8.23% | 50–300 nodes; prior evaluation |
+| **Teacher** | 10–170 nodes | **4.7139%** | **5.3734%** | **478 samples; 200–300 nodes** |
+| **Student-Scratch** | 10–170 nodes | **10.6455%** | **11.9244%** | **478 samples; 200–300 nodes** |
+| **Student-KD (α=0.5)** | 10–170 nodes | **9.0444%** | **9.8280%** | **478 samples; 200–300 nodes** |
 
 > [!IMPORTANT]
-> The teacher achieved a **35% reduction** in OOD loss vs baseline (8.23% → 5.37%) simply by training on more topology sizes.
-> The student-scratch gap vs teacher (10.65% vs 4.71%) is the **compression cost** — what KD aims to recover.
+> The earlier baseline OOD results (8.23% and 9.17%) used a broader **50–300-node** test set and are not directly comparable with the teacher/student results on the 200–300-node set. Re-evaluate the baseline on the exact 478-sample test set before making a direct comparison. On the common 200–300-node set, KD improves over scratch (9.8280% vs 11.9244%), while the teacher remains more accurate (5.3734%).
 
 ### Inference Speed & Model Size (Measured — 30 runs, single sample)
 
@@ -274,11 +294,11 @@ With the teacher model established, a **lightweight student model** (`student_de
 ```
 Baseline (10-node training)  →  8.23% OOD error,  ~178 ms inference
         ↓  train on more topology sizes
-Teacher  (10-170 training)   →  5.37% OOD error,  ~178 ms inference  (+35% accuracy, same speed)
+Teacher  (10-170 training)   →  5.37% OOD error,  ~178 ms inference
         ↓  compress the model
-Student  (scratch, no KD)    → 10.65% val error,   ~34 ms inference  (5.2× faster, accuracy cost)
+Student  (scratch, no KD)    → 11.92% OOD error,   ~34 ms inference  (5.2× faster, accuracy cost)
         ↓  add Knowledge Distillation
-Student-KD                   →  ??? OOD error,     ~34 ms inference  ← KEY experiment
+Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD improves over scratch)
 ```
 
 - **Script:** `evaluation/inference_benchmark.py`
@@ -304,13 +324,15 @@ Student-KD                   →  ??? OOD error,     ~34 ms inference  ← KEY e
 - [x] Teacher model training with extended topology coverage (10–170 nodes)
 - [x] OOD evaluation — teacher achieves 5.37% on 200–300 node topologies
 - [x] Deep-dive understanding of GNN architecture, data pipeline, and embedding mechanics
-- [x] Student model design (Queue-Link Fusion, bipartite graph, 75% param reduction)
+- [x] Student model design (Queue-Link Fusion, bipartite graph, 83.3% fewer parameters than teacher)
 - [x] Student trained from scratch — best val MAPE: **10.65%** (epoch 8, ckpt-08)
-- [x] Inference benchmark — student is **5.2× faster** (34 ms vs 178 ms), **83% smaller** (4,505 vs 27,025 params)
-- [x] **Exp 5 — Student KD training:** Completed with α=0.5, best val MAPE: **9.64%** (epoch 19, ckpt-19)
+- [x] Inference benchmark — student is **5.2× faster** (34 ms vs 178 ms), **83.3% fewer parameters** (4,505 vs 27,025)
+- [x] **Exp 5 — Student KD training:** Completed with α=0.5, training-reported best val MAPE: **9.6439%** (epoch 19, ckpt-19)
+- [x] **Exp 6 — Student OOD evaluation:** On the same 478-sample, 200–300-node set as teacher: scratch **11.9244%**, KD **9.8280%**; evaluation results saved in `all_mixed/student/results_student.json`.
 
 ### Immediate Next Steps
-- [ ] **Exp 6 — Full evaluation:** Await completion of `evaluate.py` to get final OOD Test MAPE for Student-Scratch and Student-KD models.
-- [ ] **Exp 7 — Repeat inference benchmark** after KD to confirm same latency advantage
+- [ ] **Re-evaluate baseline:** Measure the 10-node-trained baseline on the same 478-sample, 200–300-node test set before comparing it directly with teacher/students.
+- [ ] **Investigate KD validation discrepancy:** Compare the training-reported best val MAPE (9.6439%) with the checkpoint evaluation result (9.0444%) and document the metric provenance.
+- [ ] **Exp 7 — Repeat inference benchmark** after KD to confirm the same latency advantage.
 - [ ] **Jitter/Loss models:** Extend beyond delay prediction
 - [ ] **Larger-scale testing:** Generate custom datasets with even larger topologies

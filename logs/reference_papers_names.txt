@@ -1,0 +1,14 @@
+LightGNN: Simple Graph Neural Network for Recommendation
+
+RouteNet: Leveraging Graph Neural Networks for
+network modeling and optimization in SDN
+
+RouteNet-Fermi: Network Modeling with
+Graph Neural Networks
+
+T2-GNN: Graph Neural Networks for Graphs with Incomplete Features and
+Structure via Teacher-Student Distillation
+
+On Self-Distilling Graph Neural Network
+
+Learning to Distill Graph Neural Networks

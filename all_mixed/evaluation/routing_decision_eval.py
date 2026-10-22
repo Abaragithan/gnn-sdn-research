@@ -9,8 +9,7 @@
 #   How:   Each model predicts avg delay per routing → picks the lowest
 #   Metric: Did the model pick the SAME routing as the ground truth (simulator)?
 #
-# DESIGN: Uses ONLY smaller topologies (50-170 nodes) from the test set for speed.
-# These are the same OOD sizes the models have never seen during training.
+# DESIGN: Uses the teacher/student validation split (10-170 nodes) for speed.
 # Streams samples from disk without pre-loading all into memory.
 #
 # Metrics:
@@ -48,8 +47,8 @@ from student_delay_model import StudentRouteNet
 # Config
 # ─────────────────────────────────────────────────────────────
 
-# Use val_teacher split: topologies 10-170 nodes (each has 10 routing candidates)
-# NOTE: val_teacher WAS seen during training (it's the validation split),
+# Use the v1 validation split: topologies 10-170 nodes.
+# NOTE: this split WAS seen during training (it's the validation split),
 # but this is still valid for routing decision evaluation — we want to measure
 # how well each model RANKS routing candidates, not just predict absolute values.
 # The test/ split only has 200-300 node topologies (too slow to process here).
@@ -228,7 +227,7 @@ def main():
     PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
     ALL_MIXED    = os.path.join(SCRIPT_DIR, '..')
 
-    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
+    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
 
     # ── Load scenarios ────────────────────────────────────────
     scenario_groups = load_scenario_groups(

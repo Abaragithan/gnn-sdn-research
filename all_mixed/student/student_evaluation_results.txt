@@ -1,0 +1,26 @@
+{
+  "Student-Scratch": {
+    "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_scratch/ckpt-08",
+    "val_teacher": {
+      "loss": 10.645508766174316,
+      "time_seconds": 630.7
+    },
+    "test_ood": {
+      "loss": 11.92441177368164,
+      "time_seconds": 8938.2
+    }
+  },
+  "Student-KD (alpha=0.5)": {
+    "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19",
+    "val_teacher": {
+      "loss": 9.044403076171875,
+      "time_seconds": 616.9
+    },
+    "test_ood": {
+      "loss": 9.827977180480957,
+      "time_seconds": 9031.7
+    }
+  }
+}
+
+

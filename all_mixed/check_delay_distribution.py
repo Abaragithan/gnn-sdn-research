@@ -135,6 +135,12 @@ if __name__ == "__main__":
     main()
 
 
+# Original baseline splits:
 # python check_delay_distribution.py --data ../data/all_mixed/train
 # python check_delay_distribution.py --data ../data/all_mixed/validation
 # python check_delay_distribution.py --data ../data/all_mixed/test
+#
+# Teacher/student splits:
+# python check_delay_distribution.py --data ../data/all_mixed_v1/train
+# python check_delay_distribution.py --data ../data/all_mixed_v1/validation
+# python check_delay_distribution.py --data ../data/all_mixed_v1/test

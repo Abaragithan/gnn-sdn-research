@@ -10,7 +10,7 @@ from data_generator import input_fn
 def visualize_single_sample():
     # Define path to dataset - assuming standard structure based on other scripts
     # You may need to change this path if your data is located elsewhere
-    data_dir = '../data/all_mixed/test' 
+    data_dir = '../data/all_mixed_v1/test'
     
     if not os.path.exists(data_dir):
         print(f"Error: Data directory '{data_dir}' does not exist.")

@@ -20,10 +20,12 @@ gnn-sdn-research/
 ```
 
 ## Dataset
-- **Location:** `data/all_mixed_v1/` (symlinked as `data/all_mixed/`)
-- **Train:** `train_teacher/` — topologies with 10–170 nodes (9972 samples)
-- **Val:**   `val_teacher/`   — topologies with 10–170 nodes
-- **Test:**  `test/`          — topologies with 50–300 nodes (OOD: 200–300 unseen)
+- **Original baseline data:** `data/all_mixed/` (`train/`, `validation/`, and broad `test/`)
+- **Teacher/student data:** `data/all_mixed_v1/`
+- **Train:** `train/` — topologies with 10–170 nodes (9972 samples)
+- **Val:**   `validation/` — topologies with 10–170 nodes
+- **Test:**  `test/` — held-out OOD topologies with 200–300 nodes (478 samples)
+- **Preserved additional validation split:** `validation_extra/`
 
 ---
 
@@ -89,9 +91,9 @@ cd ~/gnn-sdn-research/all_mixed/evaluation
 Outputs a comparison table:
 ```
 Model                          Params    Val Loss   OOD Loss   OOD Time
-Teacher (RouteNet-Fermi)        4,945      4.71%      5.37%      Xs
-Student-Scratch (no KD)         1,241      X.XX%      X.XX%      Xs
-Student-KD (alpha=0.5)          1,241      X.XX%      X.XX%      Xs
+Teacher (RouteNet-Fermi)       27,025      4.71%      5.37%      Xs
+Student-Scratch (no KD)         4,505     10.65%     11.92%      Xs
+Student-KD (alpha=0.5)          4,505      9.04%      9.83%      Xs
 ```
 
 Saves results to `results_comparison.json`.
@@ -130,9 +132,9 @@ cd ~/gnn-sdn-research/all_mixed/evaluation
 
 | Model | Val MAPE | Test OOD MAPE | Params | MP Stages |
 |-------|---------|--------------|--------|-----------|
-| Teacher (RouteNet-Fermi) | **4.71%** | **5.37%** | ~4,945 | 24 (8×3) |
-| Student-Scratch | TBD | TBD | ~1,241 | 8 (4×2) |
-| Student-KD (α=0.5) | TBD | TBD | ~1,241 | 8 (4×2) |
+| Teacher (RouteNet-Fermi) | **4.7139%** | **5.3734%** | 27,025 | 24 (8×3) |
+| Student-Scratch | **10.6455%** | **11.9244%** | 4,505 | 8 (4×2) |
+| Student-KD (α=0.5) | **9.0444%** | **9.8280%** | 4,505 | 8 (4×2) |
 
 ---
 

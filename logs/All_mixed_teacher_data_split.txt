@@ -1,0 +1,169 @@
+▒▓ ~/RouteNet-Fermi  main !4 ?5  mkdir ./data/all_mixed/train_teacher                                                       ✔  routenet-fermi Py ▓▒░
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mkdir ./data/all_mixed/val_teacher                                                         ✔  routenet-fermi Py ▓▒░
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  # move selected topo sizes from test into teacher training                                 ✔  routenet-fermi Py ▓▒░
+find data/all_mixed/test -type d -name "*topo-50-*"  -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-75-*"  -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-100-*" -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-130-*" -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-170-*" -exec mv {} data/all_mixed/train_teacher/ \;
+
+find: ‘data/all_mixed/test/50/ch22-testing-scheduling-topo-50-0’: No such file or directory
+find: ‘data/all_mixed/test/50/ch22-testing-scheduling-topo-50-1’: No such file or directory
+find: ‘data/all_mixed/test/75/ch22-testing-scheduling-topo-75-10’: No such file or directory
+find: ‘data/all_mixed/test/75/ch22-testing-scheduling-topo-75-11’: No such file or directory
+find: ‘data/all_mixed/test/100/ch22-testing-scheduling-topo-100-21’: No such file or directory
+find: ‘data/all_mixed/test/100/ch22-testing-scheduling-topo-100-20’: No such file or directory
+find: ‘data/all_mixed/test/130/ch22-testing-scheduling-topo-130-27’: No such file or directory
+find: ‘data/all_mixed/test/130/ch22-testing-scheduling-topo-130-26’: No such file or directory
+find: ‘data/all_mixed/test/170/ch22-testing-scheduling-topo-170-34’: No such file or directory
+find: ‘data/all_mixed/test/170/ch22-testing-scheduling-topo-170-35’: No such file or directory
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mv data/all_mixed/train/* data/all_mixed/train_teacher/                                  1 ✘  routenet-fermi Py ▓▒░
+
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  for d in data/all_mixed/train_teacher/*topo-*; do                                          ✔  routenet-fermi Py ▓▒░
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+      7 10
+      2 100
+      2 130
+      2 170
+      2 50
+      2 75
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  ls data/all_mixed/train_teacher | grep topo-10                                             ✔  routenet-fermi Py ▓▒░
+ls data/all_mixed/train_teacher | grep topo-50
+ls data/all_mixed/train_teacher | grep topo-75
+ls data/all_mixed/train_teacher | grep topo-100
+ls data/all_mixed/train_teacher | grep topo-130
+ls data/all_mixed/train_teacher | grep topo-170
+
+ch22-testing-scheduling-topo-100-20
+ch22-testing-scheduling-topo-100-21
+ch22-training-scheduling-topo-10-10
+ch22-training-scheduling-topo-10-20
+ch22-training-scheduling-topo-10-21
+ch22-training-scheduling-topo-10-25
+ch22-training-scheduling-topo-10-36
+ch22-training-scheduling-topo-10-39
+ch22-training-scheduling-topo-10-7
+ch22-testing-scheduling-topo-50-0
+ch22-testing-scheduling-topo-50-1
+ch22-testing-scheduling-topo-75-10
+ch22-testing-scheduling-topo-75-11
+ch22-testing-scheduling-topo-100-20
+ch22-testing-scheduling-topo-100-21
+ch22-testing-scheduling-topo-130-26
+ch22-testing-scheduling-topo-130-27
+ch22-testing-scheduling-topo-170-34
+ch22-testing-scheduling-topo-170-35
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mv data/all_mixed/train_teacher/ch22-training-scheduling-topo-10-7   data/all_mixed/val_teacher/
+
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-50-0    data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-75-10   data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-100-20  data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-130-26  data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-170-34  data/all_mixed/val_teacher/
+
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  echo "TRAIN_TEACHER:"                                                                      ✔  routenet-fermi Py ▓▒░
+for d in data/all_mixed/train_teacher/*topo-*; do
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+echo "VAL_TEACHER:"
+for d in data/all_mixed/val_teacher/*topo-*; do
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+TRAIN_TEACHER:
+      6 10
+      1 100
+      1 130
+      1 170
+      1 50
+      1 75
+VAL_TEACHER:
+      1 10
+      1 100
+      1 130
+      1 170
+      1 50
+      1 75
+      
+      
+python check_teacher_counts.py
+
+
+TRAIN_TEACHER: ../data/all_mixed/train_teacher
+  Raw samples seen        : 9972
+  Filtered (non-positive) : 0
+  Usable yielded          : 9972
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010353
+    max    : 2.09923
+    mean   : 0.216956
+    median : 0.125951
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+VAL_TEACHER: ../data/all_mixed/val_teacher
+  Raw samples seen        : 2191
+  Filtered (non-positive) : 0
+  Usable yielded          : 2191
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010335
+    max    : 1.87365
+    mean   : 0.251585
+    median : 0.134563
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+TEST: ../data/all_mixed/test
+  Raw samples seen        : 478
+  Filtered (non-positive) : 0
+  Usable yielded          : 478
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.005543
+    max    : 0.084601
+    mean   : 0.0172408
+    median : 0.0105755
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+░▒▓ 21m 20s
+
+
+
+
+echo "TRAIN_TEACHER sizes:" 
+find data/all_mixed/train_teacher -maxdepth 1 -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+echo "VAL_TEACHER sizes:"
+find data/all_mixed/val_teacher -maxdepth 1 -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+echo "TEST sizes:"
+find data/all_mixed/test -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+TRAIN_TEACHER sizes:
+      6 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+VAL_TEACHER sizes:
+      1 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+TEST sizes:
+      2 200
+      4 240
+      2 260
+      2 280
+      2 300

@@ -1,0 +1,347 @@
+								MOLDEL: RouteNet-F
+
+
+
+## TRAINED: 15 epochs , steps_per_epochs = 2500
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !2  python few_shot_all.py
+2026-01-25 11:16:44.514475: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 11:16:44.514507: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 11:16:45.107999: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 11:16:45.108025: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 11:16:45.108039: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 11:16:45.108182: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Starting training from scratch...
+2026-01-25 11:16:45.338157: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+Epoch 1/15
+2500/2500 [==============================] - 402s 156ms/step - loss: 11.6487 - val_loss: 7.3709
+
+Epoch 00001: val_loss improved from inf to 7.37090, saving model to ./ckpt_dirs/ckpt_dir_0_10000/01-7.37
+Epoch 2/15
+2500/2500 [==============================] - 391s 157ms/step - loss: 7.2014 - val_loss: 7.3790
+
+Epoch 00002: val_loss did not improve from 7.37090
+Epoch 3/15
+2500/2500 [==============================] - 390s 156ms/step - loss: 6.1348 - val_loss: 6.4990
+
+Epoch 00003: val_loss improved from 7.37090 to 6.49898, saving model to ./ckpt_dirs/ckpt_dir_0_10000/03-6.50
+Epoch 4/15
+2500/2500 [==============================] - 390s 156ms/step - loss: 5.8512 - val_loss: 7.0333
+
+Epoch 00004: val_loss did not improve from 6.49898
+Epoch 5/15
+2500/2500 [==============================] - 391s 157ms/step - loss: 5.5800 - val_loss: 7.9782
+
+Epoch 00005: val_loss did not improve from 6.49898
+Epoch 6/15
+2500/2500 [==============================] - 396s 158ms/step - loss: 4.9295 - val_loss: 7.7501
+
+Epoch 00006: val_loss did not improve from 6.49898
+Epoch 7/15
+2500/2500 [==============================] - 404s 162ms/step - loss: 4.9842 - val_loss: 7.4529
+
+Epoch 00007: val_loss did not improve from 6.49898
+Epoch 8/15
+2500/2500 [==============================] - 406s 163ms/step - loss: 4.4184 - val_loss: 7.4296
+
+Epoch 00008: val_loss did not improve from 6.49898
+Epoch 9/15
+2500/2500 [==============================] - 406s 162ms/step - loss: 4.7914 - val_loss: 6.8492
+
+Epoch 00009: val_loss did not improve from 6.49898
+Epoch 10/15
+2500/2500 [==============================] - 408s 163ms/step - loss: 4.4159 - val_loss: 7.3902
+
+Epoch 00010: val_loss did not improve from 6.49898
+Epoch 11/15
+2500/2500 [==============================] - 409s 164ms/step - loss: 4.3443 - val_loss: 6.6989
+
+Epoch 00011: val_loss did not improve from 6.49898
+Epoch 12/15
+2500/2500 [==============================] - 399s 160ms/step - loss: 3.9967 - val_loss: 7.7768
+
+Epoch 00012: val_loss did not improve from 6.49898
+Epoch 13/15
+2500/2500 [==============================] - 406s 163ms/step - loss: 4.2514 - val_loss: 7.6684
+
+Epoch 00013: val_loss did not improve from 6.49898
+Epoch 14/15
+2500/2500 [==============================] - 411s 165ms/step - loss: 3.9100 - val_loss: 6.9326
+
+Epoch 00014: val_loss did not improve from 6.49898
+Epoch 15/15
+2500/2500 [==============================] - 423s 169ms/step - loss: 3.8650 - val_loss: 7.0676
+
+Epoch 00015: val_loss did not improve from 6.49898
+░▒▓ 1h 40m 34s
+
+
+
+## VALIDATION : validation of 50 samples 
+
+# RESULT : {"10000": {"0": {"loss": 7.473931789398193}}}
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?1  python validation_all.py
+2026-01-25 13:09:22.734169: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 13:09:22.734199: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 13:09:23.318422: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 13:09:23.318464: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 13:09:23.318485: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 13:09:23.318726: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 03-6.50
+2026-01-25 13:09:23.599578: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+50/50 [==============================] - 958s 19s/step - loss: 7.4739
+░▒▓ 16m 0s 
+
+
+
+
+
+## VALIDATION : validation of 1000 samples 
+
+# RESULT : {"10000": {"0": {"loss": 9.170709609985352}}}
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?2  python validation_all.py
+2026-01-25 18:10:45.451829: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 18:10:45.451944: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 18:10:46.501243: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 18:10:46.501270: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 18:10:46.501284: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 18:10:46.501849: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 03-6.50
+2026-01-25 18:10:46.840564: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 11152s 13s/step - loss: 9.1707
+░▒▓ 3h 5m 55s 
+
+
+
+
+
+
+
+2026-02-05 11:26:11.476122: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 11:26:11.476167: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 11:26:12.579510: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 11:26:12.579536: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 11:26:12.579565: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 11:26:12.580187: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-02-05 11:26:12.924564: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+Epoch 1/15
+2500/2500 [==============================] - 418s 162ms/step - loss: 11.6487 - val_loss: 7.3709
+
+Epoch 00001: saving model to ./ckpt_dirs/ckpt_dir_0_10000/01-7.37
+Epoch 2/15
+2500/2500 [==============================] - 408s 163ms/step - loss: 7.2014 - val_loss: 7.3790
+
+Epoch 00002: saving model to ./ckpt_dirs/ckpt_dir_0_10000/02-7.38
+Epoch 3/15
+2500/2500 [==============================] - 424s 170ms/step - loss: 6.1348 - val_loss: 6.4990
+
+Epoch 00003: saving model to ./ckpt_dirs/ckpt_dir_0_10000/03-6.50
+Epoch 4/15
+2500/2500 [==============================] - 415s 166ms/step - loss: 5.8512 - val_loss: 7.0333
+
+Epoch 00004: saving model to ./ckpt_dirs/ckpt_dir_0_10000/04-7.03
+Epoch 5/15
+2500/2500 [==============================] - 417s 167ms/step - loss: 5.3712 - val_loss: 8.3544
+
+Epoch 00005: saving model to ./ckpt_dirs/ckpt_dir_0_10000/05-8.35
+Epoch 6/15
+2500/2500 [==============================] - 416s 166ms/step - loss: 5.2279 - val_loss: 7.9246
+
+Epoch 00006: saving model to ./ckpt_dirs/ckpt_dir_0_10000/06-7.92
+Epoch 7/15
+2500/2500 [==============================] - 423s 169ms/step - loss: 4.5600 - val_loss: 7.2414
+
+Epoch 00007: saving model to ./ckpt_dirs/ckpt_dir_0_10000/07-7.24
+Epoch 8/15
+2500/2500 [==============================] - 422s 169ms/step - loss: 5.3617 - val_loss: 7.4563
+
+Epoch 00008: saving model to ./ckpt_dirs/ckpt_dir_0_10000/08-7.46
+Epoch 9/15
+2500/2500 [==============================] - 411s 164ms/step - loss: 4.5370 - val_loss: 7.6325
+
+Epoch 00009: saving model to ./ckpt_dirs/ckpt_dir_0_10000/09-7.63
+Epoch 10/15
+2500/2500 [==============================] - 409s 164ms/step - loss: 4.5885 - val_loss: 7.5861
+
+Epoch 00010: saving model to ./ckpt_dirs/ckpt_dir_0_10000/10-7.59
+Epoch 11/15
+2500/2500 [==============================] - 422s 169ms/step - loss: 4.0268 - val_loss: 7.0683
+
+Epoch 00011: saving model to ./ckpt_dirs/ckpt_dir_0_10000/11-7.07
+Epoch 12/15
+2500/2500 [==============================] - 432s 173ms/step - loss: 4.6370 - val_loss: 7.1695
+
+Epoch 00012: saving model to ./ckpt_dirs/ckpt_dir_0_10000/12-7.17
+Epoch 13/15
+2500/2500 [==============================] - 438s 175ms/step - loss: 4.0519 - val_loss: 8.1650
+
+Epoch 00013: saving model to ./ckpt_dirs/ckpt_dir_0_10000/13-8.16
+Epoch 14/15
+2500/2500 [==============================] - 444s 178ms/step - loss: 4.3640 - val_loss: 7.3174
+
+Epoch 00014: saving model to ./ckpt_dirs/ckpt_dir_0_10000/14-7.32
+Epoch 15/15
+2500/2500 [==============================] - 438s 175ms/step - loss: 3.6902 - val_loss: 6.4095
+
+Epoch 00015: saving model to ./ckpt_dirs/ckpt_dir_0_10000/15-6.41
+
+
+
+
+2026-02-05 13:15:27.196370: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 13:15:27.196402: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 13:15:28.128332: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 13:15:28.128360: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 13:15:28.128376: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 13:15:28.128560: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-02-05 13:15:28.406727: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+50/50 [==============================] - 1066s 21s/step - loss: 6.8509
+
+
+
+
+
+{"10000": {"0": {"loss": 6.850912094116211}}}
+
+
+
+2026-02-05 13:39:03.327510: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 13:39:03.327541: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 13:39:04.216705: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 13:39:04.216731: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 13:39:04.216745: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 13:39:04.216889: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-02-05 13:39:04.463115: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 11328s 13s/step - loss: 8.2249
+
+
+
+
+{"10000": {"0": {"loss": 8.224876403808594}}}
+
+
+
+12/04/2026
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !4 ?10  python few_shot_all.py                       ✔  routenet-fermi Py ▓▒░
+
+2500/2500 [==============================] - 422s 162ms/step - loss: 11.6487 - val_loss: 7.3709
+
+Epoch 00001: saving model to ./ckpt_dirs/ckpt_dir_0_10000/01-7.37
+Epoch 2/15
+2500/2500 [==============================] - 403s 161ms/step - loss: 7.2014 - val_loss: 7.3790
+
+Epoch 00002: saving model to ./ckpt_dirs/ckpt_dir_0_10000/02-7.38
+Epoch 3/15
+2500/2500 [==============================] - 410s 164ms/step - loss: 6.1348 - val_loss: 6.4990
+
+Epoch 00003: saving model to ./ckpt_dirs/ckpt_dir_0_10000/03-6.50
+Epoch 4/15
+2500/2500 [==============================] - 420s 168ms/step - loss: 5.8512 - val_loss: 7.0333
+
+Epoch 00004: saving model to ./ckpt_dirs/ckpt_dir_0_10000/04-7.03
+Epoch 5/15
+2500/2500 [==============================] - 410s 164ms/step - loss: 5.3712 - val_loss: 8.3544
+
+Epoch 00005: saving model to ./ckpt_dirs/ckpt_dir_0_10000/05-8.35
+Epoch 6/15
+2500/2500 [==============================] - 420s 168ms/step - loss: 5.2279 - val_loss: 7.9246
+
+Epoch 00006: saving model to ./ckpt_dirs/ckpt_dir_0_10000/06-7.92
+Epoch 7/15
+2500/2500 [==============================] - 422s 169ms/step - loss: 4.5600 - val_loss: 7.2414
+
+Epoch 00007: saving model to ./ckpt_dirs/ckpt_dir_0_10000/07-7.24
+Epoch 8/15
+2500/2500 [==============================] - 410s 164ms/step - loss: 5.3617 - val_loss: 7.4563
+
+Epoch 00008: saving model to ./ckpt_dirs/ckpt_dir_0_10000/08-7.46
+Epoch 9/15
+2500/2500 [==============================] - 414s 166ms/step - loss: 4.5370 - val_loss: 7.6325
+
+Epoch 00009: saving model to ./ckpt_dirs/ckpt_dir_0_10000/09-7.63
+Epoch 10/15
+2500/2500 [==============================] - 428s 171ms/step - loss: 4.5885 - val_loss: 7.5861
+
+Epoch 00010: saving model to ./ckpt_dirs/ckpt_dir_0_10000/10-7.59
+Epoch 11/15
+2500/2500 [==============================] - 434s 174ms/step - loss: 4.0268 - val_loss: 7.0683
+
+Epoch 00011: saving model to ./ckpt_dirs/ckpt_dir_0_10000/11-7.07
+Epoch 12/15
+2500/2500 [==============================] - 432s 173ms/step - loss: 4.6370 - val_loss: 7.1695
+
+Epoch 00012: saving model to ./ckpt_dirs/ckpt_dir_0_10000/12-7.17
+Epoch 13/15
+2500/2500 [==============================] - 435s 174ms/step - loss: 4.0519 - val_loss: 8.1650
+
+Epoch 00013: saving model to ./ckpt_dirs/ckpt_dir_0_10000/13-8.16
+Epoch 14/15
+2500/2500 [==============================] - 431s 173ms/step - loss: 4.3640 - val_loss: 7.3174
+
+Epoch 00014: saving model to ./ckpt_dirs/ckpt_dir_0_10000/14-7.32
+Epoch 15/15
+2500/2500 [==============================] - 437s 175ms/step - loss: 3.6902 - val_loss: 6.4095
+
+Epoch 00015: saving model to ./ckpt_dirs/ckpt_dir_0_10000/15-6.41
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !4 ?10                                                           ✔  1h 45m 35s  routenet-fermi Py ▓▒░
+
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !4 ?10  python predict.py                      ✔  routenet-fermi Py ▓▒░
+2026-04-12 13:12:13.529322: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-04-12 13:12:13.529355: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-04-12 13:12:14.493145: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-04-12 13:12:14.493173: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-04-12 13:12:14.493191: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-04-12 13:12:14.493337: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-04-12 13:12:14.791600: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 11417s 13s/step
+
+
+
+
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !5 ?13  python validation_all.py               ✔  routenet-fermi Py ▓▒░
+2026-04-13 09:33:14.865311: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-04-13 09:33:14.865367: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-04-13 09:33:16.709117: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-04-13 09:33:16.709162: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-04-13 09:33:16.709210: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-04-13 09:33:16.710000: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-04-13 09:33:17.224345: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 10729s 12s/step - loss: 8.2249
+
+
+{"10000": {"0": {"loss": 8.224876403808594}}}

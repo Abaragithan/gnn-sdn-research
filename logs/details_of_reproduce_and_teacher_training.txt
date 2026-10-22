@@ -1,0 +1,716 @@
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?4  python check_dataset_counts.py \                                                 ✔  routenet-fermi Py ▓▒░
+  --train ../data/all_mixed/train \
+  --val ../data/all_mixed/validation \
+  --test ../data/all_mixed/test
+
+2026-02-05 17:17:55.494888: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 17:17:55.494920: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-02-05 17:17:56.014028: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 17:17:56.014061: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 17:17:56.014075: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 17:17:56.014298: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+
+TRAIN: ../data/all_mixed/train
+  Raw samples seen        : 11763
+  Filtered (non-positive) : 2
+  Usable yielded          : 11761
+  Usable ratio            : 1.000
+
+VAL: ../data/all_mixed/validation
+  Raw samples seen        : 25
+  Filtered (non-positive) : 0
+  Usable yielded          : 25
+  Usable ratio            : 1.000
+
+TEST: ../data/all_mixed/test
+  Raw samples seen        : 878
+  Filtered (non-positive) : 1
+  Usable yielded          : 877
+  Usable ratio            : 0.999
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?4                                                                       ✔  3h 2m 21s  routenet-fermi Py ▓▒░
+
+
+
+
+
+
+
+
+
+
+
+
+
+								MOLDEL: RouteNet-F
+
+
+
+## TRAINED: 15 epochs , steps_per_epochs = 2500
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !2  python few_shot_all.py
+2026-01-25 11:16:44.514475: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 11:16:44.514507: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 11:16:45.107999: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 11:16:45.108025: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 11:16:45.108039: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 11:16:45.108182: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Starting training from scratch...
+2026-01-25 11:16:45.338157: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+Epoch 1/15
+2500/2500 [==============================] - 402s 156ms/step - loss: 11.6487 - val_loss: 7.3709
+
+Epoch 00001: val_loss improved from inf to 7.37090, saving model to ./ckpt_dirs/ckpt_dir_0_10000/01-7.37
+Epoch 2/15
+2500/2500 [==============================] - 391s 157ms/step - loss: 7.2014 - val_loss: 7.3790
+
+Epoch 00002: val_loss did not improve from 7.37090
+Epoch 3/15
+2500/2500 [==============================] - 390s 156ms/step - loss: 6.1348 - val_loss: 6.4990
+
+Epoch 00003: val_loss improved from 7.37090 to 6.49898, saving model to ./ckpt_dirs/ckpt_dir_0_10000/03-6.50
+Epoch 4/15
+2500/2500 [==============================] - 390s 156ms/step - loss: 5.8512 - val_loss: 7.0333
+
+Epoch 00004: val_loss did not improve from 6.49898
+Epoch 5/15
+2500/2500 [==============================] - 391s 157ms/step - loss: 5.5800 - val_loss: 7.9782
+
+Epoch 00005: val_loss did not improve from 6.49898
+Epoch 6/15
+2500/2500 [==============================] - 396s 158ms/step - loss: 4.9295 - val_loss: 7.7501
+
+Epoch 00006: val_loss did not improve from 6.49898
+Epoch 7/15
+2500/2500 [==============================] - 404s 162ms/step - loss: 4.9842 - val_loss: 7.4529
+
+Epoch 00007: val_loss did not improve from 6.49898
+Epoch 8/15
+2500/2500 [==============================] - 406s 163ms/step - loss: 4.4184 - val_loss: 7.4296
+
+Epoch 00008: val_loss did not improve from 6.49898
+Epoch 9/15
+2500/2500 [==============================] - 406s 162ms/step - loss: 4.7914 - val_loss: 6.8492
+
+Epoch 00009: val_loss did not improve from 6.49898
+Epoch 10/15
+2500/2500 [==============================] - 408s 163ms/step - loss: 4.4159 - val_loss: 7.3902
+
+Epoch 00010: val_loss did not improve from 6.49898
+Epoch 11/15
+2500/2500 [==============================] - 409s 164ms/step - loss: 4.3443 - val_loss: 6.6989
+
+Epoch 00011: val_loss did not improve from 6.49898
+Epoch 12/15
+2500/2500 [==============================] - 399s 160ms/step - loss: 3.9967 - val_loss: 7.7768
+
+Epoch 00012: val_loss did not improve from 6.49898
+Epoch 13/15
+2500/2500 [==============================] - 406s 163ms/step - loss: 4.2514 - val_loss: 7.6684
+
+Epoch 00013: val_loss did not improve from 6.49898
+Epoch 14/15
+2500/2500 [==============================] - 411s 165ms/step - loss: 3.9100 - val_loss: 6.9326
+
+Epoch 00014: val_loss did not improve from 6.49898
+Epoch 15/15
+2500/2500 [==============================] - 423s 169ms/step - loss: 3.8650 - val_loss: 7.0676
+
+Epoch 00015: val_loss did not improve from 6.49898
+░▒▓ 1h 40m 34s
+
+
+
+## VALIDATION : validation of 50 samples 
+
+# RESULT : {"10000": {"0": {"loss": 7.473931789398193}}}
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?1  python validation_all.py
+2026-01-25 13:09:22.734169: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 13:09:22.734199: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 13:09:23.318422: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 13:09:23.318464: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 13:09:23.318485: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 13:09:23.318726: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 03-6.50
+2026-01-25 13:09:23.599578: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+50/50 [==============================] - 958s 19s/step - loss: 7.4739
+░▒▓ 16m 0s 
+
+
+
+
+
+## VALIDATION : validation of 1000 samples 
+
+# RESULT : {"10000": {"0": {"loss": 9.170709609985352}}}
+
+
+
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?2  python validation_all.py
+2026-01-25 18:10:45.451829: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-25 18:10:45.451944: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-01-25 18:10:46.501243: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-25 18:10:46.501270: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-25 18:10:46.501284: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-25 18:10:46.501849: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 03-6.50
+2026-01-25 18:10:46.840564: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 11152s 13s/step - loss: 9.1707
+░▒▓ 3h 5m 55s 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2026-02-05 11:26:11.476122: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 11:26:11.476167: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 11:26:12.579510: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 11:26:12.579536: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 11:26:12.579565: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 11:26:12.580187: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-02-05 11:26:12.924564: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+Epoch 1/15
+2500/2500 [==============================] - 418s 162ms/step - loss: 11.6487 - val_loss: 7.3709
+
+Epoch 00001: saving model to ./ckpt_dirs/ckpt_dir_0_10000/01-7.37
+Epoch 2/15
+2500/2500 [==============================] - 408s 163ms/step - loss: 7.2014 - val_loss: 7.3790
+
+Epoch 00002: saving model to ./ckpt_dirs/ckpt_dir_0_10000/02-7.38
+Epoch 3/15
+2500/2500 [==============================] - 424s 170ms/step - loss: 6.1348 - val_loss: 6.4990
+
+Epoch 00003: saving model to ./ckpt_dirs/ckpt_dir_0_10000/03-6.50
+Epoch 4/15
+2500/2500 [==============================] - 415s 166ms/step - loss: 5.8512 - val_loss: 7.0333
+
+Epoch 00004: saving model to ./ckpt_dirs/ckpt_dir_0_10000/04-7.03
+Epoch 5/15
+2500/2500 [==============================] - 417s 167ms/step - loss: 5.3712 - val_loss: 8.3544
+
+Epoch 00005: saving model to ./ckpt_dirs/ckpt_dir_0_10000/05-8.35
+Epoch 6/15
+2500/2500 [==============================] - 416s 166ms/step - loss: 5.2279 - val_loss: 7.9246
+
+Epoch 00006: saving model to ./ckpt_dirs/ckpt_dir_0_10000/06-7.92
+Epoch 7/15
+2500/2500 [==============================] - 423s 169ms/step - loss: 4.5600 - val_loss: 7.2414
+
+Epoch 00007: saving model to ./ckpt_dirs/ckpt_dir_0_10000/07-7.24
+Epoch 8/15
+2500/2500 [==============================] - 422s 169ms/step - loss: 5.3617 - val_loss: 7.4563
+
+Epoch 00008: saving model to ./ckpt_dirs/ckpt_dir_0_10000/08-7.46
+Epoch 9/15
+2500/2500 [==============================] - 411s 164ms/step - loss: 4.5370 - val_loss: 7.6325
+
+Epoch 00009: saving model to ./ckpt_dirs/ckpt_dir_0_10000/09-7.63
+Epoch 10/15
+2500/2500 [==============================] - 409s 164ms/step - loss: 4.5885 - val_loss: 7.5861
+
+Epoch 00010: saving model to ./ckpt_dirs/ckpt_dir_0_10000/10-7.59
+Epoch 11/15
+2500/2500 [==============================] - 422s 169ms/step - loss: 4.0268 - val_loss: 7.0683
+
+Epoch 00011: saving model to ./ckpt_dirs/ckpt_dir_0_10000/11-7.07
+Epoch 12/15
+2500/2500 [==============================] - 432s 173ms/step - loss: 4.6370 - val_loss: 7.1695
+
+Epoch 00012: saving model to ./ckpt_dirs/ckpt_dir_0_10000/12-7.17
+Epoch 13/15
+2500/2500 [==============================] - 438s 175ms/step - loss: 4.0519 - val_loss: 8.1650
+
+Epoch 00013: saving model to ./ckpt_dirs/ckpt_dir_0_10000/13-8.16
+Epoch 14/15
+2500/2500 [==============================] - 444s 178ms/step - loss: 4.3640 - val_loss: 7.3174
+
+Epoch 00014: saving model to ./ckpt_dirs/ckpt_dir_0_10000/14-7.32
+Epoch 15/15
+2500/2500 [==============================] - 438s 175ms/step - loss: 3.6902 - val_loss: 6.4095
+
+Epoch 00015: saving model to ./ckpt_dirs/ckpt_dir_0_10000/15-6.41
+
+
+
+
+
+
+2026-02-05 13:15:27.196370: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 13:15:27.196402: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 13:15:28.128332: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 13:15:28.128360: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 13:15:28.128376: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 13:15:28.128560: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-02-05 13:15:28.406727: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+50/50 [==============================] - 1066s 21s/step - loss: 6.8509
+
+
+
+
+
+{"10000": {"0": {"loss": 6.850912094116211}}}
+
+
+
+
+
+2026-02-05 13:39:03.327510: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-02-05 13:39:03.327541: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+STARTING ITERATION 0 WITH NUM SAMPLES 10000
+2026-02-05 13:39:04.216705: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-02-05 13:39:04.216731: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-02-05 13:39:04.216745: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-02-05 13:39:04.216889: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+BEST CHECKOINT FOUND FOR ITERATION 0 AND NUM SAMPLES 10000: 15-6.41
+2026-02-05 13:39:04.463115: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+878/878 [==============================] - 11328s 13s/step - loss: 8.2249
+
+
+
+
+{"10000": {"0": {"loss": 8.224876403808594}}}
+
+
+
+
+
+
+▒▓ ~/RouteNet-Fermi  main !4 ?5  mkdir ./data/all_mixed/train_teacher                                                       ✔  routenet-fermi Py ▓▒░
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mkdir ./data/all_mixed/val_teacher                                                         ✔  routenet-fermi Py ▓▒░
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  # move selected topo sizes from test into teacher training                                 ✔  routenet-fermi Py ▓▒░
+find data/all_mixed/test -type d -name "*topo-50-*"  -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-75-*"  -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-100-*" -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-130-*" -exec mv {} data/all_mixed/train_teacher/ \;
+find data/all_mixed/test -type d -name "*topo-170-*" -exec mv {} data/all_mixed/train_teacher/ \;
+
+find: ‘data/all_mixed/test/50/ch22-testing-scheduling-topo-50-0’: No such file or directory
+find: ‘data/all_mixed/test/50/ch22-testing-scheduling-topo-50-1’: No such file or directory
+find: ‘data/all_mixed/test/75/ch22-testing-scheduling-topo-75-10’: No such file or directory
+find: ‘data/all_mixed/test/75/ch22-testing-scheduling-topo-75-11’: No such file or directory
+find: ‘data/all_mixed/test/100/ch22-testing-scheduling-topo-100-21’: No such file or directory
+find: ‘data/all_mixed/test/100/ch22-testing-scheduling-topo-100-20’: No such file or directory
+find: ‘data/all_mixed/test/130/ch22-testing-scheduling-topo-130-27’: No such file or directory
+find: ‘data/all_mixed/test/130/ch22-testing-scheduling-topo-130-26’: No such file or directory
+find: ‘data/all_mixed/test/170/ch22-testing-scheduling-topo-170-34’: No such file or directory
+find: ‘data/all_mixed/test/170/ch22-testing-scheduling-topo-170-35’: No such file or directory
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mv data/all_mixed/train/* data/all_mixed/train_teacher/                                  1 ✘  routenet-fermi Py ▓▒░
+
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  for d in data/all_mixed/train_teacher/*topo-*; do                                          ✔  routenet-fermi Py ▓▒░
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+      7 10
+      2 100
+      2 130
+      2 170
+      2 50
+      2 75
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  ls data/all_mixed/train_teacher | grep topo-10                                             ✔  routenet-fermi Py ▓▒░
+ls data/all_mixed/train_teacher | grep topo-50
+ls data/all_mixed/train_teacher | grep topo-75
+ls data/all_mixed/train_teacher | grep topo-100
+ls data/all_mixed/train_teacher | grep topo-130
+ls data/all_mixed/train_teacher | grep topo-170
+
+ch22-testing-scheduling-topo-100-20
+ch22-testing-scheduling-topo-100-21
+ch22-training-scheduling-topo-10-10
+ch22-training-scheduling-topo-10-20
+ch22-training-scheduling-topo-10-21
+ch22-training-scheduling-topo-10-25
+ch22-training-scheduling-topo-10-36
+ch22-training-scheduling-topo-10-39
+ch22-training-scheduling-topo-10-7
+ch22-testing-scheduling-topo-50-0
+ch22-testing-scheduling-topo-50-1
+ch22-testing-scheduling-topo-75-10
+ch22-testing-scheduling-topo-75-11
+ch22-testing-scheduling-topo-100-20
+ch22-testing-scheduling-topo-100-21
+ch22-testing-scheduling-topo-130-26
+ch22-testing-scheduling-topo-130-27
+ch22-testing-scheduling-topo-170-34
+ch22-testing-scheduling-topo-170-35
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  mv data/all_mixed/train_teacher/ch22-training-scheduling-topo-10-7   data/all_mixed/val_teacher/
+
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-50-0    data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-75-10   data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-100-20  data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-130-26  data/all_mixed/val_teacher/
+mv data/all_mixed/train_teacher/ch22-testing-scheduling-topo-170-34  data/all_mixed/val_teacher/
+
+░▒▓ ~/RouteNet-Fermi  main !4 ?5  echo "TRAIN_TEACHER:"                                                                      ✔  routenet-fermi Py ▓▒░
+for d in data/all_mixed/train_teacher/*topo-*; do
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+echo "VAL_TEACHER:"
+for d in data/all_mixed/val_teacher/*topo-*; do
+  echo "$(basename "$d")" | sed -E 's/.*topo-([0-9]+)-.*/\1/'
+done | sort | uniq -c
+
+TRAIN_TEACHER:
+      6 10
+      1 100
+      1 130
+      1 170
+      1 50
+      1 75
+VAL_TEACHER:
+      1 10
+      1 100
+      1 130
+      1 170
+      1 50
+      1 75
+      
+      
+python check_teacher_counts.py
+
+
+TRAIN_TEACHER: ../data/all_mixed/train_teacher
+  Raw samples seen        : 9972
+  Filtered (non-positive) : 0
+  Usable yielded          : 9972
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010353
+    max    : 2.09923
+    mean   : 0.216956
+    median : 0.125951
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+VAL_TEACHER: ../data/all_mixed/val_teacher
+  Raw samples seen        : 2191
+  Filtered (non-positive) : 0
+  Usable yielded          : 2191
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010335
+    max    : 1.87365
+    mean   : 0.251585
+    median : 0.134563
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+TEST: ../data/all_mixed/test
+  Raw samples seen        : 478
+  Filtered (non-positive) : 0
+  Usable yielded          : 478
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.005543
+    max    : 0.084601
+    mean   : 0.0172408
+    median : 0.0105755
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+░▒▓ 21m 20s
+
+
+
+
+echo "TRAIN_TEACHER sizes:" 
+find data/all_mixed/train_teacher -maxdepth 1 -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+echo "VAL_TEACHER sizes:"
+find data/all_mixed/val_teacher -maxdepth 1 -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+echo "TEST sizes:"
+find data/all_mixed/test -type d -name "*topo-*" \
+| sed -E 's/.*topo-([0-9]+)-.*/\1/' | sort -n | uniq -c
+
+TRAIN_TEACHER sizes:
+      6 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+VAL_TEACHER sizes:
+      1 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+TEST sizes:
+      2 200
+      4 240
+      2 260
+      2 280
+      2 300
+      
+      
+      
+      
+      						RouteNet-F Teacher Model for Delay Prediction
+						---------------------------------------------
+
+
+## DATASET
+==========
+
+TRAIN_TEACHER sizes:
+      6 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+VAL_TEACHER sizes:
+      1 10
+      1 50
+      1 75
+      1 100
+      1 130
+      1 170
+TEST sizes:
+      2 200
+      4 240
+      2 260
+      2 280
+      2 300
+      
+ TRAIN_TEACHER: ../data/all_mixed/train_teacher
+  Raw samples seen        : 9972
+  Filtered (non-positive) : 0
+  Usable yielded          : 9972
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010353
+    max    : 2.09923
+    mean   : 0.216956
+    median : 0.125951
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+VAL_TEACHER: ../data/all_mixed/val_teacher
+  Raw samples seen        : 2191
+  Filtered (non-positive) : 0
+  Usable yielded          : 2191
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.010335
+    max    : 1.87365
+    mean   : 0.251585
+    median : 0.134563
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+
+TEST: ../data/all_mixed/test
+  Raw samples seen        : 478
+  Filtered (non-positive) : 0
+  Usable yielded          : 478
+  Usable ratio            : 1.000
+  Delay stats (global_delay):
+    min    : 0.005543
+    max    : 0.084601
+    mean   : 0.0172408
+    median : 0.0105755
+    % < 0.0001: 0.000%
+    % < 0.001: 0.000%
+------------------------------------------
+    
+    
+## TRAINING
+===========
+
+epochs: 30
+steps per epochs: number of samples (9972)
+
+RESULT:
+
+Epoch 1/30
+9972/9972 [==============================] - 1655s 165ms/step - loss: 7.6173 - val_loss: 7.7157
+
+Epoch 00001: val_loss improved from inf to 7.71567, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-01
+Epoch 2/30
+9972/9972 [==============================] - 1584s 159ms/step - loss: 6.0447 - val_loss: 7.2879
+
+Epoch 00002: val_loss improved from 7.71567 to 7.28785, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-02
+Epoch 3/30
+9972/9972 [==============================] - 1601s 161ms/step - loss: 5.9251 - val_loss: 7.9793
+
+Epoch 00003: val_loss did not improve from 7.28785
+Epoch 4/30
+9972/9972 [==============================] - 1552s 156ms/step - loss: 5.7016 - val_loss: 7.4936
+
+Epoch 00004: val_loss did not improve from 7.28785
+Epoch 5/30
+9972/9972 [==============================] - 1533s 154ms/step - loss: 5.0794 - val_loss: 6.0834
+
+Epoch 00005: val_loss improved from 7.28785 to 6.08337, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-05
+Epoch 6/30
+9972/9972 [==============================] - 1512s 152ms/step - loss: 4.8996 - val_loss: 6.4913
+
+Epoch 00006: val_loss did not improve from 6.08337
+Epoch 7/30
+9972/9972 [==============================] - 1508s 151ms/step - loss: 4.8883 - val_loss: 6.4972
+
+Epoch 00007: val_loss did not improve from 6.08337
+Epoch 8/30
+9972/9972 [==============================] - 1570s 157ms/step - loss: 4.5263 - val_loss: 6.0524
+
+Epoch 00008: val_loss improved from 6.08337 to 6.05237, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-08
+Epoch 9/30
+9972/9972 [==============================] - 1557s 156ms/step - loss: 4.6338 - val_loss: 6.0155
+
+Epoch 00009: val_loss improved from 6.05237 to 6.01548, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-09
+Epoch 10/30
+9972/9972 [==============================] - 1538s 154ms/step - loss: 4.3966 - val_loss: 5.4865
+
+Epoch 00010: val_loss improved from 6.01548 to 5.48654, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-10
+Epoch 11/30
+9972/9972 [==============================] - 1554s 156ms/step - loss: 4.3999 - val_loss: 6.2160
+
+Epoch 00011: val_loss did not improve from 5.48654
+Epoch 12/30
+9972/9972 [==============================] - 1528s 153ms/step - loss: 4.2246 - val_loss: 5.1928
+
+Epoch 00012: val_loss improved from 5.48654 to 5.19283, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-12
+Epoch 13/30
+9972/9972 [==============================] - 1565s 157ms/step - loss: 4.1303 - val_loss: 5.2589
+
+Epoch 00013: val_loss did not improve from 5.19283
+Epoch 14/30
+9972/9972 [==============================] - 1573s 158ms/step - loss: 4.1656 - val_loss: 5.7631
+
+Epoch 00014: val_loss did not improve from 5.19283
+Epoch 15/30
+9972/9972 [==============================] - 1561s 157ms/step - loss: 4.1494 - val_loss: 5.7563
+
+Epoch 00015: val_loss did not improve from 5.19283
+Epoch 16/30
+9972/9972 [==============================] - 1589s 159ms/step - loss: 4.0491 - val_loss: 5.4061
+
+Epoch 00016: val_loss did not improve from 5.19283
+Epoch 17/30
+9972/9972 [==============================] - 1566s 157ms/step - loss: 4.0895 - val_loss: 5.0863
+
+Epoch 00017: val_loss improved from 5.19283 to 5.08629, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-17
+Epoch 18/30
+9972/9972 [==============================] - 1516s 152ms/step - loss: 4.0708 - val_loss: 6.7599
+
+Epoch 00018: val_loss did not improve from 5.08629
+Epoch 19/30
+9972/9972 [==============================] - 1525s 153ms/step - loss: 4.0458 - val_loss: 5.4792
+
+Epoch 00019: val_loss did not improve from 5.08629
+Epoch 20/30
+9972/9972 [==============================] - 1570s 157ms/step - loss: 3.8289 - val_loss: 5.1151
+
+Epoch 00020: val_loss did not improve from 5.08629
+Epoch 21/30
+9972/9972 [==============================] - 1574s 158ms/step - loss: 3.9641 - val_loss: 4.7331
+
+Epoch 00021: val_loss improved from 5.08629 to 4.73306, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-21
+Epoch 22/30
+9972/9972 [==============================] - 1598s 160ms/step - loss: 4.0405 - val_loss: 4.9076
+
+Epoch 00022: val_loss did not improve from 4.73306
+Epoch 23/30
+9972/9972 [==============================] - 1540s 154ms/step - loss: 4.0208 - val_loss: 5.5545
+
+Epoch 00023: val_loss did not improve from 4.73306
+Epoch 24/30
+9972/9972 [==============================] - 1563s 157ms/step - loss: 3.8710 - val_loss: 5.5437
+
+Epoch 00024: val_loss did not improve from 4.73306
+Epoch 25/30
+9972/9972 [==============================] - 1538s 154ms/step - loss: 3.8707 - val_loss: 5.1506
+
+Epoch 00025: val_loss did not improve from 4.73306
+Epoch 26/30
+9972/9972 [==============================] - 1536s 154ms/step - loss: 3.8044 - val_loss: 4.7139
+
+Epoch 00026: val_loss improved from 4.73306 to 4.71391, saving model to ./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26
+Epoch 27/30
+9972/9972 [==============================] - 1532s 154ms/step - loss: 3.8249 - val_loss: 5.2744
+
+Epoch 00027: val_loss did not improve from 4.71391
+Epoch 28/30
+9972/9972 [==============================] - 1528s 153ms/step - loss: 3.8205 - val_loss: 5.4711
+
+Epoch 00028: val_loss did not improve from 4.71391
+Epoch 29/30
+9972/9972 [==============================] - 1518s 152ms/step - loss: 3.6957 - val_loss: 5.0402
+
+Epoch 00029: val_loss did not improve from 4.71391
+Epoch 30/30
+9972/9972 [==============================] - 1521s 153ms/step - loss: 3.6569 - val_loss: 5.2150
+
+Epoch 00030: val_loss did not improve from 4.71391
+░▒▓  12h 56m 47s 
+
+-----------------------------------------------------------------------------------------------
+
+## EVALUATION AND TEST
+   ===================
+
+
+python test_teacher.py 
+
+Evaluating on VAL_TEACHER...
+2026-02-14 07:44:47.884876: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2191/2191 [==============================] - 659s 299ms/step - loss: 4.7139
+
+Evaluating on TEST (OOD: 200–300 nodes)...
+478/478 [==============================] - 9642s 20s/step - loss: 5.3734
+
+Saved: results_teacher.json
+{
+  "ckpt_dir": "./ckpt_dirs_teacher/ckpt_dir_0_9972",
+  "checkpoint": "./ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+  "val_teacher": {
+    "loss": 4.713905334472656
+  },
+  "test": {
+    "loss": 5.3733954429626465
+  }
+}
+ 2h 51m 43s 
+
+----------------------------------------------------------------------------------------------

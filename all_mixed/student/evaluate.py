@@ -38,8 +38,8 @@ def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
 
-    VAL_PATH  = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
-    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'test')
+    VAL_PATH  = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
+    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'test')
 
     # Try scratch checkpoint first, then KD
     ckpt_configs = [

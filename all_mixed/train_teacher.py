@@ -39,8 +39,8 @@ def build_model():
 
 def main():
     # Paths for teacher dataset
-    TRAIN_PATH = "../data/all_mixed/train_teacher"
-    VAL_PATH   = "../data/all_mixed/val_teacher"
+    TRAIN_PATH = "../data/all_mixed_v1/train"
+    VAL_PATH   = "../data/all_mixed_v1/validation"
 
     # Your counted usable train samples (used for full-pass epochs)
     NUM_TRAIN_SAMPLES = 9972

@@ -1,0 +1,139 @@
+░▒▓ ~/RouteNet-Fermi/all_mixed  main !3 ?5  python inspect_one_sample.py ../data/all_mixed/test                    ✔  routenet-fermi Py ▓▒░
+
+2026-01-24 12:01:08.025822: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-01-24 12:01:08.025853: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-01-24 12:01:08.551700: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-01-24 12:01:08.551732: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-01-24 12:01:08.551801: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-01-24 12:01:08.552012: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-01-24 12:01:08.583558: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+
+=== X (inputs) keys ===
+ar_a: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+avg_pkts_lambda: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+avg_t_off: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+avg_t_on: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+capacity: Tensor shape=(852, 1) dtype=<dtype: 'float32'>
+delay: Tensor shape=(57360,) dtype=<dtype: 'float32'>
+eq_lambda: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+exp_max_factor: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+length: Tensor shape=(57360,) dtype=<dtype: 'int32'>
+link_to_path: RaggedTensor shape=(57360, 1) dtype=<dtype: 'int32'> ragged_rank=1
+  row_lengths (first 5): [5 4 5 4 4]
+model: Tensor shape=(57360,) dtype=<dtype: 'int32'>
+packets: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+path_to_link: RaggedTensor shape=(852, None, 2) dtype=<dtype: 'int32'> ragged_rank=1
+  row_lengths (first 5): [379 458 302 268 217]
+path_to_queue: RaggedTensor shape=(2124, None, 2) dtype=<dtype: 'int32'> ragged_rank=1
+  row_lengths (first 5): [ 33 127 219  53 131]
+pkts_lambda_on: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+policy: Tensor shape=(852,) dtype=<dtype: 'int32'>
+priority: Tensor shape=(2124,) dtype=<dtype: 'int32'>
+queue_size: Tensor shape=(2124, 1) dtype=<dtype: 'float32'>
+queue_to_link: RaggedTensor shape=(852, 1) dtype=<dtype: 'int32'> ragged_rank=1
+  row_lengths (first 5): [3 3 3 1 3]
+queue_to_path: RaggedTensor shape=(57360, 1) dtype=<dtype: 'int32'> ragged_rank=1
+  row_lengths (first 5): [5 4 5 4 4]
+sigma: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+traffic: Tensor shape=(57360, 1) dtype=<dtype: 'float32'>
+weight: Tensor shape=(2124, 1) dtype=<dtype: 'float32'>
+
+=== Y (label) ===
+y: Tensor shape=(57360,) dtype=<dtype: 'float32'>
+y length: 57360
+y first 10: [0.008143 0.016067 0.004295 0.011586 0.010175 0.007718 0.011602 0.003784
+ 0.005718 0.00567 ]
+
+
+
+
+
+
+
+
+Nice — that output tells us **exactly** what “1 step / 1 sample / batch size” means in your setup.
+
+---
+
+## What is **1 dataset sample** here?
+
+One element from `input_fn(...).take(1)` gives you:
+
+* **Links:** `capacity` shape **(852, 1)** → there are **852 links**
+* **Queues:** `queue_size` shape **(2124, 1)** → there are **2124 queues**
+* **Paths/Flows:** most path-level tensors are shape **(57360, …)** → there are **57,360 paths/flows** in this one sample
+* **Label y:** shape **(57360,)** → the target delay is **one delay value per path/flow**
+
+So **one “sample” = one whole network scenario**, containing thousands of paths/flows.
+
+---
+
+## What is **1 gradient step** in your training?
+
+A “gradient step” happens **once per `train_step`** (i.e., once per dataset element consumed by `model.fit`).
+
+In your case, because you did **NOT** call `.batch(...)`, each step uses:
+
+✅ **1 network sample** (one graph/scenario)
+but inside that sample the loss is computed over **57,360 flow delays**.
+
+So:
+
+* **1 step ≠ 1 flow**
+* **1 step = 1 network scenario**, containing many flows.
+
+---
+
+## Is “batch size defined in the model”?
+
+No — **batch size is defined by the dataset pipeline**.
+
+* If you do `ds = ds.batch(4)` → batch size = 4 samples (4 scenarios per step)
+* In your code you never call `.batch(...)` → **batch size is effectively 1**
+
+Your model still processes big tensors because each sample already contains huge vectors (57360 flows).
+
+---
+
+## Why did `predict.py` create a `.npy` of shape `(2868000,)`?
+
+You saw one sample has **57360** labels.
+
+Now your saved predictions array is:
+
+* **2,868,000 = 57,360 × 50**
+
+So your prediction ran on **50 samples** (test set size or you limited it earlier), and for each sample it predicted **57,360 flow delays**.
+
+That’s why the `.npy` is “huge” and 1D.
+
+---
+
+## What does `y` represent here?
+
+From your generator:
+
+* `y = list(nx.get_node_attributes(HG, 'delay').values())`
+
+Those are **AvgDelay per flow** pulled from `P[src,dst]['Flows'][f_id]['AvgDelay']`.
+
+So the model is learning:
+
+✅ **Predict per-flow average delay** given the whole network + traffic + queues + routing structure.
+
+---
+
+## Quick check: what “12/Unknown” / “50/50” means
+
+* `Unknown` happens when TensorFlow can’t know dataset length (generator pipeline, no known cardinality).
+* `50/50` shows up when the dataset **is finite and known** (like `.take(50)` or the test set happens to have 50 elements).
+
+---
+
+If you want, paste just one more thing from training output:
+
+* the line that shows `steps_per_epoch` and how long one epoch took
+
+and I’ll estimate your **15 epochs × 2500 steps** time more accurately using your real “seconds per step”.
+

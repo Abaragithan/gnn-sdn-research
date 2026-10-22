@@ -107,8 +107,8 @@ def main():
     PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
     ALL_MIXED_DIR = os.path.join(SCRIPT_DIR, '..')
 
-    TRAIN_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'train_teacher')
-    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
+    TRAIN_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'train')
+    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
     NUM_TRAIN_SAMPLES = 9972
 
     # Check both new and old teacher checkpoint locations

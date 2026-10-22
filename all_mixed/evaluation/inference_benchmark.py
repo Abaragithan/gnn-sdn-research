@@ -89,7 +89,7 @@ def main():
     ALL_MIXED    = os.path.join(SCRIPT_DIR, '..')
 
     # Use validation set — grab just 1 sample
-    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
+    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
     ds = input_fn(VAL_PATH, shuffle=False)
     sample_x, sample_y = next(iter(ds))  # single graph sample
 

@@ -16,5 +16,4 @@ ckpt_dirs_teacher
 few_shot
 all_mixed/student/ckpt_dirs_scratch/
 all_mixed/student/ckpt_dirs_kd_alpha0.5/
-log*
 pid*

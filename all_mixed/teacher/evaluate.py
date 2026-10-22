@@ -38,8 +38,8 @@ def main():
     NUM_TRAIN_SAMPLES = 9972
     ckpt_dir = os.path.join(SCRIPT_DIR, f"ckpt_dirs/ckpt_dir_0_{NUM_TRAIN_SAMPLES}")
 
-    VAL_PATH  = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
-    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'test')
+    VAL_PATH  = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
+    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'test')
 
     best_ckpt = tf.train.latest_checkpoint(ckpt_dir)
     if best_ckpt is None:

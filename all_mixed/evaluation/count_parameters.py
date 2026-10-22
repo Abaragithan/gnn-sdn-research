@@ -39,7 +39,7 @@ def count_params(model, name, data_path):
 def main():
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
-    DATA_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
+    DATA_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
 
     print("\n" + "=" * 60)
     print("  MODEL PARAMETER COMPARISON")

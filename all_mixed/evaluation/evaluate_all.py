@@ -52,8 +52,8 @@ def main():
     PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
     ALL_MIXED_DIR = os.path.join(SCRIPT_DIR, '..')
 
-    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'val_teacher')
-    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed', 'test')
+    VAL_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'validation')
+    TEST_PATH = os.path.join(PROJECT_ROOT, 'data', 'all_mixed_v1', 'test')
 
     models_config = [
         {"name": "Teacher (RouteNet-Fermi)",

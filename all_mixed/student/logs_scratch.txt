@@ -1,0 +1,45 @@
+.
+├── ckpt_dirs_kd_alpha0.5
+│   ├── checkpoint
+│   ├── ckpt-01.data-00000-of-00001
+│   ├── ckpt-01.index
+│   ├── ckpt-02.data-00000-of-00001
+│   ├── ckpt-02.index
+│   ├── ckpt-03.data-00000-of-00001
+│   ├── ckpt-03.index
+│   ├── ckpt-04.data-00000-of-00001
+│   ├── ckpt-04.index
+│   ├── ckpt-05.data-00000-of-00001
+│   ├── ckpt-05.index
+│   ├── ckpt-06.data-00000-of-00001
+│   ├── ckpt-06.index
+│   ├── ckpt-07.data-00000-of-00001
+│   ├── ckpt-07.index
+│   ├── ckpt-08.data-00000-of-00001
+│   └── ckpt-08.index
+├── ckpt_dirs_scratch
+│   ├── checkpoint
+│   ├── ckpt-01.data-00000-of-00001
+│   ├── ckpt-01.index
+│   ├── ckpt-02.data-00000-of-00001
+│   ├── ckpt-02.index
+│   ├── ckpt-03.data-00000-of-00001
+│   ├── ckpt-03.index
+│   ├── ckpt-04.data-00000-of-00001
+│   ├── ckpt-04.index
+│   ├── ckpt-06.data-00000-of-00001
+│   ├── ckpt-06.index
+│   ├── ckpt-07.data-00000-of-00001
+│   ├── ckpt-07.index
+│   ├── ckpt-08.data-00000-of-00001
+│   └── ckpt-08.index
+├── evaluate.py
+├── logs_kd.txt
+├── logs_scratch.txt
+├── pid_kd.txt
+├── pid_scratch.txt
+├── README.md
+├── train_kd.py
+└── train_scratch.py
+
+3 directories, 40 files
