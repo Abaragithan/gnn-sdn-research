@@ -40,6 +40,29 @@ extra validation split. The original external source at
 verified against it using SHA-256 hashes (907 train, 58 validation, and 396
 test files). No split contents were intentionally merged.
 
+### Git-history cross-check
+
+| Commit | Evidence |
+|---|---|
+| `4d1b3e0` (2026-04-03) | The initial committed teacher scripts read `data/all_mixed/train_teacher`, `val_teacher`, and `test`. |
+| `4667525` (2026-10-19) | Adds the student model/evaluation and experiment documentation used as provenance for the student work. |
+| `842d9cb` (2026-10-22) | Records the normalized teacher/student script paths (`data/all_mixed_v1/{train,validation,test}`), adds the historical training log and this metadata document, and removes the `.gitignore` rule that excluded `logs/`. |
+
+The committed historical log documents the teacher split construction: it
+moves selected 50–170-node topologies and original 10-node training topologies
+into `train_teacher`, then moves one topology per size into `val_teacher`.
+It records 9,972 train samples, 2,191 validation samples, 478 OOD test samples,
+and the teacher evaluation metrics. The current
+`data/all_mixed_v1/validation_extra/` is 58 files and is SHA-256-identical,
+with matching relative paths, to the current original
+`data/all_mixed/validation/`.
+
+Git history does not contain the dataset directories themselves: `data/` is
+ignored by Git. Thus commits establish the scripts, logged split-building
+commands, results, and later path updates, but cannot independently prove every
+physical dataset move. The file identity checks above establish the current
+copy relationships, not a complete filesystem audit trail.
+
 ### Split paths
 
 Baseline scripts use `data/all_mixed/{train,validation,test}`. Teacher and
