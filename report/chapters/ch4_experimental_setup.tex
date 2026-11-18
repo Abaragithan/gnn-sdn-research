@@ -1,0 +1,175 @@
+\chapter{Experimental Setup}
+\label{ch:setup}
+
+\section{Datasets and Preprocessing}
+\label{sec:datasets}
+
+\subsection{The all-mixed dataset}
+
+All experiments use the \emph{all-mixed} dataset published by the Barcelona Neural Networking Center together with RouteNet-Fermi \cite{ferriolgalmes2023routenetfermi,bnn2023allmixed}. Each sample is one simulated network scenario, made up of a topology, a routing and a traffic matrix, together with the per-flow mean delay measured by a packet-level simulator. Scenarios mix the four scheduling policies and several traffic models, and the topology directories carry the prefix \texttt{ch22}, indicating their origin in the 2022 edition of the Graph Neural Networking Challenge. The dataset and the reference code are distributed under the Apache License 2.0.
+
+The dataset as downloaded is divided into three splits by topology (\cref{tab:orig-split}). The training split contains only 10-node topologies, the validation split contains five topologies of 100 to 300 nodes, and the test split contains 22 topologies of 50 to 300 nodes.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Original splits of the all-mixed dataset, as downloaded. Sample counts were obtained by iterating over each split with the dataset API.}
+\label{tab:orig-split}
+\begin{tabularx}{\textwidth}{@{}l c Y r@{}}
+\toprule
+\textbf{Split} & \textbf{Topologies} & \textbf{Topology sizes (nodes) and count} & \textbf{Samples} \\
+\midrule
+Train      & 7  & $7 \times 10$ & 11,763 \\
+Validation & 5  & $1 \times$ each of 100, 150, 200, 260, 300 & 25 \\
+Test       & 22 & $2 \times$ each of 50, 75, 100, 130, 170, 200, 260, 280, 300; $4 \times 240$ & 878 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A counting script that read each scenario's global (network-wide) mean delay flagged two training scenarios and one test scenario with a non-positive value. The training and evaluation pipeline does not filter scenarios, so these were not removed; for example, the evaluation of the baseline on the original test split processed all 878 scenarios.
+
+\subsection{Topology-diverse re-split}
+\label{sec:resplit}
+
+For the teacher and both students, the data were re-split as follows. The ten topologies of 50, 75, 100, 130 and 170 nodes were moved out of the original test split. Together with the seven 10-node training topologies, they were divided so that one topology of each size (10, 50, 75, 100, 130 and 170 nodes) formed a new validation split and the remaining eleven formed a new training split. Only the twelve topologies of 200 to 300 nodes were left in the test split. The original validation split was kept aside unchanged and was not used by any of the teacher or student runs. The commands used and the resulting counts were recorded in the project log.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Topology-diverse splits used for the teacher and student models. Delay statistics are over the per-scenario global mean delay reported by the dataset API.}
+\label{tab:v1-split}
+\begin{tabularx}{\textwidth}{@{}l Y r c c@{}}
+\toprule
+\textbf{Split} & \textbf{Topologies (count $\times$ nodes)} & \textbf{Samples} & \textbf{Delay range} & \textbf{Mean / median} \\
+\midrule
+Train      & $6\times10$; $1\times$ each of 50, 75, 100, 130, 170 & 9,972 & 0.0104--2.099 & 0.217 / 0.126 \\
+Validation & $1\times$ each of 10, 50, 75, 100, 130, 170          & 2,191 & 0.0103--1.874 & 0.252 / 0.135 \\
+Test (OOD) & $2\times200$, $4\times240$, $2\times260$, $2\times280$, $2\times300$ & 478 & 0.0055--0.0846 & 0.0172 / 0.0106 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The counts are consistent with the original splits: the 9,972 training and 2,191 validation scenarios add up to 12,163, which equals the 11,763 original training scenarios plus the 400 scenarios contained in the ten topologies moved from the original test split ($878 - 478 = 400$).
+
+\Cref{tab:v1-split} also shows a feature of the data that matters for interpreting the results. The mean global delay in the test split (0.0172) is more than ten times smaller than in the training split (0.217), and the two ranges barely overlap. The held-out set is therefore out of distribution in two senses: its topologies are larger than any seen in training, and its target values are concentrated at the low end of the training range. Since MAPE divides by the true delay, small absolute errors on these short delays translate into relatively large percentage errors.
+
+\subsection{Preprocessing}
+
+No preprocessing beyond that of the reference pipeline was applied. For each scenario, the pipeline builds the path--link--queue graph described in \cref{sec:graph} using NetworkX, computes the index tensors needed for message passing, and passes raw feature values to the model. Normalisation is done inside the models with fixed z-score statistics taken from the reference implementation; the same statistics are used by the teacher and the student. Training scenarios are shuffled by the dataset API with a fixed seed; validation and test scenarios are read in a fixed order.
+
+\section{Implementation Details}
+\label{sec:impl}
+
+All models were implemented in Python with TensorFlow and its Keras API \cite{abadi2016tensorflow}; the project's requirements file pins TensorFlow 2.6 and NetworkX 2.6. The teacher and baseline use the RouteNet-Fermi delay model from the reference implementation without changes. The student model, the distillation training loop, the evaluation scripts and the inference benchmark were written for this project. \Cref{tab:files} lists the main files.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Main source files used for the reported experiments (paths relative to the project repository).}
+\label{tab:files}
+\begin{tabularx}{\textwidth}{@{}l Y@{}}
+\toprule
+\textbf{File} & \textbf{Purpose} \\
+\midrule
+\texttt{delay\_model.py}                   & RouteNet-Fermi delay model (baseline and teacher) \\
+\texttt{student\_delay\_model.py}          & Queue-Link Fusion student model \\
+\texttt{all\_mixed/data\_generator.py}     & Scenario-to-graph pipeline (reference implementation) \\
+\texttt{all\_mixed/few\_shot\_all.py}      & Baseline training \\
+\texttt{all\_mixed/validation\_all.py}     & Baseline evaluation \\
+\texttt{all\_mixed/train\_teacher.py}      & Teacher training \\
+\texttt{all\_mixed/test\_teacher.py}       & Teacher evaluation \\
+\texttt{all\_mixed/student/train\_scratch.py} & Student training without distillation \\
+\texttt{all\_mixed/student/train\_kd.py}   & Student training with distillation \\
+\texttt{all\_mixed/student/evaluate.py}    & Student evaluation (validation and test) \\
+\texttt{all\_mixed/evaluation/inference\_benchmark.py} & Latency and model-size benchmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\paragraph{Student implementation.} The queue-to-link fusion of \cref{eq:fusion} is implemented by inverting the ragged queue-to-link index (each queue's parent link is given by the row index of the ragged tensor) and applying \texttt{tf.math.unsorted\_segment\_mean}. Unlike the reference teacher code, which constructs its recurrent layer wrappers inside the forward function, the student builds its path RNN wrapper once in the constructor, so that the compiled graph does not create new layer objects on each call.
+
+\paragraph{Distillation implementation.} Distillation is implemented as a Keras model subclass that holds both networks and overrides the training and test steps. In each training step the teacher is called in inference mode, the student's forward pass and \cref{eq:kd} are evaluated under a gradient tape, and gradients are applied to the student's variables only. The validation step computes the student's MAPE against the ground truth. The student weights are saved whenever the validation loss improves.
+
+\paragraph{Parameter counts.} \Cref{tab:params} breaks down the trainable parameters of both architectures. The totals agree with those reported by the benchmark script and were also checked by hand from the layer shapes (a Keras GRU cell with $d_{\mathrm{in}}$ inputs and $d$ units has $3(d_{\mathrm{in}}d + d^2 + 2d)$ parameters).
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Trainable parameters by component.}
+\label{tab:params}
+\begin{tabular}{@{}l r l r@{}}
+\toprule
+\multicolumn{2}{c}{\textbf{Teacher (RouteNet-Fermi)}} & \multicolumn{2}{c}{\textbf{Student (Queue-Link Fusion)}} \\
+\cmidrule(r){1-2}\cmidrule(l){3-4}
+Path GRU (64 in, 32 units)   & 9,408 & Path GRU (16 in, 16 units)      & 1,632 \\
+Link GRU (32 in, 32 units)   & 6,336 & Interface GRU (16 in, 16 units) & 1,632 \\
+Queue GRU (32 in, 32 units)  & 6,336 & ---                              & --- \\
+Path embedding (17--32--32)  & 1,632 & Path embedding (17--16--16)     & 560 \\
+Link embedding (5--32--32)   & 1,248 & Interface embedding (11--16--16) & 464 \\
+Queue embedding (5--32--32)  & 1,248 & ---                              & --- \\
+Readout (32--16--16--1)      & 817   & Readout (16--8--8--1)           & 217 \\
+\midrule
+\textbf{Total}               & \textbf{27,025} & \textbf{Total}          & \textbf{4,505} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Experimental Settings}
+\label{sec:settings}
+
+\Cref{tab:settings} lists the training configuration of the four models. Settings common to all runs are: the Adam optimiser \cite{kingma2015adam} with a learning rate of $10^{-3}$; one scenario per training step (no batching across scenarios); and a global random seed of 69420 for Python, NumPy and TensorFlow, with a training-set shuffle seed of 0. Each configuration was trained once.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Training configuration of each model.}
+\label{tab:settings}
+\begin{tabularx}{\textwidth}{@{}l Y Y Y Y@{}}
+\toprule
+ & \textbf{Baseline} & \textbf{Teacher} & \textbf{Student-scratch} & \textbf{Student-KD} \\
+\midrule
+Architecture     & RouteNet-Fermi & RouteNet-Fermi & Queue-Link Fusion & Queue-Link Fusion \\
+Training data    & Original train (10-node); first 10,000 shuffled scenarios & Re-split train (9,972) & Re-split train (9,972) & Re-split train (9,972) \\
+Validation data  & Original validation (25) & Re-split validation (2,191) & Re-split validation (2,191) & Re-split validation (2,191) \\
+Initial weights  & Reference initial-weights checkpoint & Reference initial-weights checkpoint & Random (Keras defaults) & Random (Keras defaults) \\
+Loss             & MAPE & MAPE & MAPE & \cref{eq:kd}, $\alpha=0.5$ \\
+Epochs $\times$ steps & $15 \times 2{,}500$ & up to $30 \times 9{,}972$ & up to $30 \times 9{,}972$ & up to $30 \times 9{,}972$ \\
+Early stopping   & None & Patience 5 & Patience 5 & Patience 5 \\
+Checkpoint kept  & Lowest validation MAPE & Lowest validation MAPE & Lowest validation MAPE & Lowest validation loss \\
+Epochs run / best & 15 / 15 & 30 / 26 & 13 / 8 & 24 / 19 \\
+Wall-clock time  & $\approx$1 h 45 min & 12 h 57 min & $\approx$5.4 h$^{\dagger}$ & $\approx$10.0 h \\
+\bottomrule
+\end{tabularx}
+
+\vspace{1mm}
+{\footnotesize $^{\dagger}$Taken from the project's running notes; the console log of this run was not retained (see \cref{app:logs}).}
+\end{table}
+
+\paragraph{Baseline.} The baseline follows the few-shot training script supplied with the reference implementation. It was trained twice with the same configuration. The first run kept only improving checkpoints and selected epoch 3 (validation MAPE 6.499). The second run saved every epoch and selected epoch 15 (validation MAPE 6.410). The two runs produced identical losses for the first four epochs and diverged afterwards, which is consistent with non-deterministic multi-threaded CPU kernels. The second run's checkpoint is used as \emph{the} baseline throughout this report because it is the one evaluated on the shared test set. Note that the baseline's validation split consists of 100- to 300-node topologies (\cref{tab:orig-split}), so its checkpoint was selected using larger topologies than the teacher's; this point is revisited in \cref{sec:threats}.
+
+\paragraph{Teacher.} The teacher used the same initial weights as the baseline and ran for all 30 epochs; early stopping did not trigger because the validation loss improved at epoch 26, less than five epochs before the end.
+
+\paragraph{Students.} Both students were initialised randomly with the same global seed. Because the distillation script builds and loads the teacher before creating the student, the random number generator is in a different state when the student's weights are drawn, so the two students do not start from identical weights. The distillation run used the teacher checkpoint from epoch 26.
+
+\paragraph{Hardware and software.} All training and evaluation ran on a single machine running Fedora Linux, without a GPU (TensorFlow reported no CUDA device and used CPU kernels with AVX2 and FMA instructions). Training throughput was between about 147 and 178~ms per step in the runs for which console logs were kept.
+
+\section{Evaluation Criteria and Performance Metrics}
+\label{sec:metrics}
+
+\subsection{Accuracy}
+
+The primary accuracy metric is MAPE (\cref{eq:mape}) on the held-out test split of 478 scenarios from 200- to 300-node topologies. All four models are evaluated on exactly this set, using their selected checkpoints and without any further training or tuning. The test set was not used for checkpoint selection or for any design decision. MAPE on each model's own validation split is reported as a secondary measure.
+
+All MAPE values reported from Keras's \texttt{evaluate} and \texttt{fit} routines are aggregated in a specific way that should be made explicit. For each scenario, Keras computes the MAPE over that scenario's flows; when averaging over scenarios, it weights each scenario by the size of the first dimension of its label tensor, which here is the number of flows. The reported value is therefore equivalent to the MAPE over all flows in the split pooled together, so larger scenarios count for more. The custom validation step in the distillation training loop, by contrast, takes an unweighted mean over scenarios. This difference is the most likely reason why the validation values recorded during distillation training differ from those obtained when the same checkpoint is evaluated afterwards (\cref{sec:kd-discrepancy}).
+
+\subsection{Efficiency}
+
+Efficiency is measured in four ways:
+\begin{itemize}
+  \item \textbf{Trainable parameters}, counted from the model variables.
+  \item \textbf{Model weight size}, the parameter count multiplied by four bytes (32-bit floating point).
+  \item \textbf{Message-passing stages} per forward pass (iterations times stages per iteration).
+  \item \textbf{Inference latency} of a single forward pass. Each model's checkpoint is loaded, the model is called five times on one validation scenario to complete graph tracing, and then 30 further calls on the same scenario are timed with a high-resolution counter. The mean, median, standard deviation, minimum and maximum are recorded. Only the model's forward pass is timed; reading the scenario from disk and building the graph are excluded.
+\end{itemize}
+
+The benchmark was run for the baseline, the teacher and the scratch student. It was run before the distillation checkpoint existed, so student-KD was not timed separately. Student-KD has the same architecture and parameter count as student-scratch and differs only in its weight values, so its forward-pass cost is expected to be the same, but this has not been measured.

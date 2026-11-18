@@ -1,0 +1,39 @@
+\chapter{Conclusion}
+\label{ch:conclusion}
+
+\section{Summary of Research and Key Findings}
+
+This project set out to determine whether a lightweight GNN, distilled from a topology-diverse RouteNet-Fermi teacher, can predict per-flow delay at a much lower computational cost, and how much accuracy it loses on networks larger than any used in training. Using the public all-mixed dataset, four models were trained and evaluated on a common held-out test set of 478 scenarios from 200- to 300-node topologies. The findings relate to the three objectives as follows.
+
+\paragraph{Objective 1: topology diversity.} RouteNet-Fermi trained on topologies of 10 to 170 nodes reached 5.37\% MAPE on the held-out set, against 8.40\% for the same architecture trained on 10-node topologies only, a relative reduction of 36\%. Training on larger topologies clearly helped, although the teacher also received about eight times more training steps, so the size of the data effect alone is not yet isolated.
+
+\paragraph{Objective 2: lightweight architecture.} The proposed Queue-Link Fusion student merges each link with its queues into a single interface entity, reducing the graph from three entity types to two and the message passing from 24 stages to 8. It has 4,505 trainable parameters (83.3\% fewer than RouteNet-Fermi), occupies 17.6~KB, and runs a single forward pass in 34.2~ms on the test machine against 178.5~ms for the teacher, a speed-up of about 5.2 times. It keeps RouteNet-Fermi's capacity-based delay readout.
+
+\paragraph{Objective 3: distillation and trade-off.} Trained from scratch, the student reached 11.92\% test MAPE. Trained with distillation from the teacher, it reached 9.83\%, a 17.6\% relative improvement, with a similar improvement on the validation split and a smaller gap between validation and test error. The distilled student is the most accurate of the small models, but it remains less accurate than both full-size models. These conclusions rest on one run per configuration.
+
+Taken together, the results show that the training data and the model size both affect accuracy on unseen large networks, and that in this study the training data had the larger effect: a full-size model trained on diverse topologies was much better than one trained on small topologies, while distillation recovered part, but not all, of the accuracy lost by compression.
+
+\section{Research Contributions}
+
+The main contributions of this project are:
+\begin{enumerate}
+  \item \textbf{An out-of-distribution evaluation of RouteNet-Fermi by topology size.} A topology-level re-split of the all-mixed dataset was constructed that keeps all 200- to 300-node topologies unseen, and RouteNet-Fermi was evaluated on it under two training regimes. The re-split is documented so that it can be reproduced.
+  \item \textbf{The Queue-Link Fusion student architecture.} A bipartite GNN for per-flow delay prediction that merges queues into links before message passing, cutting parameters by 83\% and message-passing stages by two thirds while keeping the physically motivated readout. Its information loss relative to the teacher, the absence of per-class queue states, is identified explicitly.
+  \item \textbf{An empirical study of distillation for a network-modelling GNN.} The project applies response-based distillation to a regression task on network graphs, with a structurally different student. The results quantify the accuracy, size and latency of each model on a common test set, and identify a metric-aggregation issue that affects how validation results from custom training loops should be compared.
+  \item \textbf{A reproducible implementation.} The student model, distillation loop, evaluation scripts and latency benchmark, together with saved results and logs, are kept in the project repository (\cref{app:repro}).
+\end{enumerate}
+
+\section{Future Work}
+\label{sec:future}
+
+The limitations identified in \cref{sec:threats} suggest the following next steps, roughly in order of priority.
+\begin{itemize}
+  \item \textbf{Repeated runs.} Train the scratch and distilled students, and ideally the baseline and teacher, with several random seeds and report means and spread. This is the most important step for establishing whether the distillation gain is reliable.
+  \item \textbf{Controlled baseline.} Train the 10-node baseline for the same number of steps as the teacher, so that the effect of topology diversity can be separated from that of training length.
+  \item \textbf{Finer-grained evaluation.} Break down test errors by topology size, scheduling policy and traffic model, and add absolute error measures alongside MAPE.
+  \item \textbf{Student ablations.} Vary the number of iterations, the state dimension and the fusion step independently. In particular, test a variant that passes each flow's ToS class, or the state of its own queue, into the path update, to recover the per-class information that the fusion removes.
+  \item \textbf{Distillation design.} Compare the MSE soft loss with a relative (percentage or logarithmic) loss on the teacher's predictions, sweep $\alpha$, and try intermediate-representation distillation of path states.
+  \item \textbf{Other compression methods.} Apply the pruning and quantisation planned in the proposal, alone and combined with distillation.
+  \item \textbf{Decision-level evaluation.} Measure how often each model picks the same best routing as the simulator among a set of candidates. An evaluation script for this purpose was prepared during the project but has not been run to completion, so no results are reported.
+  \item \textbf{Other QoS metrics and deployment.} Extend the student to jitter and packet loss, for which the reference implementation provides teacher models, speed up graph construction, and test the model inside an SDN controller on edge-class hardware.
+\end{itemize}

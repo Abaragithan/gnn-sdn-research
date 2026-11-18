@@ -1,0 +1,43 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+\section{Background and Motivation}
+\label{sec:background}
+
+Software-defined networking (SDN) separates the control plane of a network from its data plane and places routing and configuration decisions in a logically centralised controller \cite{kreutz2015sdn,mckeown2008openflow}. Because the controller has a global view of the topology and can reprogram forwarding behaviour, it is a natural place to apply quality-of-service (QoS) policies: choosing paths that keep end-to-end delay low, spreading load to avoid congestion, or assigning traffic classes to queues with suitable scheduling. To make such decisions well, the controller needs some way of predicting how a candidate configuration will perform before it is deployed. This is the role of a \emph{network model}.
+
+Two classical kinds of network model are in common use. Analytical models based on queueing theory \cite{kleinrock1975queueing} are fast, but they rest on assumptions, such as Poisson arrivals and independence between queues, that real traffic and multi-hop paths often violate. Packet-level simulators such as OMNeT++ \cite{varga2001omnet} and ns-3 \cite{riley2010ns3} are accurate, but simulating a large network under realistic load can take minutes to hours, which rules them out for decisions that have to be made while the network is running. Knowledge-defined networking \cite{mestres2017kdn} proposed closing this gap with models learned from data.
+
+Graph neural networks (GNNs) \cite{scarselli2009gnn,gilmer2017mpnn,battaglia2018relational} have turned out to suit this task well, because a network is itself a graph and the quantities of interest (per-flow delay, jitter and loss) emerge from interactions between flows, links and queues. RouteNet \cite{rusek2020routenet} showed that a GNN which passes messages between paths and links can predict per-path delay on topologies it was not trained on. RouteNet-Fermi \cite{ferriolgalmes2023routenetfermi} extended this design with explicit queue entities, multiple traffic models and four scheduling policies, and reported accuracy close to packet-level simulation at a small fraction of its cost.
+
+These models still leave two practical problems, and both motivate this project.
+
+The first problem is \emph{computational cost on small controllers}. RouteNet-Fermi performs eight iterations of three message-passing stages, each driven by a recurrent unit, over a graph that for a few hundred nodes can contain tens of thousands of flows. On the CPU-only machine used in this project, a single forward pass of RouteNet-Fermi on one validation sample took about 178~ms (\cref{sec:efficiency}). That is acceptable for occasional what-if analysis in a data centre, but it is less attractive for controllers running on edge hardware that must evaluate many candidate configurations quickly.
+
+The second problem is \emph{generalisation to larger networks}. A learned model is only reliable on inputs that resemble its training data, and operational networks are often larger than the ones that can be simulated cheaply to produce training data. A model trained only on small topologies may degrade on large ones, and it is not obvious in advance by how much.
+
+Knowledge distillation (KD) \cite{hinton2015distilling,gou2021kdsurvey} offers one way to address both problems together. A large, accurate \emph{teacher} model is trained first, ideally on data that cover a wide range of conditions, and a small \emph{student} model is then trained to match both the ground truth and the teacher's outputs. KD has been studied extensively for GNNs in node classification and recommendation \cite{yang2020lsp,zhang2022glnn,chen2021gnnsd,yang2023ltd,huo2023t2gnn,chen2025lightgnn}, but much less for regression models that predict network performance, where the target is a continuous delay value and the evaluation that matters is accuracy on unseen, larger topologies.
+
+\section{Research Aim and Objectives}
+\label{sec:objectives}
+
+The aim of this project is to determine whether a lightweight GNN, trained with knowledge distillation from a topology-diverse RouteNet-Fermi teacher, can predict per-flow delay in SDN-like networks at a substantially lower computational cost, and to measure how much accuracy it gives up on topologies larger than any used in training.
+
+The project has three objectives:
+
+\begin{enumerate}[label=\textbf{O\arabic*.}, leftmargin=*]
+  \item To reproduce RouteNet-Fermi delay prediction on the all-mixed dataset and quantify how its accuracy on held-out 200- to 300-node topologies changes when the training data are extended from 10-node topologies only to topologies of 10 to 170 nodes.
+  \item To design and implement a lightweight student GNN that reduces the parameter count and the number of message-passing stages of RouteNet-Fermi while keeping its physically motivated delay readout.
+  \item To train the student with and without knowledge distillation from the teacher, and to evaluate the trade-off between out-of-distribution accuracy, model size and inference latency against the full-size models.
+\end{enumerate}
+
+\section{Scope and Changes from the Research Proposal}
+\label{sec:scope}
+
+The original proposal \cite{proposal2025} described a broader programme: an SDN testbed built with Mininet and the RYU controller, compression by pruning, quantisation and distillation, and comparison against shortest-path and deep reinforcement learning (DRL) routing. During the project the work was narrowed, for two reasons. First, building a reliable learned model of network delay is a precondition for any routing scheme that relies on one, and on the available CPU-only hardware the study of out-of-distribution accuracy alone needed training runs of up to 13 hours and test-set evaluations of about two and a half hours per model. Second, the public all-mixed dataset provided simulator-generated ground truth at a scale (more than 12,000 labelled network scenarios) that could not have been produced with a Mininet testbed in the time available.
+
+As a result, this report covers delay prediction only. Jitter and packet loss, pruning and quantisation, deployment on an SDN controller, and routing-decision experiments were not carried out, and no results are claimed for them. They are discussed as future work in \cref{sec:future}.
+
+\section{Organisation of the Report}
+
+\Cref{ch:related} reviews related work on network performance modelling, learning-based routing and knowledge distillation for GNNs, and identifies the gap this project addresses. \Cref{ch:method} describes the teacher model, the proposed student architecture and the distillation procedure. \Cref{ch:setup} sets out the dataset, data splits, implementation and evaluation protocol. \Cref{ch:results} presents and discusses the results. \Cref{ch:conclusion} summarises the findings and contributions and outlines future work. The appendices give per-epoch training records, a reproducibility guide and a preliminary experiment with the original RouteNet.

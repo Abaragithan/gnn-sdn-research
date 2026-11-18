@@ -1,0 +1,103 @@
+% =====================================================================
+%  Final-Year Research Project Report
+%  Department of Computer Science, University of Jaffna
+%  Compile with pdfLaTeX + BibTeX (Overleaf default settings work).
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{report}
+
+% ---------- Encoding and fonts ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ---------- Page layout ----------
+\usepackage[a4paper,left=30mm,right=25mm,top=25mm,bottom=25mm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parskip}{4pt}
+
+% ---------- Mathematics ----------
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+
+% ---------- Tables ----------
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{longtable}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ---------- Figures ----------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+
+% ---------- Lists, colour, misc ----------
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+\usepackage{xcolor}
+\usepackage[nottoc]{tocbibind}
+\usepackage{titlesec}
+\titleformat{\chapter}[display]{\normalfont\Large\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\LARGE}
+\titlespacing*{\chapter}{0pt}{-10pt}{20pt}
+
+% ---------- Citations and links ----------
+\usepackage{cite}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise]{cleveref}
+
+% ---------- Project-wide macros (edit here if details change) ----------
+\newcommand{\reporttitle}{Lightweight Graph Neural Networks for QoS-Aware Delay Prediction in Software-Defined Networks}
+\newcommand{\studentname}{K. Abaragithan}
+\newcommand{\regno}{2021/SP/061}
+\newcommand{\supervisor}{Dr. K. Thabotharan}
+\newcommand{\department}{Department of Computer Science}
+\newcommand{\university}{University of Jaffna}
+\newcommand{\submissiondate}{December 2026}
+
+% Short names used throughout the text
+\newcommand{\rnf}{RouteNet-Fermi}
+\newcommand{\qlf}{Queue-Link Fusion}
+
+\begin{document}
+
+% ---------------------------------------------------------------------
+\pagenumbering{roman}
+\input{frontmatter/titlepage}
+\input{frontmatter/declaration}
+\input{frontmatter/acknowledgements}
+\input{frontmatter/abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\input{frontmatter/abbreviations}
+
+% ---------------------------------------------------------------------
+\clearpage
+\pagenumbering{arabic}
+\input{chapters/ch1_introduction}
+\input{chapters/ch2_related_work}
+\input{chapters/ch3_methodology}
+\input{chapters/ch4_experimental_setup}
+\input{chapters/ch5_results}
+\input{chapters/ch6_conclusion}
+
+% ---------------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% ---------------------------------------------------------------------
+\appendix
+\input{chapters/appendices}
+
+\end{document}
