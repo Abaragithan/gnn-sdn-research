@@ -1,12 +1,16 @@
 # RouteNet-Fermi Research — Full Progress Summary
 
-> Last updated: 2026-10-23 (baseline evaluated on the shared OOD test set) | Synthesized from experiment logs and saved results
+> Last updated: 2026-11-21 (15-trial Mininet validation completed; Abilene checkpoint comparison investigated) | Historical offline results retained separately from new deployment evidence
 
 ---
 
 ## 1. Project Overview
 
 **Goal:** Investigate GNN-based network performance prediction using RouteNet-Fermi, with a focus on **delay prediction** and **out-of-distribution (OOD) generalization** to unseen topology sizes. The research explores knowledge distillation / teacher-student approaches to improve generalization.
+
+**Current scope:** offline accuracy/compression evaluation plus a completed
+controlled SDN emulation proof of concept. Production deployment, arbitrary
+real-traffic accuracy and guaranteed real-time operation have not been established.
 
 **Reference Papers:**
 - RouteNet: Leveraging GNNs for network modeling and optimization in SDN
@@ -293,8 +297,8 @@ With the teacher model established, a **lightweight student model** (`student_de
 | **Student-Scratch** | **4,505** | **17.6 KB** | **8** | **34.2 ms** | **5.2× faster** |
 
 > [!NOTE]
-> Baseline and Teacher are **identical architectures** — same params, same inference speed. The only difference is training data diversity.
-> The student's 5.2× inference speedup is the key deployment advantage, measured on CPU (the real SDN controller environment).
+> Baseline and Teacher have identical architectures and parameter counts, with similar measured inference times. Their training data differ.
+> The historical 5.2× speedup is a model-only CPU benchmark on one 9,900-flow sample. It is not total SDN controller latency or a real-time guarantee. Separate six-switch deployment-input timings are reported below; the workloads must not be mixed.
 
 ### The Research Narrative
 
@@ -305,7 +309,7 @@ Teacher  (10-170 training)   →  5.37% OOD error,  ~178 ms inference
         ↓  compress the model
 Student  (scratch, no KD)    → 11.92% OOD error,   ~34 ms inference  (5.2× faster, accuracy cost)
         ↓  add Knowledge Distillation
-Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD improves over scratch)
+Student-KD                   →  9.83% OOD error  (historical KD result; separate deployment timings below)
 ```
 
 - **Script:** `evaluation/inference_benchmark.py`
@@ -325,7 +329,145 @@ Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD impro
 
 ---
 
-## 12. Current State & Next Steps
+## 12. Controlled Mininet Routing Validation — Completed
+
+### Setup and what was actually measured
+
+- **Implementation:** `mininet_experiment/`; separate Mininet runner, Ryu
+  OpenFlow 1.3 controller and TensorFlow model worker. Earlier model-driven
+  pilots demonstrated selection and installation of explicit forwarding rules.
+- **Network:** six switches, one host each, 30 ordered host-pair flows; foreground
+  host 0 to host 5. Background routes/demands remained fixed.
+- **Traffic:** deterministic fixed-size CBR UDP, 125-byte frames, 20,000-bit/s
+  inter-switch links, 32,000-bit FIFO queues, no configured propagation delay.
+  Reference busiest-link offered utilization is 60%; all components share a laptop.
+- **Frozen checkpoints:** teacher `ckpt-26`, scratch `ckpt-08`, KD `ckpt-19`.
+  No retraining or checkpoint selection using Mininet outcomes was performed.
+- **Validation:** force each of three candidate paths, then measure for 60 seconds
+  after two seconds warm-up, with drainage afterward. Five repetitions per path,
+  **15 accepted trials**, using a fixed, rotated execution order.
+- Scenario hashes matched the frozen predictions. Rules, path counters, queue
+  settings, offered rates and packet pacing passed the recorded checks.
+
+### Network outcomes
+
+| Candidate | Path | Mean delay, ms | SD of five trial means, ms | Mean of trial p95 values, ms |
+|---|---|---:|---:|---:|
+| 0 | 0 → 1 → 5 | 123.785 | 0.016 | 169.144 |
+| **1** | **0 → 4 → 5** | **112.929** | **0.019** | **148.144** |
+| 2 | 0 → 2 → 3 → 5 | 196.331 | 0.099 | 296.375 |
+
+All three models predicted ranking **1, 0, 2**, matching measured mean-delay
+ranking in all five repetitions. Candidate 1 reduced mean delay by **8.770%**
+relative to candidate 0 (paired-reduction SD **0.023 percentage points**), about
+**10.856 ms**. Both have two hops: this compares one deterministic shortest-path
+tie choice with delay-based selection, not every shortest-path routing policy.
+
+Each trial received all 180 foreground packets: **900 per path, 2,700 total,
+zero observed foreground loss**. The p95 column averages trial percentiles;
+it is not a pooled percentile. SD describes trial means, not individual packets.
+
+### Prediction and inference cost
+
+| Model | Mean APE across 15 foreground trial means | Three-candidate inference mean, ms | Sample SD, ms | p95, ms |
+|---|---:|---:|---:|---:|
+| Teacher | 7.20% | 7.55 | 0.45 | 8.42 |
+| Scratch | 5.28% | 4.08 | 0.51 | 5.35 |
+| KD | 6.77% | 3.62 | 0.23 | 4.05 |
+
+The errors compare frozen predictions against **foreground route trial means**;
+they are not full-dataset MAPEs or replacements for historical OOD scores.
+Model timing used 30 passes after five warm-ups, with all three inputs prepared
+before timing. Student inference cost is approximately **1.85×/2.09× lower**
+than teacher on this input. This excludes preprocessing, communication, rule
+installation and preflight. Repeated total model decision-to-install latency
+was not measured by these fixed-path trials.
+
+All models choose the same candidate: **no KD routing advantage is demonstrated**.
+The 5/5 agreement repeats one frozen choice against five network measurements;
+it is not five independent traffic scenarios or five new model-driven decisions.
+Scratch's lower error here does not establish general superiority on other data.
+
+### Evidence and limitations
+
+- Calculations, trial sources/hashes and checkpoint identities:
+  `mininet_experiment/outputs/six_validation_summary.json`.
+- Frozen predictions and raw inference timings:
+  `mininet_experiment/outputs/six_validation_predictions.json`.
+- Raw trials: `six_validation_path_0/1/2` and
+  `six_validation_rep2/3/4/5_path_<candidate>` under `outputs/`.
+- This supports a **repeatable controlled routing pilot**. One topology, load,
+  FIFO configuration and deterministic traffic schedule do not demonstrate
+  realistic traffic robustness, physical edge performance or real-time readiness.
+
+---
+
+## 13. Abilene Investigation — Limitation Remains
+
+The 12-switch Abilene pilot used published topology/capacities and adapted traffic
+demands from the authors' real-traces dataset, but generated fixed-size CBR UDP.
+It did **not** replay original packet traces. Initial runs passed operational
+checks while producing inaccurate and sometimes physically impossible predictions.
+
+- Our teacher predicted **1,842.831 ms** for a route measured at **0.804 ms**.
+  Internal tracing found large embeddings, saturated GRU gates and approximately
+  **3.07 million queued bits per hop**, versus 32,000-bit configured queues.
+- Scratch produced negative queue contributions. KD also had invalid queue
+  contributions on some background flows despite positive foreground totals.
+- Full training-archive scanning covered 404 archives / 9,972 raw sample lines:
+  positive traffic ranged **74.626–4,367.03 bits/s**, versus up to **344,561.89
+  bits/s** in our Abilene scenario. These are observed ranges, not guarantees of
+  distribution coverage. No uniform scale fits all demand/capacity ranges while
+  preserving their ratios. Diagnostic scaling was not adopted as a validated fix.
+- The deployment adapter changes `link_to_path`/`queue_to_path` hop order to match
+  physical routes and reverse connectivity. A known validation sample gives
+  teacher 4.1395% MAPE with historical ordering and 4.0373% with deployment order.
+  These are single-sample checks, not full evaluation. Restoring historical order
+  leaves the Abilene failure at about 1.843 seconds, so ordering alone does not
+  explain it. Original training/evaluation scripts remain unchanged.
+
+### Direct comparison with the authors' real-traffic checkpoint
+
+On ten Abilene samples selected before evaluation (**1,320 flows**), both
+checkpoints received identical inputs through the authors' unchanged pipeline:
+
+| Checkpoint | MAPE | MAE |
+|---|---:|---:|
+| Authors' real-traffic `01-5.20` | **3.81%** | **0.158 ms** |
+| Our all-mixed teacher `ckpt-26` | **12,636.82%** | **74.621 ms** |
+
+The model definitions and normalization constants match; learned weights differ.
+The authors' weights still predicted **38.56 ms** on our changed CBR input for
+the route measured at 0.804 ms, and failed some physical checks. Their trace
+pipeline encodes traffic features differently. Diagnostic feature interventions
+were not applied to deployment inputs as fixes.
+
+The supported finding is **checkpoint/input-domain incompatibility**, not that
+RouteNet-Fermi universally fails on real traffic or that historical offline
+results are invalid. The [authors' real-traffic experiment](https://arxiv.org/html/2212.12070#S5.SS3.SSS2)
+adapted a previous checkpoint using 200 GEANT samples. Our ten-sample comparison
+is a diagnostic, not a reproduction of their full reported test score.
+
+### Safeguards and stored evidence
+
+Prediction checks now stop invalid model runs **before starting Mininet**.
+They detect non-finite values, negative/overfull queues and impossible total
+delays for the single-FIFO configuration. Nothing is clipped. The guards are
+tested; **Abilene prediction accuracy itself is not fixed**. All nine six-switch
+model/candidate combinations pass these checks and were subsequently compared
+with measurements in Section 12.
+
+Evidence: `mininet_experiment/outputs/adapter_audit.json`,
+`teacher_mechanism_audit.json`, `six_switch_physical_audit.json`, and
+`author_real_traffic/{comparison.json,provenance.json}`. Author source is pinned
+to commit `ef72a37bb6f677e149f354f088f5836f29c862b5`. Diagnostic/preparation
+scripts and complete prior notes are preserved under
+`outputs/source_archive_before_cleanup/`. All `outputs/` artifacts are local
+and Git-ignored; an agent using only GitHub cannot claim to have inspected them.
+
+---
+
+## 14. Current State & Next Steps
 
 ### Completed ✅
 - [x] Original RouteNet evaluation on geant2bw (ρ=0.989)
@@ -339,9 +481,33 @@ Student-KD                   →  9.83% OOD error,   ~34 ms inference  (KD impro
 - [x] **Exp 5 — Student KD training:** Completed with α=0.5, training-reported best val MAPE: **9.6439%** (epoch 19, ckpt-19)
 - [x] **Exp 6 — Student OOD evaluation:** On the same 478-sample, 200–300-node set as teacher: scratch **11.9244%**, KD **9.8280%**; evaluation results saved in `all_mixed/student/results_student.json`.
 - [x] **Exp 7 — Fair baseline OOD evaluation:** Baseline checkpoint `15-6.41` scored **8.4011% MAPE** on the same 478 samples as teacher and students; result and console log saved separately.
+- [x] Mininet/Ryu/model-worker integration with the frozen historical checkpoints.
+- [x] Six-switch fixed-path validation: **15 accepted trials**, five per candidate;
+  all models rank the measured candidates correctly in this controlled scenario.
+- [x] Repeated three-candidate inference timing for teacher, scratch and KD on the
+  matching six-switch inputs; raw timings saved separately from network results.
+- [x] Abilene failure investigated, including original author-checkpoint comparison;
+  negative findings retained and pre-network physical prediction guards added.
+- [x] Active experiment simplified to five runtime Python files; diagnostic sources
+  preserved with result artifacts. Existing report files were left unchanged.
+- [x] Report-agent handoff prepared in
+  [`mininet_experiment/README.md`, Section 9](../mininet_experiment/README.md#9-handoff-for-the-agent-updating-the-report).
 
 ### Immediate Next Steps
-- [ ] **Investigate KD validation discrepancy:** Compare the training-reported best val MAPE (9.6439%) with the checkpoint evaluation result (9.0444%) and document the metric provenance.
-- [ ] **Exp 7 — Repeat inference benchmark** after KD to confirm the same latency advantage.
-- [ ] **Jitter/Loss models:** Extend beyond delay prediction
-- [ ] **Larger-scale testing:** Generate custom datasets with even larger topologies
+- [ ] **Report update:** incorporate the completed controlled pilot and limitations
+  into the current LaTeX report. The handoff is ready; this progress update does
+  not edit the report or imply that its deployment section is already updated.
+- [ ] **Optional further validation:** predeclare additional traffic/load conditions
+  and check predictions before collecting measurements. These experiments are
+  proposed, not completed; the planned five-repetition fixed scenario is finished.
+- [ ] **Total processing cost:** repeat end-to-end decision timings separately if
+  making broader controller-latency claims. Inference-only timings are insufficient.
+- [ ] **Historical metric provenance:** retain the distinct KD training/evaluation
+  validation values and resolve their aggregation/protocol explanation separately.
+
+### Future work, not required to describe the completed pilot
+
+- Real-traffic adaptation with appropriate labelled training data and independent
+  evaluation for every compared model; no new training has been performed here.
+- Broader traffic/topology tests, jitter/loss prediction and resource profiling.
+- Stronger attribution of fusion benefits beyond width/iteration reduction.
