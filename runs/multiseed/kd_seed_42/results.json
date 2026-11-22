@@ -1,0 +1,19 @@
+{
+  "alpha": 0.5,
+  "best_val_loss": 9.991888999938965,
+  "seed": 42,
+  "data_seed": 1234,
+  "ordered": true,
+  "validation_metric": "flow_weighted_mape",
+  "epochs_limit": 30,
+  "steps_per_epoch": 9972,
+  "learning_rate": 0.001,
+  "patience": 5,
+  "state_dim": 16,
+  "iterations": 4,
+  "tensorflow": "2.6.5",
+  "initial_sha256": "72f35f9c485f9c4358708b752131866b35e1e8e6e8873328e07a2b63b9b281aa",
+  "teacher_checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/student/../ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+  "best_epoch": 26,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/multiseed/kd_seed_42/checkpoints/ckpt-26"
+}

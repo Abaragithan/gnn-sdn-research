@@ -1,0 +1,20 @@
+{
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/multiseed/kd_seed_42/checkpoints/ckpt-26",
+  "seed": 42,
+  "validation_metric": "flow_weighted_mape",
+  "mae_units": "dataset delay units",
+  "validation_path": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/validation",
+  "test_path": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/test",
+  "val_teacher": {
+    "loss": 9.991888999938965,
+    "mae": 0.02004559524357319,
+    "time_seconds": 627.5,
+    "scenarios": 2191
+  },
+  "test_ood": {
+    "loss": 10.99813461303711,
+    "mae": 0.006617326755076647,
+    "time_seconds": 8981.2,
+    "scenarios": 478
+  }
+}
