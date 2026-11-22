@@ -1,0 +1,6 @@
+PASS: 200 nodes; first scenario matches T2: 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt::0
+PASS: 240 nodes; first scenario matches T2: 240/ch22-testing-scheduling-topo-240-10/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::240/ch22-testing-scheduling-topo-240-10/graphs/graph_topo-240-10-3.txt::0
+PASS: 260 nodes; first scenario matches T2: 260/ch22-testing-scheduling-topo-260-46/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::260/ch22-testing-scheduling-topo-260-46/graphs/graph_topo-260-46-0.txt::0
+PASS: 280 nodes; first scenario matches T2: 280/ch22-testing-scheduling-topo-280-48/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::280/ch22-testing-scheduling-topo-280-48/graphs/graph_topo-280-48-4.txt::0
+PASS: 300 nodes; first scenario matches T2: 300/ch22-testing-scheduling-topo-300-50/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::300/ch22-testing-scheduling-topo-300-50/graphs/graph_topo-300-50-3.txt::0
+All five test selectors PASS. No TensorFlow imports or model inference performed.

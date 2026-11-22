@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "model": {
+    "name": "baseline",
+    "kind": "fermi",
+    "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41",
+    "sha256": {
+      "15-6.41.index": "f0963a0cfa49c33c7a16cb31ac8b6ad8e35af9fb831292fc6c4f97ea2ad5ab63",
+      "15-6.41.data-00000-of-00001": "4e5b97f53fc594be102fd963914030157c6d5682aa478dd1b2a2bc1ca4bfac37"
+    }
+  },
+  "threads": "default",
+  "requested_scenarios": [
+    "validation",
+    "test200",
+    "test240",
+    "test260",
+    "test280",
+    "test300"
+  ],
+  "n_warmup": 5,
+  "n_timed": 30,
+  "n_construct": 3,
+  "input_order": "ref",
+  "pid": 169347,
+  "started_unix": 1795361042.3917677,
+  "scenarios": [
+    {
+      "scenario": "validation",
+      "split": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/validation",
+      "scenario_id": "ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt::0",
+      "topology_id": "ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt",
+      "n_nodes": 100,
+      "n_links": 560,
+      "n_queues": 1484,
+      "n_flows": 9900,
+      "selection_and_parse_ms": 627.7259960006631,
+      "construction": {
+        "mean_ms": 1599.3727873331711,
+        "median_ms": 1622.9115909991378,
+        "std_ms": 42.59627298369363,
+        "p95_ms": 1634.3539570003486,
+        "all_ms": [
+          1539.5814399998926,
+          1622.9115909991378,
+          1635.6253310004831
+        ],
+        "n_repeats": 3
+      },
+      "forward": {
+        "mean_ms": 180.05911776672292,
+        "median_ms": 179.46920300164493,
+        "std_ms": 4.840988247500924,
+        "p95_ms": 187.2884600987163,
+        "all_ms": [
+          177.78223699860973,
+          171.90945500260568,
+          177.6448269993125,
+          186.57588299902272,
+          184.3508819983981,
+          181.4520679981797,
+          179.1425560004427,
+          187.18685199928586,
+          176.42950500157895,
+          176.7053580006177,
+          181.84927600304945,
+          179.9536819999048,
+          179.97562699747505,
+          185.6175409993739,
+          190.1824559972738,
+          184.8053430003347,
+          175.65490400011186,
+          175.25438099983148,
+          174.818397998024,
+          186.3059909992444,
+          182.17068400190328,
+          183.03606699919328,
+          187.37159399825032,
+          170.3854110019165,
+          178.01417100054095,
+          179.79585000284715,
+          178.84039699856658,
+          174.02354500154615,
+          176.75570100254845,
+          177.78289100169786
+        ],
+        "n_repeats": 30
+      },
+      "n_nonfinite": 0,
+      "n_negative": 0,
+      "peak_rss_kib": 1183556.0,
+      "peak_rss_mib": 1155.81640625,
+      "construct_plus_forward_ms": 1802.9707087658608,
+      "historical_comparison": null
+    }
+  ],
+  "environment": {
+    "python": "3.7.12 | packaged by conda-forge | (default, Oct 26 2021, 06:08:21) \n[GCC 9.4.0]",
+    "tensorflow": "2.6.5",
+    "networkx": "2.6.3",
+    "platform": "Linux-7.3.4-100.fc43.x86_64-x86_64-with-fedora-43-Forty_Three",
+    "cpu_count": 18,
+    "intra_op_threads": 0,
+    "inter_op_threads": 0,
+    "thread_environment": {
+      "TF_NUM_INTRAOP_THREADS": null,
+      "TF_NUM_INTEROP_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "TF_ENABLE_ONEDNN_OPTS": null
+    }
+  },
+  "timing_policy": "Construction includes DiGraph + hypergraph + tensors; excludes sample parsing. Forward synchronizes to NumPy; excludes tracing, warm-up and validation checks.",
+  "memory_policy": "ru_maxrss is the cumulative high-water mark of this model/thread process, including TF, parsing, construction and earlier scenarios; not per-scenario memory.",
+  "git_commit": "d120439ca00484a491764744be19e9d3bdaa3f5e",
+  "fixed_signature_matches_original": true,
+  "parameter_count": 27025,
+  "peak_rss_kib": 1183556.0,
+  "peak_rss_mib": 1155.81640625,
+  "error": "DatanetException: ERROR: The argument of set_files_to_process should be a list of tuples -> [(root_dir,file),...]"
+}

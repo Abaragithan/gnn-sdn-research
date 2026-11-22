@@ -1,0 +1,41 @@
+2026-11-22 22:40:04.523773: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-22 22:40:04.523796: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-11-22 22:40:05.242247: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-22 22:40:05.242272: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-22 22:40:05.242283: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+Selecting scratch 1 validation
+2026-11-22 22:40:07.447926: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Construction validation 1 / 3: 1912.6007480008411 ms
+Construction validation 2 / 3: 1585.4887530003907 ms
+Construction validation 3 / 3: 1558.715562998259 ms
+Loading exact checkpoint: /home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_scratch/ckpt-08
+2026-11-22 22:40:12.804628: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-22 22:40:12.923364: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: RaggedConcat/assert_equal_1/Assert/AssertGuard/branch_executed/_62
+Finished validation forward mean_ms= 70.88281103303113 peak RSS MiB= 560.6171875
+Selecting scratch 1 test200
+Construction test200 1 / 3: 8966.477275003854 ms
+Construction test200 2 / 3: 9080.899696004053 ms
+Construction test200 3 / 3: 8794.475204005721 ms
+Finished test200 forward mean_ms= 383.4641622003498 peak RSS MiB= 1275.765625
+Selecting scratch 1 test240
+Construction test240 1 / 3: 16535.00983199774 ms
+Construction test240 2 / 3: 16153.096198002459 ms
+Construction test240 3 / 3: 15967.286917002639 ms
+Finished test240 forward mean_ms= 907.1842957331683 peak RSS MiB= 1817.421875
+Selecting scratch 1 test260
+Construction test260 1 / 3: 17418.979232999845 ms
+Construction test260 2 / 3: 16205.752373003634 ms
+Construction test260 3 / 3: 16204.023490994587 ms
+Finished test260 forward mean_ms= 691.4295585003856 peak RSS MiB= 1959.671875
+Selecting scratch 1 test280
+Construction test280 1 / 3: 19945.8028460067 ms
+Construction test280 2 / 3: 19768.044882999675 ms
+Construction test280 3 / 3: 19819.848892002483 ms
+Finished test280 forward mean_ms= 901.134564698926 peak RSS MiB= 2110.3828125
+Selecting scratch 1 test300
+Construction test300 1 / 3: 23741.519037997932 ms
+Construction test300 2 / 3: 24366.343891000724 ms
+Construction test300 3 / 3: 23656.473559000005 ms
+Finished test300 forward mean_ms= 1059.9032073007645 peak RSS MiB= 2266.2890625
+Saved complete worker: results/dec1/latency_v2_runs_20261122_212858/scratch_1.json

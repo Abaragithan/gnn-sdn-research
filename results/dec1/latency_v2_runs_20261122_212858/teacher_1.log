@@ -1,0 +1,41 @@
+2026-11-22 22:12:25.729155: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-22 22:12:25.729183: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-11-22 22:12:26.512702: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-22 22:12:26.512727: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-22 22:12:26.512739: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+Selecting teacher 1 validation
+2026-11-22 22:12:28.284797: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Construction validation 1 / 3: 1544.3278989987448 ms
+Construction validation 2 / 3: 1516.8149940000148 ms
+Construction validation 3 / 3: 1922.1178050065646 ms
+Loading exact checkpoint: /home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26
+2026-11-22 22:12:35.450209: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-22 22:12:35.759143: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert/AssertGuard/branch_executed/_1017
+Finished validation forward mean_ms= 396.58490493311547 peak RSS MiB= 757.4296875
+Selecting teacher 1 test200
+Construction test200 1 / 3: 9112.68371299957 ms
+Construction test200 2 / 3: 8608.612864998577 ms
+Construction test200 3 / 3: 8758.847775003233 ms
+Finished test200 forward mean_ms= 2589.349963899925 peak RSS MiB= 1420.046875
+Selecting teacher 1 test240
+Construction test240 1 / 3: 16638.805882997985 ms
+Construction test240 2 / 3: 16834.0613689943 ms
+Construction test240 3 / 3: 16729.530160999275 ms
+Finished test240 forward mean_ms= 5812.072991767491 peak RSS MiB= 1994.82421875
+Selecting teacher 1 test260
+Construction test260 1 / 3: 16707.590254001843 ms
+Construction test260 2 / 3: 16463.826876002713 ms
+Construction test260 3 / 3: 16329.474752004899 ms
+Finished test260 forward mean_ms= 4948.337442333286 peak RSS MiB= 2018.37109375
+Selecting teacher 1 test280
+Construction test280 1 / 3: 19219.076522997057 ms
+Construction test280 2 / 3: 20373.037780998857 ms
+Construction test280 3 / 3: 19494.55622399546 ms
+Finished test280 forward mean_ms= 5993.250426999536 peak RSS MiB= 2173.12109375
+Selecting teacher 1 test300
+Construction test300 1 / 3: 23713.99831400049 ms
+Construction test300 2 / 3: 23790.654775002622 ms
+Construction test300 3 / 3: 23833.71911100403 ms
+Finished test300 forward mean_ms= 7995.185648800543 peak RSS MiB= 2452.19140625
+Saved complete worker: results/dec1/latency_v2_runs_20261122_212858/teacher_1.json

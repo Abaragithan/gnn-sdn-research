@@ -79,7 +79,12 @@ def first_sample(split, n_nodes=None):
                 selected.append((folder, archive))
         if not selected:
             raise ValueError("No archives for topology size {}".format(n_nodes))
-        api.set_files_to_process(selected)
+        # The bundled set_files_to_process shadows the built-in `tuple` in
+        # `for tuple in ...`, so `type(tuple) is tuple` rejects every entry.
+        # These tuples come directly from get_available_files above. Set the
+        # exact same selection field as that method, preserving archive order,
+        # without modifying the historical DatanetAPI implementation.
+        api._selected_tuple_files = selected.copy()
     iterator = iter(api)
     try:
         sample = next(iterator)

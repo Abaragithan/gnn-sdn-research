@@ -192,7 +192,7 @@ T2 results reviewed and accepted. These interpretations are fixed; use the same 
 4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
 5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
 
-**Next task: T3** (R2 approved; see the end of the T3 section).
+**T3 benchmark completed; see its completion hand-off below for the scratch historical-timing deviation. T4 has not started.**
 
 ---
 
@@ -211,15 +211,15 @@ New file: `all_mixed/evaluation/latency_v2.py`. One **process per (model, thread
 
 **Done when:** on scenario (a), default threads, the teacher and scratch means are within ~20% of 178.5 ms and 34.2 ms. If they aren't, record the difference; it may come from machine load. The JSON contains all 4 models × 2 thread settings × 6 scenarios.
 
-### T3 implementation prepared — R2 runtime check pending
+### T3 implementation and checks
 
 - Added `all_mixed/evaluation/latency_v2.py`: exact checkpoint loading; thread settings applied before TensorFlow imports; reference-order inputs; three construction repeats; five forward warm-ups and 30 timed, synchronized calls; raw timing samples, summary statistics, scenario identity/size and peak RSS. A fixed input signature is checked against the original model call before timing. Historical comparisons record deviations above 20% without silently discarding results.
 - Added `all_mixed/evaluation/run_latency_v2.sh`: sequentially launches eight fresh worker processes (four models × two thread settings), each with its own JSON and log in a timestamped folder, then validates and merges all 48 combinations into `results/dec1/latency_v2.json`. Existing output files are refused. Peak RSS is explicitly the process-wide high-water mark, including earlier scenarios, not independent memory usage per scenario.
 - Test scenario selection preserves DatanetAPI archive order and checks graph-file metadata to skip folders of other topology sizes; it does not depend on T2 prediction files. Construction timing excludes sample parsing; selection/parsing time is recorded separately.
 - **Checks passed:** Python and Bash syntax; timing-statistic calculations; historical comparison thresholds; 48-combination merge; rejection of missing workers and inconsistent scenarios. These checks did not import TensorFlow or run model inference.
-- **Not run:** the R2 one-model/one-scenario check, historical timing reproduction and full benchmark. The user will run the commands; do not mark T3 complete until those results are available. No commits or pushes made by the execution agent.
+- **R2 small check completed:** teacher/default/validation passed (see review below). The subsequent full benchmark completed after the selector fix, with a scratch historical-timing deviation documented below. The user ran the benchmark commands. No commits or pushes made by the execution agent.
 
-**Next action, from the repo root with the conda environment active and machine otherwise idle:**
+**Original R2 small-check command (already completed; preserve its outputs):**
 
 ```bash
 set -o pipefail
@@ -248,8 +248,38 @@ Share both new scripts, the smoke JSON and its log for R2 review. After review, 
   Done when `results/dec1/latency_v2.json` exists with `n_benchmark_combinations: 48`, and the scratch validation mean (default threads) is within 20% of 34.2 ms. If a worker fails, report the error from its log. Don't rerun blindly.
 - **In `SUMMARY.md`,** report forward and construction times per scenario size for both thread settings, and the end-to-end comparison (construction + forward) between teacher and student, consistent with T2 finding 4.
 
+### T3 first full-queue attempt: selector failure fixed (22 Nov)
+
+The queue started in `results/dec1/latency_v2_runs_20261122_205401/`. Baseline/default completed validation (mean forward **180.059 ms**), then stopped at `test200` with `DatanetException` from `set_files_to_process`. The bundled API shadows the built-in `tuple` in its validation loop and rejects valid tuples. The original R2 smoke covered only validation, so it did not exercise this branch.
+
+Fixed only `latency_v2.py`: assign the selection copied from `get_available_files()` directly to the same `_selected_tuple_files` field used by the broken API method. Archive order is unchanged; historical `datanetAPI.py`, checkpoints and timing code are untouched. Read-only regression checks selected the first scenario at **all five sizes (200–300)** and matched each scenario ID against T2. Evidence: `results/dec1/latency_v2_selector_check.log`; no TensorFlow imports or inference in those checks. The failure and resolution are also recorded in `results/dec1/SUMMARY.md`.
+
+**Subsequent action completed:** the user reran `bash all_mixed/evaluation/run_latency_v2.sh` in a fresh timestamped folder. The failed attempt and its logs were preserved. See the completed-run hand-off below. The execution agent did not restart the benchmark or commit changes.
+
+### T3 completed-run hand-off (22 Nov 2026)
+
+**All benchmark measurements completed; historical scratch timing has a recorded deviation.** `results/dec1/latency_v2.json` has `status: complete`, **8 complete workers and 48 combinations** (4 models × 2 thread settings × 6 scenarios). Per-worker JSON/logs are in `results/dec1/latency_v2_runs_20261122_212858/`. Elapsed wall time across the successful workers was approximately **1.54 h (92 min)**. No automatic rerun was performed after checking the results.
+
+| Model | Validation forward mean, default threads (ms) | Historical mean (ms) | Difference | Within 20% |
+|---|---:|---:|---:|---|
+| teacher | 181.634 | 178.5 | +1.76% | PASS |
+| scratch | 41.180 | 34.2 | +20.41% | NO — record deviation |
+| kd | 41.383 | not previously measured | — | — |
+| baseline | 181.191 | not part of this reproduction check | — | — |
+
+The scratch upper 20% bound is **41.04 ms**; the measured mean is **41.1798 ms**, about **0.14 ms** above that bound. Do not label both historical checks as passing. The cause was not established; do not attribute it to machine load without evidence. Use the new measurements in the report and retain the original numbers as historical evidence. This deviation is recorded under Problems in `results/dec1/SUMMARY.md`.
+
+| Model | 300-node mean forward, default threads (ms) | 300-node mean forward, one thread (ms) | Peak process RSS, default / one thread (MiB) |
+|---|---:|---:|---:|
+| baseline | 2693.997 | 7717.250 | 3522.8 / 2452.9 |
+| teacher | 2748.769 | 7995.186 | 3587.6 / 2452.2 |
+| scratch | 406.212 | 1059.903 | 3144.8 / 2266.3 |
+| kd | 404.973 | 1085.581 | 3227.6 / 2268.0 |
+
+Use the merged JSON for all six scenarios' construction medians, mean/SD/median/p95 forward times and raw repeats. Construction plus forward excludes dataset parsing; `selection_and_parse_ms` is separate and includes selection overhead. RSS values are cumulative process peaks including TensorFlow, construction and earlier scenarios, not model-weight size or isolated per-scenario allocations. Carry the scratch deviation and the resolved selector failure into T8's Problems and deviations. T4 has not started.
+
 ### Order of work from here
-1. **T3 full queue** (now, machine idle).
+1. **T3 full queue:** measurements completed; preserve the scratch historical-timing deviation above in the review/report hand-off.
 2. **T4** emulation re-score (minutes, no sudo). It can run right after T3, or meanwhile if it is only scored after T3 finishes. It must not run while T3 is timing.
 3. **T5 code + smoke tests, then stop at R4** for review. This is the critical path: **T6 training must start no later than 23 Nov, evening** (≈ 41 h queue, and T8 must start by 27 Nov, 20:00).
 4. **T6** right after R4 approval, then T7 only if time allows, then T8.

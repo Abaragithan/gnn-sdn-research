@@ -1,0 +1,41 @@
+2026-11-22 21:40:06.473606: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-22 21:40:06.473633: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-11-22 21:40:07.373550: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-22 21:40:07.373581: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-22 21:40:07.373596: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+Selecting baseline 1 validation
+2026-11-22 21:40:09.598105: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Construction validation 1 / 3: 1941.8506080037332 ms
+Construction validation 2 / 3: 2083.435078995535 ms
+Construction validation 3 / 3: 1765.652432004572 ms
+Loading exact checkpoint: /home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41
+2026-11-22 21:40:17.907873: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-22 21:40:18.293505: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: RaggedConcat_13/assert_equal_1/Assert/AssertGuard/branch_executed/_828
+Finished validation forward mean_ms= 349.30583070017747 peak RSS MiB= 757.43359375
+Selecting baseline 1 test200
+Construction test200 1 / 3: 9448.788179994153 ms
+Construction test200 2 / 3: 9159.694522997597 ms
+Construction test200 3 / 3: 9230.224295999506 ms
+Finished test200 forward mean_ms= 2571.6005856006327 peak RSS MiB= 1452.1484375
+Selecting baseline 1 test240
+Construction test240 1 / 3: 16713.792414993804 ms
+Construction test240 2 / 3: 16090.537333999237 ms
+Construction test240 3 / 3: 16315.312509999785 ms
+Finished test240 forward mean_ms= 5652.147084765845 peak RSS MiB= 1995.53125
+Selecting baseline 1 test260
+Construction test260 1 / 3: 16544.44400799548 ms
+Construction test260 2 / 3: 16778.373477995046 ms
+Construction test260 3 / 3: 16942.768640001304 ms
+Finished test260 forward mean_ms= 4713.420942399777 peak RSS MiB= 2020.6171875
+Selecting baseline 1 test280
+Construction test280 1 / 3: 19794.425549000152 ms
+Construction test280 2 / 3: 19427.34276799456 ms
+Construction test280 3 / 3: 19079.184829999576 ms
+Finished test280 forward mean_ms= 5844.049256834114 peak RSS MiB= 2173.6171875
+Selecting baseline 1 test300
+Construction test300 1 / 3: 23270.42516799702 ms
+Construction test300 2 / 3: 23181.754208999337 ms
+Construction test300 3 / 3: 23586.84453299793 ms
+Finished test300 forward mean_ms= 7717.249701967133 peak RSS MiB= 2452.8671875
+Saved complete worker: results/dec1/latency_v2_runs_20261122_212858/baseline_1.json
