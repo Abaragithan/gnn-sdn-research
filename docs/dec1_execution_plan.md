@@ -49,6 +49,12 @@ A review of the work against the report (22 Nov) found these problems. The tasks
 | R4 (**required**) | T6 training queue | `train_student_v2.py`, the full smoke-test output (checks 1–3), and `config.json` from both smoke runs |
 | R5 (**required**, if T7 is done) | T7 ablation run | the `delay_model.py` diff and the check that reloaded `ckpt-26` reproduces the teacher's T2 predictions |
 
+9. **`runs/multiseed/` (seed-42 runs from 19 Nov) is archived, not used.** Those runs came from code changes (hop-ordered and data-ordered training) that were later reverted and never committed, so they can't be reproduced.
+   - `git mv runs/multiseed runs/archive/multiseed_ordered_unreproducible`
+   - Add a `NOTE.md` there explaining this. Results: scratch val 9.44 / test 10.30; KD (MSE) val 9.99 / test 11.00.
+   - If the original code still exists anywhere on this machine, copy it into that folder and say so in `NOTE.md`.
+   - Do **not** reuse its initial weights, checkpoints or settings in T5–T8. Do not include it in `SUMMARY.md` tables. Mention it only under "Problems and deviations".
+
 ### Fixed checkpoints (v0)
 
 | Name | Class | Checkpoint (relative to `all_mixed/`) | Test MAPE in report |
@@ -145,6 +151,13 @@ A separate script, `all_mixed/evaluation/aggregate_eval.py`, writes `results/dec
 Evidence: `results/dec1/eval_v0_test_smoke.jsonl`, `.meta.json`, `.keras_check.json` and `.log`; aggregation: `eval_v0_test_smoke_summary.json` and `eval_v0_test_smoke_aggregate.log`. `results/dec1/eval_t2_checks.log` records passing checks for flow weighting, ranking ties, undefined correlations, timing fractions and recovery of a partial JSONL write. Ranking metrics use NumPy; no SciPy installation is needed. Historical scripts and checkpoints are unchanged.
 
 **Awaiting user review at R1. The full 478-scenario run has not started; the full-test reproduction gate remains pending.**
+
+**R1 review result (22 Nov): approved after fix 1. Fix 2 is also wanted before the full run; fix 3 can come later.**
+1. **Required before the full run:** `eval_multi.py` raises an error when a label is ≤ 0. One such flow would stop the overnight run, and resuming would fail on the same scenario again. Replace this with the Keras MAPE rule, `|y−ŷ| / max(|y|, 1e-7)` (also in `sum_ape`). Add `n_nonpositive_labels` to each scenario record. Keep the error only for non-finite labels. Rerun `--limit 5 --keras-check` to a **new** output file; the gate must still pass.
+2. **Wanted before the full run:** also time the `DatanetAPI` iterator's `next()` (tar read and parsing) as `parse_ms` in each record. Report it in the aggregation's timing section, together with `construct_ms` and `forward_ms`. Without it, "most of the time is input preparation" can't be fully supported.
+3. **Aggregation only, no rerun needed:** `topology_id` is the graph file, which is topology plus scheduling configuration (`graph_topo-200-40-0.txt`, `-3`, `-4`). Add a second ranking grouping by **topology folder** (for example `ch22-testing-scheduling-topo-200-40`), derived from `topology_id`. Report both, and use the topology-folder grouping as the main one. Within a group, scenarios differ mostly in traffic intensity, so note in `SUMMARY.md` that the ranking metrics may be easy to score well on.
+
+After fix 1 (and 2) and the new smoke check, start the full run without waiting for another review.
 
 ---
 
