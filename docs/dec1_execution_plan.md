@@ -78,12 +78,14 @@ The test split is `data/all_mixed_v1/test` (478 scenarios, 200–300 nodes). The
 
 ## T1. Preflight (≈30 min)
 
-- [ ] `git pull`. Check that you are on `main` and that this plan is present.
-- [ ] Write machine specs to `results/dec1/machine_specs.txt`: `lscpu`, `free -h`, `nproc`, `df -h .`, and the TF and networkx versions printed by `PY`.
-- [ ] Count samples, using `all_mixed/check_teacher_counts.py` or an equivalent loop over `DatanetAPI`. Expect train 9,972, validation 2,191, test 478. Write the counts to `machine_specs.txt`.
-- [ ] Create `results/dec1/` and `runs/`.
+- [x] `git pull`. Check that you are on `main` and that this plan is present.
+- [x] Write machine specs to `results/dec1/machine_specs.txt`: `lscpu`, `free -h`, `nproc`, `df -h .`, and the TF and networkx versions printed by `PY`.
+- [x] Count samples, using `all_mixed/check_teacher_counts.py` or an equivalent loop over `DatanetAPI`. Expect train 9,972, validation 2,191, test 478. Write the counts to `machine_specs.txt`.
+- [x] Create `results/dec1/` and `runs/`.
 
 **Done when:** the counts match. If they don't, stop.
+
+**Completed: 22 Nov 2026.** On `main`; `git pull` reported already up to date. Counts from `DatanetAPI` on `data/all_mixed_v1`: train **9,972**, validation **2,191**, test **478** — all match. Machine specifications and counts are recorded in `results/dec1/machine_specs.txt` (TensorFlow **2.6.5**, NetworkX **2.6.3**). T1 passed; T2 has not started.
 
 ---
 
