@@ -1,0 +1,1154 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "started_unix": 1795369333.4909055,
+  "git_commit": "ba805fb7e811084dc3a0d19a3fbf916a3e7137e3",
+  "scenario": {
+    "n": 6,
+    "edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        4,
+        5
+      ]
+    ],
+    "candidates": [
+      [
+        0,
+        1,
+        5
+      ],
+      [
+        0,
+        4,
+        5
+      ],
+      [
+        0,
+        2,
+        3,
+        5
+      ]
+    ],
+    "flows": [
+      {
+        "id": 0,
+        "src": 0,
+        "dst": 1,
+        "path": [
+          0,
+          1
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 1,
+        "src": 0,
+        "dst": 2,
+        "path": [
+          0,
+          2
+        ],
+        "rate_bps": 1875.0
+      },
+      {
+        "id": 2,
+        "src": 0,
+        "dst": 3,
+        "path": [
+          0,
+          2,
+          3
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 3,
+        "src": 0,
+        "dst": 4,
+        "path": [
+          0,
+          4
+        ],
+        "rate_bps": 1875.0
+      },
+      {
+        "id": 4,
+        "src": 0,
+        "dst": 5,
+        "path": [
+          0,
+          1,
+          5
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 5,
+        "src": 1,
+        "dst": 0,
+        "path": [
+          1,
+          0
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 6,
+        "src": 1,
+        "dst": 2,
+        "path": [
+          1,
+          0,
+          2
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 7,
+        "src": 1,
+        "dst": 3,
+        "path": [
+          1,
+          5,
+          3
+        ],
+        "rate_bps": 3375.0
+      },
+      {
+        "id": 8,
+        "src": 1,
+        "dst": 4,
+        "path": [
+          1,
+          0,
+          4
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 9,
+        "src": 1,
+        "dst": 5,
+        "path": [
+          1,
+          5
+        ],
+        "rate_bps": 3375.0
+      },
+      {
+        "id": 10,
+        "src": 2,
+        "dst": 0,
+        "path": [
+          2,
+          0
+        ],
+        "rate_bps": 2625.0
+      },
+      {
+        "id": 11,
+        "src": 2,
+        "dst": 1,
+        "path": [
+          2,
+          0,
+          1
+        ],
+        "rate_bps": 3750.0
+      },
+      {
+        "id": 12,
+        "src": 2,
+        "dst": 3,
+        "path": [
+          2,
+          3
+        ],
+        "rate_bps": 3750.0
+      },
+      {
+        "id": 13,
+        "src": 2,
+        "dst": 4,
+        "path": [
+          2,
+          0,
+          4
+        ],
+        "rate_bps": 2625.0
+      },
+      {
+        "id": 14,
+        "src": 2,
+        "dst": 5,
+        "path": [
+          2,
+          3,
+          5
+        ],
+        "rate_bps": 3750.0
+      },
+      {
+        "id": 15,
+        "src": 3,
+        "dst": 0,
+        "path": [
+          3,
+          2,
+          0
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 16,
+        "src": 3,
+        "dst": 1,
+        "path": [
+          3,
+          5,
+          1
+        ],
+        "rate_bps": 1875.0
+      },
+      {
+        "id": 17,
+        "src": 3,
+        "dst": 2,
+        "path": [
+          3,
+          2
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 18,
+        "src": 3,
+        "dst": 4,
+        "path": [
+          3,
+          5,
+          4
+        ],
+        "rate_bps": 3000.0
+      },
+      {
+        "id": 19,
+        "src": 3,
+        "dst": 5,
+        "path": [
+          3,
+          5
+        ],
+        "rate_bps": 1875.0
+      },
+      {
+        "id": 20,
+        "src": 4,
+        "dst": 0,
+        "path": [
+          4,
+          0
+        ],
+        "rate_bps": 3375.0
+      },
+      {
+        "id": 21,
+        "src": 4,
+        "dst": 1,
+        "path": [
+          4,
+          0,
+          1
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 22,
+        "src": 4,
+        "dst": 2,
+        "path": [
+          4,
+          0,
+          2
+        ],
+        "rate_bps": 3375.0
+      },
+      {
+        "id": 23,
+        "src": 4,
+        "dst": 3,
+        "path": [
+          4,
+          5,
+          3
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 24,
+        "src": 4,
+        "dst": 5,
+        "path": [
+          4,
+          5
+        ],
+        "rate_bps": 2250.0
+      },
+      {
+        "id": 25,
+        "src": 5,
+        "dst": 0,
+        "path": [
+          5,
+          1,
+          0
+        ],
+        "rate_bps": 3750.0
+      },
+      {
+        "id": 26,
+        "src": 5,
+        "dst": 1,
+        "path": [
+          5,
+          1
+        ],
+        "rate_bps": 2625.0
+      },
+      {
+        "id": 27,
+        "src": 5,
+        "dst": 2,
+        "path": [
+          5,
+          3,
+          2
+        ],
+        "rate_bps": 3750.0
+      },
+      {
+        "id": 28,
+        "src": 5,
+        "dst": 3,
+        "path": [
+          5,
+          3
+        ],
+        "rate_bps": 2625.0
+      },
+      {
+        "id": 29,
+        "src": 5,
+        "dst": 4,
+        "path": [
+          5,
+          4
+        ],
+        "rate_bps": 3750.0
+      }
+    ],
+    "foreground": 4,
+    "capacity_bps": 20000,
+    "queue_bits": 32000,
+    "frame_bytes": 125,
+    "measurement_s": 60.0
+  },
+  "scenario_sha256": "98450239a91c78d5f5999023ce1ef5ed6fd81b775416223c77c7195bc97b3f92",
+  "scenario_source": "frozen_scenario_verified_against_settings_except_measurement_duration",
+  "measured": {
+    "source": "/home/abaragithan/gnn-sdn-research/mininet_experiment/outputs/six_validation_summary.json",
+    "source_sha256": "195d9d7cb831e97da162c347995420ef18a8293490cdce8ab7f2699beb74f9af",
+    "means_ms": [
+      123.78503940666667,
+      112.92921313555556,
+      196.3312025988889
+    ],
+    "trial_means_ms": [
+      [
+        123.7598847611111,
+        123.78990663333335,
+        123.79872326111112,
+        123.79613742222223,
+        123.78054495555557
+      ],
+      [
+        112.94177505,
+        112.91243847222223,
+        112.90523530555555,
+        112.94595900555555,
+        112.94065784444444
+      ],
+      [
+        196.25859298888886,
+        196.43760287222221,
+        196.39747457222225,
+        196.36149836111113,
+        196.2008442
+      ]
+    ],
+    "note": "APE is against foreground measurements; background flows have no measured labels here."
+  },
+  "measured_ranking": [
+    1,
+    0,
+    2
+  ],
+  "frozen_source": "/home/abaragithan/gnn-sdn-research/mininet_experiment/outputs/six_validation_predictions.json",
+  "frozen_source_sha256": "8a7b6976beecb9ab69d5584b4b83d02a5ffc8eb80820e9f5914c9b310ca2e50f",
+  "frozen_tolerance": {
+    "rtol": 1e-06,
+    "atol_seconds": 1e-08
+  },
+  "tensorflow": "2.6.5",
+  "models": {
+    "teacher": {
+      "checkpoint": "all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+      "checkpoint_sha256": {
+        "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6",
+        "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d"
+      },
+      "orders": {
+        "hop": {
+          "preserve_hop_order": true,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.13027960062026978,
+              "predicted_foreground_delay_ms": 130.27960062026978,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 5.246644703377078,
+              "ape_vs_trial_means_percent": [
+                5.268036465728321,
+                5.242506568939383,
+                5.235011467355328,
+                5.237209603668718,
+                5.250466191635968
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 62.546974182128906,
+                "maximum_queued_bits": 367.4593505859375
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.12036845088005066,
+              "predicted_foreground_delay_ms": 120.36845088005066,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 6.587522872018376,
+              "ape_vs_trial_means_percent": [
+                6.575667707332227,
+                6.603357883961288,
+                6.610159001305299,
+                6.5717197320269,
+                6.576721950598756
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 100.0853042602539,
+                "maximum_queued_bits": 366.8441467285156
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.2154930979013443,
+              "predicted_foreground_delay_ms": 215.4930979013443,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 9.759984683435055,
+              "ape_vs_trial_means_percent": [
+                9.800592483379514,
+                9.700533273925773,
+                9.722947492433217,
+                9.743050292399953,
+                9.832910648273497
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 62.339691162109375,
+                "maximum_queued_bits": 505.030029296875
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 7.198050752943504,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 7.1980593841976095
+        },
+        "ref": {
+          "preserve_hop_order": false,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.13040360808372498,
+              "predicted_foreground_delay_ms": 130.40360808372498,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 5.34682438910453,
+              "ape_vs_trial_means_percent": [
+                5.36823651334033,
+                5.342682315757346,
+                5.335180079913349,
+                5.337380308536719,
+                5.350649514871236
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 67.32318878173828,
+                "maximum_queued_bits": 367.8896484375
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.12035144865512848,
+              "predicted_foreground_delay_ms": 120.35144865512848,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 6.572467223926884,
+              "ape_vs_trial_means_percent": [
+                6.560613733800596,
+                6.588299999150516,
+                6.595100155826463,
+                6.556666316152727,
+                6.561667828153678
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 100.08504486083984,
+                "maximum_queued_bits": 366.82568359375
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.21560874581336975,
+              "predicted_foreground_delay_ms": 215.60874581336975,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 9.818889182819051,
+              "ape_vs_trial_means_percent": [
+                9.859518775606626,
+                9.759405867733934,
+                9.781832115200057,
+                9.80194570366473,
+                9.89185428457486
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 67.16783142089844,
+                "maximum_queued_bits": 509.2823486328125
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 7.2460602652834885,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 7.246068900818878
+        }
+      },
+      "frozen_check": {
+        "status": "passed",
+        "max_absolute_difference_ms": 0.0,
+        "selected_candidate_matches": true
+      }
+    },
+    "scratch": {
+      "checkpoint": "all_mixed/student/ckpt_dirs_scratch/ckpt-08",
+      "checkpoint_sha256": {
+        "ckpt-08.index": "252503bc39aed25d5f34b851b411302bcfc5eda91dd426bbe186c6d467c56c94",
+        "ckpt-08.data-00000-of-00001": "325a9a4f9de77c945214fee8d2b1aad8bebf21d780f50ac336af9a9634211abf"
+      },
+      "orders": {
+        "hop": {
+          "preserve_hop_order": true,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.12727615237236023,
+              "predicted_foreground_delay_ms": 127.27615237236023,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 2.820302826922669,
+              "ape_vs_trial_means_percent": [
+                2.841201426485205,
+                2.8162600924752055,
+                2.8089377819467973,
+                2.8110852427236663,
+                2.824036215109399
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 67.14484405517578,
+                "maximum_queued_bits": 363.0179748535156
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.11849537491798401,
+              "predicted_foreground_delay_ms": 118.49537491798401,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 4.928894506461372,
+              "ape_vs_trial_means_percent": [
+                4.917223822208738,
+                4.944483106823737,
+                4.95117839070957,
+                4.91333728208505,
+                4.918261660198751
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 93.5429458618164,
+                "maximum_queued_bits": 362.8998107910156
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.21222001314163208,
+              "predicted_foreground_delay_ms": 212.22001314163208,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 8.092860601075493,
+              "ape_vs_trial_means_percent": [
+                8.132851616666215,
+                8.034312188016228,
+                8.056385961109356,
+                8.076183423369969,
+                8.164678906938196
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 67.12980651855469,
+                "maximum_queued_bits": 475.97955322265625
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 5.280685978153178,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 5.280694474457738
+        },
+        "ref": {
+          "preserve_hop_order": false,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.12725335359573364,
+              "predicted_foreground_delay_ms": 127.25335359573364,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 2.801884788090297,
+              "ape_vs_trial_means_percent": [
+                2.8227796441196227,
+                2.797842777811485,
+                2.790521778917024,
+                2.7926688550226277,
+                2.805617507521084
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 69.30497741699219,
+                "maximum_queued_bits": 360.8399963378906
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.11857487261295319,
+              "predicted_foreground_delay_ms": 118.57487261295319,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 4.99929054727479,
+              "ape_vs_trial_means_percent": [
+                4.9876120332440115,
+                5.014889605917046,
+                5.021589381620694,
+                4.9837228856685005,
+                4.988650567512068
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 93.5429458618164,
+                "maximum_queued_bits": 362.89935302734375
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.21213623881340027,
+              "predicted_foreground_delay_ms": 212.13623881340027,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 8.050190700864592,
+              "ape_vs_trial_means_percent": [
+                8.090165929911825,
+                7.991665399923265,
+                8.013730459344742,
+                8.033520106512531,
+                8.121980656289278
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 69.28712463378906,
+                "maximum_queued_bits": 476.0075988769531
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 5.283788678743226,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 5.2837971726223865
+        }
+      },
+      "frozen_check": {
+        "status": "passed",
+        "max_absolute_difference_ms": 0.0,
+        "selected_candidate_matches": true
+      }
+    },
+    "kd": {
+      "checkpoint": "all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19",
+      "checkpoint_sha256": {
+        "ckpt-19.index": "b5dfd77a9bc0e3d2f26a5a016b04d6feb80a1570c72017fbd3c3064219ac7725",
+        "ckpt-19.data-00000-of-00001": "6ba1c4bfbba39761309d09f317025d1ca2fdc0ee0f548d46d97d8a941f889159"
+      },
+      "orders": {
+        "hop": {
+          "preserve_hop_order": true,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.1287035346031189,
+              "predicted_foreground_delay_ms": 128.7035346031189,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 3.973416513035688,
+              "ape_vs_trial_means_percent": [
+                3.9945494871382086,
+                3.969328439950888,
+                3.961924010850056,
+                3.964095555065158,
+                3.9771917705896085
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 57.328834533691406,
+                "maximum_queued_bits": 382.7046813964844
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.11979692429304123,
+              "predicted_foreground_delay_ms": 119.79692429304123,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 6.08143009837672,
+              "ape_vs_trial_means_percent": [
+                6.069631223704789,
+                6.097189923422527,
+                6.103958748090551,
+                6.065701993949775,
+                6.0706804612738
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 75.69551849365234,
+                "maximum_queued_bits": 386.9084167480469
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.21646541357040405,
+              "predicted_foreground_delay_ms": 216.46541357040405,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 10.255227241005604,
+              "ape_vs_trial_means_percent": [
+                10.296018265380713,
+                10.195507583753928,
+                10.218022936339803,
+                10.238216441148552,
+                10.328482251456105
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 57.323036193847656,
+                "maximum_queued_bits": 517.915771484375
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 6.7700246174726715,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 6.770033272807631
+        },
+        "ref": {
+          "preserve_hop_order": false,
+          "candidates": [
+            {
+              "candidate": 0,
+              "path": [
+                0,
+                1,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.12864160537719727,
+              "predicted_foreground_delay_ms": 128.64160537719727,
+              "measured_mean_delay_ms": 123.78503940666667,
+              "ape_vs_candidate_mean_percent": 3.923386859841349,
+              "ape_vs_trial_means_percent": [
+                3.9445096652353597,
+                3.9193007538447295,
+                3.9118998875874826,
+                3.91407038690469,
+                3.9271603008268383
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 57.358978271484375,
+                "maximum_queued_bits": 375.7509765625
+              }
+            },
+            {
+              "candidate": 1,
+              "path": [
+                0,
+                4,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.11986888945102692,
+              "predicted_foreground_delay_ms": 119.86888945102692,
+              "measured_mean_delay_ms": 112.92921313555556,
+              "ape_vs_candidate_mean_percent": 6.145155998865643,
+              "ape_vs_trial_means_percent": [
+                6.133350036299888,
+                6.160925291252168,
+                6.167698182130901,
+                6.129418446153388,
+                6.134399904173456
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 75.69551849365234,
+                "maximum_queued_bits": 386.9090576171875
+              }
+            },
+            {
+              "candidate": 2,
+              "path": [
+                0,
+                2,
+                3,
+                5
+              ],
+              "predicted_foreground_delay_s": 0.21625667810440063,
+              "predicted_foreground_delay_ms": 216.25667810440063,
+              "measured_mean_delay_ms": 196.3312025988889,
+              "ape_vs_candidate_mean_percent": 10.148909211451295,
+              "ape_vs_trial_means_percent": [
+                10.189660901443412,
+                10.089247141276834,
+                10.111740782530001,
+                10.131914814940979,
+                10.22209358281682
+              ],
+              "physical_checks": {
+                "valid": true,
+                "violations": {
+                  "nonfinite": 0,
+                  "negative_queue_hops": 0,
+                  "overfull_queue_hops": 0,
+                  "below_serialization_flows": 0,
+                  "above_queue_bound_flows": 0
+                },
+                "minimum_queued_bits": 57.352848052978516,
+                "maximum_queued_bits": 514.8677368164062
+              }
+            }
+          ],
+          "predicted_ranking": [
+            1,
+            0,
+            2
+          ],
+          "argmin_candidate": 1,
+          "physical_checks_all_valid": true,
+          "selected_candidate": 1,
+          "ranking_matches_measured": true,
+          "ranking_1_0_2_preserved": true,
+          "choice_candidate1_preserved": true,
+          "mean_ape_across_candidate_means_percent": 6.739150690052763,
+          "n_foreground_trial_means": 15,
+          "mean_ape_across_available_foreground_trial_means_percent": 6.7391593384944635
+        }
+      },
+      "frozen_check": {
+        "status": "passed",
+        "max_absolute_difference_ms": 0.0,
+        "selected_candidate_matches": true
+      }
+    }
+  },
+  "finished_unix": 1795369343.7489502,
+  "review_status": "pending_R3",
+  "training_order_ranking_survives_for_all_models": true,
+  "training_order_choice_survives_for_all_models": true,
+  "note": "Diagnostic only. No Mininet rerun or new measured network outcomes. Review at R3 before adding conclusions to SUMMARY.md."
+}

@@ -192,7 +192,7 @@ T2 results reviewed and accepted. These interpretations are fixed; use the same 
 4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
 5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
 
-**T3 benchmark completed; see its completion hand-off below for the scratch historical-timing deviation. T4 has not started.**
+**T3 benchmark completed; see its completion hand-off below for the scratch historical-timing deviation. T4 diagnostic completed; R3 review is pending (see T4).**
 
 ---
 
@@ -276,7 +276,7 @@ The scratch upper 20% bound is **41.04 ms**; the measured mean is **41.1798 ms**
 | scratch | 406.212 | 1059.903 | 3144.8 / 2266.3 |
 | kd | 404.973 | 1085.581 | 3227.6 / 2268.0 |
 
-Use the merged JSON for all six scenarios' construction medians, mean/SD/median/p95 forward times and raw repeats. Construction plus forward excludes dataset parsing; `selection_and_parse_ms` is separate and includes selection overhead. RSS values are cumulative process peaks including TensorFlow, construction and earlier scenarios, not model-weight size or isolated per-scenario allocations. Carry the scratch deviation and the resolved selector failure into T8's Problems and deviations. T4 has not started.
+Use the merged JSON for all six scenarios' construction medians, mean/SD/median/p95 forward times and raw repeats. Construction plus forward excludes dataset parsing; `selection_and_parse_ms` is separate and includes selection overhead. RSS values are cumulative process peaks including TensorFlow, construction and earlier scenarios, not model-weight size or isolated per-scenario allocations. Carry the scratch deviation and the resolved selector failure into T8's Problems and deviations. T4 subsequently completed its diagnostic; see its R3 hand-off below.
 
 ### Order of work from here
 1. **T3 full queue:** measurements completed; preserve the scratch historical-timing deviation above in the review/report hand-off.
@@ -300,6 +300,31 @@ New file: `mininet_experiment/rescore_hop_order.py`. This is a diagnostic, not p
 - **Output:** `results/dec1/emulation_hop_order.json`, plus a line in `SUMMARY.md` saying whether the ranking 1, 0, 2 and the choice of candidate 1 survive under the training order.
 
 **Done when:** both orders are scored for all 3 models, and the `True` order matches the frozen predictions.
+
+### T4 diagnostic completed — awaiting R3 review (22 Nov 2026)
+
+Added and ran `mininet_experiment/rescore_hop_order.py`, importing the unchanged worker's `scenario`, `build_inputs`, `load_model`, `prediction` and `physical_checks`. No Mininet, sudo, servers, network trials or training were run. All **18 candidate/model/order combinations** were scored (3 candidates × 3 models × 2 orders).
+
+**Preflight issue and resolution:** the first attempt stopped on a scenario hash mismatch. The frozen scenario includes `measurement_s: 60.0`; `settings.scenario()` omits it. Every other field matched. The script now verifies all model-input fields against the current scenario, ignores only `measurement_s` for that comparison, then uses the exact frozen scenario and its hash. It also checks checkpoint hashes and the measurement summary's prediction-source hash. No historical files were edited. Preserve `results/dec1/emulation_hop_order_preflight_failed.json` and `.log`; the problem and resolution are recorded in `SUMMARY.md` without adding T4 conclusions before R3.
+
+**Gate checks PASS:** both orders scored for every model; all 18 physical checks valid; all nine true-hop-order foreground predictions exactly reproduce the frozen values (maximum absolute difference **0.0 ms** for each model). Under both orders, every model ranks the candidates **[1, 0, 2]** and selects **candidate 1**.
+
+| Model | APE vs 15 measured foreground trial means, true hop order (%) | APE vs the same trial means, training/ref order (%) | Ranking / selected candidate, both orders |
+|---|---:|---:|---|
+| teacher | 7.198059 | 7.246069 | [1, 0, 2] / 1 |
+| scratch | 5.280694 | 5.283797 | [1, 0, 2] / 1 |
+| kd | 6.770033 | 6.739159 | [1, 0, 2] / 1 |
+
+Measured candidate means came from `mininet_experiment/outputs/six_validation_summary.json`: **123.785039 / 112.929213 / 196.331203 ms** for candidates 0 / 1 / 2, with five trial means per candidate. These APEs use the 15 foreground trial means, not all flows or training seeds. This is one fixed six-switch scenario and does not establish general routing-decision accuracy.
+
+**Review artifacts:**
+
+- `mininet_experiment/rescore_hop_order.py` — diagnostic code.
+- `results/dec1/emulation_hop_order.json` — exact per-candidate delays, APEs, physical checks, rankings/selections, source hashes, frozen checks and `review_status: pending_R3`.
+- `results/dec1/emulation_hop_order.log` — successful execution log.
+- `results/dec1/emulation_hop_order_preflight_failed.json` and `.log` — preserved preflight failure.
+
+**Stop at R3:** ready for the other agent's review. Do not put the T4 ranking/choice conclusion into `SUMMARY.md` until that review. No commits or pushes made by the execution agent. T5 has not started.
 
 ---
 

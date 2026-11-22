@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "status": "failed",
+  "started_unix": 1795369302.4659266,
+  "git_commit": "ba805fb7e811084dc3a0d19a3fbf916a3e7137e3",
+  "error": "ValueError: Current and frozen scenarios differ"
+}
