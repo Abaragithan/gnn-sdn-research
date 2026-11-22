@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "model": {
+    "name": "teacher",
+    "kind": "fermi",
+    "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+    "sha256": {
+      "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6",
+      "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d"
+    }
+  },
+  "threads": "default",
+  "requested_scenarios": [
+    "validation"
+  ],
+  "n_warmup": 5,
+  "n_timed": 30,
+  "n_construct": 3,
+  "input_order": "ref",
+  "pid": 162982,
+  "started_unix": 1795360348.3625634,
+  "scenarios": [
+    {
+      "scenario": "validation",
+      "split": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/validation",
+      "scenario_id": "ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt::0",
+      "topology_id": "ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt",
+      "n_nodes": 100,
+      "n_links": 560,
+      "n_queues": 1484,
+      "n_flows": 9900,
+      "selection_and_parse_ms": 651.0257349982567,
+      "construction": {
+        "mean_ms": 1639.945029333224,
+        "median_ms": 1638.3921769993322,
+        "std_ms": 26.094883543415904,
+        "p95_ms": 1669.2266692989506,
+        "all_ms": [
+          1672.6527239989082,
+          1608.790187001432,
+          1638.3921769993322
+        ],
+        "n_repeats": 3
+      },
+      "forward": {
+        "mean_ms": 184.24250343353683,
+        "median_ms": 183.05797199900553,
+        "std_ms": 7.375607697709538,
+        "p95_ms": 196.3328038003965,
+        "all_ms": [
+          181.3583210023353,
+          178.64805900171632,
+          210.25872400059598,
+          194.38333099969896,
+          186.50119399899268,
+          197.92782700096723,
+          177.98499000127777,
+          174.74716899960185,
+          172.87734499768703,
+          179.3555149997701,
+          183.83230499966885,
+          177.3260490008397,
+          183.8027810008498,
+          184.5697669996298,
+          179.8071679986606,
+          181.5366980008548,
+          180.55529699995532,
+          192.9520470002899,
+          188.2405510004901,
+          185.2935350034386,
+          186.36783699912485,
+          184.78612400213024,
+          177.348109002196,
+          186.35947699658573,
+          181.15660799958277,
+          186.96547299987287,
+          181.96074400111684,
+          182.31316299716127,
+          177.97510600212263,
+          190.08378899889067
+        ],
+        "n_repeats": 30
+      },
+      "n_nonfinite": 0,
+      "n_negative": 0,
+      "peak_rss_kib": 1162544.0,
+      "peak_rss_mib": 1135.296875,
+      "construct_plus_forward_ms": 1822.634680432869,
+      "historical_comparison": {
+        "expected_mean_ms": 178.5,
+        "obtained_mean_ms": 184.24250343353683,
+        "relative_difference": 0.032170887582839355,
+        "within_20_percent": true,
+        "note": "A mismatch is reported, not hidden; machine load and protocol can affect latency."
+      }
+    }
+  ],
+  "environment": {
+    "python": "3.7.12 | packaged by conda-forge | (default, Oct 26 2021, 06:08:21) \n[GCC 9.4.0]",
+    "tensorflow": "2.6.5",
+    "networkx": "2.6.3",
+    "platform": "Linux-7.3.4-100.fc43.x86_64-x86_64-with-fedora-43-Forty_Three",
+    "cpu_count": 18,
+    "intra_op_threads": 0,
+    "inter_op_threads": 0,
+    "thread_environment": {
+      "TF_NUM_INTRAOP_THREADS": null,
+      "TF_NUM_INTEROP_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null,
+      "TF_ENABLE_ONEDNN_OPTS": null
+    }
+  },
+  "timing_policy": "Construction includes DiGraph + hypergraph + tensors; excludes sample parsing. Forward synchronizes to NumPy; excludes tracing, warm-up and validation checks.",
+  "memory_policy": "ru_maxrss is the cumulative high-water mark of this model/thread process, including TF, parsing, construction and earlier scenarios; not per-scenario memory.",
+  "git_commit": "ffbb971f144685e67288c19005ac6dc5cc69bf4b",
+  "fixed_signature_matches_original": true,
+  "parameter_count": 27025,
+  "peak_rss_kib": 1162544.0,
+  "peak_rss_mib": 1135.296875,
+  "finished_unix": 1795360367.3155622
+}

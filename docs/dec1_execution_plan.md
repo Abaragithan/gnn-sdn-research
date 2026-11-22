@@ -184,7 +184,7 @@ All four reference-order results match their expected values within **0.01 MAPE 
 
 **Interpretation for T8:** main ranking metrics cover 12 topology-folder groups. Retain the review caveat that scenarios differ mostly in traffic intensity; high correlations do not establish routing-decision accuracy. Mean parsing time was about **2.520 s/scenario** and construction **16.995 s/scenario**; reference-order mean forward times were baseline **1.789 s**, teacher **1.812 s**, scratch **0.287 s**, KD **0.292 s**. These single-pass T2 timings do not replace the dedicated repeated T3 benchmark.
 
-**Next task: T3.** It has not started. Follow its code/small-check review stop (R2) and run timing measurements with no competing jobs. T4 onward also remain pending. Preserve the historical checkpoints and keep the test split out of model selection.
+**Next task: T3.** Its script and queue runner are prepared; the small check and full benchmark have not run. Follow the code/small-check review stop (R2) and run timing measurements with no competing jobs. T4 onward also remain pending. Preserve the historical checkpoints and keep the test split out of model selection.
 
 ---
 
@@ -202,6 +202,27 @@ New file: `all_mixed/evaluation/latency_v2.py`. One **process per (model, thread
 - **Output:** `results/dec1/latency_v2.json`.
 
 **Done when:** on scenario (a), default threads, the teacher and scratch means are within ~20% of 178.5 ms and 34.2 ms. If they aren't, record the difference; it may come from machine load. The JSON contains all 4 models × 2 thread settings × 6 scenarios.
+
+### T3 implementation prepared — R2 runtime check pending
+
+- Added `all_mixed/evaluation/latency_v2.py`: exact checkpoint loading; thread settings applied before TensorFlow imports; reference-order inputs; three construction repeats; five forward warm-ups and 30 timed, synchronized calls; raw timing samples, summary statistics, scenario identity/size and peak RSS. A fixed input signature is checked against the original model call before timing. Historical comparisons record deviations above 20% without silently discarding results.
+- Added `all_mixed/evaluation/run_latency_v2.sh`: sequentially launches eight fresh worker processes (four models × two thread settings), each with its own JSON and log in a timestamped folder, then validates and merges all 48 combinations into `results/dec1/latency_v2.json`. Existing output files are refused. Peak RSS is explicitly the process-wide high-water mark, including earlier scenarios, not independent memory usage per scenario.
+- Test scenario selection preserves DatanetAPI archive order and checks graph-file metadata to skip folders of other topology sizes; it does not depend on T2 prediction files. Construction timing excludes sample parsing; selection/parsing time is recorded separately.
+- **Checks passed:** Python and Bash syntax; timing-statistic calculations; historical comparison thresholds; 48-combination merge; rejection of missing workers and inconsistent scenarios. These checks did not import TensorFlow or run model inference.
+- **Not run:** the R2 one-model/one-scenario check, historical timing reproduction and full benchmark. The user will run the commands; do not mark T3 complete until those results are available. No commits or pushes made by the execution agent.
+
+**Next action, from the repo root with the conda environment active and machine otherwise idle:**
+
+```bash
+set -o pipefail
+python -u all_mixed/evaluation/latency_v2.py \
+  --model teacher:fermi:all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26 \
+  --threads default --scenarios validation \
+  --out results/dec1/latency_v2_smoke.json \
+  2>&1 | tee results/dec1/latency_v2_smoke.log
+```
+
+Share both new scripts, the smoke JSON and its log for R2 review. After review, the full queue command is `bash all_mixed/evaluation/run_latency_v2.sh`. Do not start that queue before the review.
 
 ---
 
