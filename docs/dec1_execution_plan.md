@@ -184,7 +184,15 @@ All four reference-order results match their expected values within **0.01 MAPE 
 
 **Interpretation for T8:** main ranking metrics cover 12 topology-folder groups. Retain the review caveat that scenarios differ mostly in traffic intensity; high correlations do not establish routing-decision accuracy. Mean parsing time was about **2.520 s/scenario** and construction **16.995 s/scenario**; reference-order mean forward times were baseline **1.789 s**, teacher **1.812 s**, scratch **0.287 s**, KD **0.292 s**. These single-pass T2 timings do not replace the dedicated repeated T3 benchmark.
 
-**Next task: T3.** Its script and queue runner are prepared; the small check and full benchmark have not run. Follow the code/small-check review stop (R2) and run timing measurements with no competing jobs. T4 onward also remain pending. Preserve the historical checkpoints and keep the test split out of model selection.
+### T2 review findings (user/reviewer, 22 Nov): copy these into `SUMMARY.md` in T8
+T2 results reviewed and accepted. These interpretations are fixed; use the same wording in `SUMMARY.md`:
+1. **Hop order has a negligible effect.** True hop order changes test MAPE by at most 0.2 points for any model (baseline −0.10, teacher −0.04, scratch +0.19, KD +0.09). The "checked on one sample only" threat is closed: the effect was measured on all 478 test scenarios and is small.
+2. **Error grows only slightly with topology size, and the model order is the same at every size.** From 200 to 300 nodes: baseline 8.25 → 8.87, teacher 5.32 → 5.58, scratch 11.83 → 12.57, KD 9.79 → 10.38. 240 nodes (160 scenarios, the largest group) is the easiest size for all models.
+3. **The ranking metrics do not separate the models.** All four, including the baseline, reach Spearman ≈ 0.999–1.0 and pairwise accuracy ≈ 0.996–0.999. Scenarios in a topology differ mostly in traffic intensity. Report the metrics only as "all models track load correctly", never as evidence that one model ranks better or that routing decisions are accurate.
+4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
+5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
+
+**Next task: T3** (R2 approved; see the end of the T3 section).
 
 ---
 
@@ -223,6 +231,28 @@ python -u all_mixed/evaluation/latency_v2.py \
 ```
 
 Share both new scripts, the smoke JSON and its log for R2 review. After review, the full queue command is `bash all_mixed/evaluation/run_latency_v2.sh`. Do not start that queue before the review.
+
+### R2 review result (22 Nov): approved, start the full queue
+- **Code accepted:**
+  - thread settings applied before TensorFlow starts, with the actual values recorded;
+  - one fresh process per model and thread setting;
+  - the same fixed-signature check as T2;
+  - `set -euo pipefail`, so the queue stops if any worker fails;
+  - the merge refuses incomplete or mismatched workers.
+- **Smoke check passed:** teacher, default threads, validation scenario: 184.2 ms vs 178.5 ms historically (+3.2%, within 20%).
+- **The old benchmark scenario's size is now known:** `ch22-testing-scheduling-topo-100-20` (validation split), **100 nodes, 560 links, 1,484 queues, 9,900 flows**. Put this in `SUMMARY.md`. It replaces the report's "the size of the benchmark scenario was not recorded", and it confirms the old "9,900-flow" note in `docs/research_progress_summary.md`.
+- **Run now, with no other job on the machine** (expected ≈ 1 h; the teacher on one thread with 300-node graphs is the slowest part):
+  ```bash
+  bash all_mixed/evaluation/run_latency_v2.sh
+  ```
+  Done when `results/dec1/latency_v2.json` exists with `n_benchmark_combinations: 48`, and the scratch validation mean (default threads) is within 20% of 34.2 ms. If a worker fails, report the error from its log. Don't rerun blindly.
+- **In `SUMMARY.md`,** report forward and construction times per scenario size for both thread settings, and the end-to-end comparison (construction + forward) between teacher and student, consistent with T2 finding 4.
+
+### Order of work from here
+1. **T3 full queue** (now, machine idle).
+2. **T4** emulation re-score (minutes, no sudo). It can run right after T3, or meanwhile if it is only scored after T3 finishes. It must not run while T3 is timing.
+3. **T5 code + smoke tests, then stop at R4** for review. This is the critical path: **T6 training must start no later than 23 Nov, evening** (≈ 41 h queue, and T8 must start by 27 Nov, 20:00).
+4. **T6** right after R4 approval, then T7 only if time allows, then T8.
 
 ---
 
