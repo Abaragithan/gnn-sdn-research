@@ -1,0 +1,9 @@
+baseline hop MAPE: 3.8593532028392628
+baseline ref MAPE: 3.8604048985530426
+kd hop MAPE: 3.2074667406453736
+kd ref MAPE: 3.2379403087686995
+scratch hop MAPE: 4.678868043287238
+scratch ref MAPE: 4.692209815874087
+teacher hop MAPE: 2.051970638104775
+teacher ref MAPE: 2.08873456065722
+Saved results/dec1/eval_v0_test_smoke_summary.json

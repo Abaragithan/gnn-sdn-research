@@ -1,0 +1,744 @@
+{
+  "n_scenarios": 5,
+  "models": {
+    "baseline": {
+      "hop": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 3.8593532028392628,
+        "unweighted_scenario_mape": 3.8593532028392623,
+        "pooled_mae_seconds": 0.0005353755672314864,
+        "pooled_mae_ms": 0.5353755672314864,
+        "pooled_rmse_seconds": 0.0009568832893443911,
+        "pooled_rmse_ms": 0.956883289344391,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 3.8593532028392628,
+            "unweighted_scenario_mape": 3.8593532028392623,
+            "pooled_mae_seconds": 0.0005353755672314864,
+            "pooled_mae_ms": 0.5353755672314864,
+            "pooled_rmse_seconds": 0.0009568832893443911,
+            "pooled_rmse_ms": 0.956883289344391
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 940.2629468000669,
+            "median_ms": 950.7370159999482
+          },
+          "forward_fraction_of_total": 0.09043676045910869,
+          "mean_scenario_forward_fraction": 0.09050111752426185
+        }
+      },
+      "ref": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 3.8604048985530426,
+        "unweighted_scenario_mape": 3.8604048985530426,
+        "pooled_mae_seconds": 0.0005387348659072147,
+        "pooled_mae_ms": 0.5387348659072146,
+        "pooled_rmse_seconds": 0.0009691109684351739,
+        "pooled_rmse_ms": 0.9691109684351739,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 3.8604048985530426,
+            "unweighted_scenario_mape": 3.8604048985530426,
+            "pooled_mae_seconds": 0.0005387348659072147,
+            "pooled_mae_ms": 0.5387348659072146,
+            "pooled_rmse_seconds": 0.0009691109684351739,
+            "pooled_rmse_ms": 0.9691109684351739
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 932.0709356000407,
+            "median_ms": 936.2398479997864
+          },
+          "forward_fraction_of_total": 0.08971952551648855,
+          "mean_scenario_forward_fraction": 0.08976396152281624
+        }
+      }
+    },
+    "kd": {
+      "hop": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 3.2074667406453736,
+        "unweighted_scenario_mape": 3.2074667406453727,
+        "pooled_mae_seconds": 0.00044686748039202026,
+        "pooled_mae_ms": 0.44686748039202023,
+        "pooled_rmse_seconds": 0.0009626626228269328,
+        "pooled_rmse_ms": 0.9626626228269328,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 3.2074667406453736,
+            "unweighted_scenario_mape": 3.2074667406453727,
+            "pooled_mae_seconds": 0.00044686748039202026,
+            "pooled_mae_ms": 0.44686748039202023,
+            "pooled_rmse_seconds": 0.0009626626228269328,
+            "pooled_rmse_ms": 0.9626626228269328
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 153.02011739995578,
+            "median_ms": 147.60118000003786
+          },
+          "forward_fraction_of_total": 0.015923558980415305,
+          "mean_scenario_forward_fraction": 0.0159274936520139
+        }
+      },
+      "ref": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 3.2379403087686995,
+        "unweighted_scenario_mape": 3.2379403087686986,
+        "pooled_mae_seconds": 0.00045134713580444614,
+        "pooled_mae_ms": 0.45134713580444613,
+        "pooled_rmse_seconds": 0.0009544513933924926,
+        "pooled_rmse_ms": 0.9544513933924925,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 3.2379403087686995,
+            "unweighted_scenario_mape": 3.2379403087686986,
+            "pooled_mae_seconds": 0.00045134713580444614,
+            "pooled_mae_ms": 0.45134713580444613,
+            "pooled_rmse_seconds": 0.0009544513933924926,
+            "pooled_rmse_ms": 0.9544513933924925
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 152.45972360007727,
+            "median_ms": 149.53817100013111
+          },
+          "forward_fraction_of_total": 0.01586616860133392,
+          "mean_scenario_forward_fraction": 0.015871039755746063
+        }
+      }
+    },
+    "scratch": {
+      "hop": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 4.678868043287238,
+        "unweighted_scenario_mape": 4.678868043287237,
+        "pooled_mae_seconds": 0.0006457419443103934,
+        "pooled_mae_ms": 0.6457419443103933,
+        "pooled_rmse_seconds": 0.0011731574349966758,
+        "pooled_rmse_ms": 1.1731574349966758,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 4.678868043287238,
+            "unweighted_scenario_mape": 4.678868043287237,
+            "pooled_mae_seconds": 0.0006457419443103934,
+            "pooled_mae_ms": 0.6457419443103933,
+            "pooled_rmse_seconds": 0.0011731574349966758,
+            "pooled_rmse_ms": 1.1731574349966758
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 154.65283619996626,
+            "median_ms": 152.1296269997947
+          },
+          "forward_fraction_of_total": 0.016090728870277748,
+          "mean_scenario_forward_fraction": 0.01610205938818065
+        }
+      },
+      "ref": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 4.692209815874087,
+        "unweighted_scenario_mape": 4.692209815874087,
+        "pooled_mae_seconds": 0.000653388529512844,
+        "pooled_mae_ms": 0.653388529512844,
+        "pooled_rmse_seconds": 0.0012104981502993365,
+        "pooled_rmse_ms": 1.2104981502993366,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 4.692209815874087,
+            "unweighted_scenario_mape": 4.692209815874087,
+            "pooled_mae_seconds": 0.000653388529512844,
+            "pooled_mae_ms": 0.653388529512844,
+            "pooled_rmse_seconds": 0.0012104981502993365,
+            "pooled_rmse_ms": 1.2104981502993366
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 152.49388880001788,
+            "median_ms": 154.56830499988428
+          },
+          "forward_fraction_of_total": 0.015869667678507532,
+          "mean_scenario_forward_fraction": 0.015863199784715135
+        }
+      }
+    },
+    "teacher": {
+      "hop": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 2.051970638104775,
+        "unweighted_scenario_mape": 2.0519706381047755,
+        "pooled_mae_seconds": 0.0002733560028446759,
+        "pooled_mae_ms": 0.27335600284467587,
+        "pooled_rmse_seconds": 0.0005439363728795603,
+        "pooled_rmse_ms": 0.5439363728795603,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 2.051970638104775,
+            "unweighted_scenario_mape": 2.0519706381047755,
+            "pooled_mae_seconds": 0.0002733560028446759,
+            "pooled_mae_ms": 0.27335600284467587,
+            "pooled_rmse_seconds": 0.0005439363728795603,
+            "pooled_rmse_ms": 0.5439363728795603
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 963.5747796000942,
+            "median_ms": 958.9123219998328
+          },
+          "forward_fraction_of_total": 0.09247161005541214,
+          "mean_scenario_forward_fraction": 0.09247248102041791
+        }
+      },
+      "ref": {
+        "n_nonfinite": 0,
+        "n_negative": 0,
+        "n_scenarios": 5,
+        "n_flows": 199000,
+        "pooled_mape": 2.08873456065722,
+        "unweighted_scenario_mape": 2.08873456065722,
+        "pooled_mae_seconds": 0.00027961542518621066,
+        "pooled_mae_ms": 0.2796154251862107,
+        "pooled_rmse_seconds": 0.0005675586688142374,
+        "pooled_rmse_ms": 0.5675586688142374,
+        "by_topology_size": {
+          "200": {
+            "n_scenarios": 5,
+            "n_flows": 199000,
+            "pooled_mape": 2.08873456065722,
+            "unweighted_scenario_mape": 2.08873456065722,
+            "pooled_mae_seconds": 0.00027961542518621066,
+            "pooled_mae_ms": 0.2796154251862107,
+            "pooled_rmse_seconds": 0.0005675586688142374,
+            "pooled_rmse_ms": 0.5675586688142374
+          }
+        },
+        "ranking_by_topology": {
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt": {
+            "n_scenarios": 3,
+            "spearman": 1.0,
+            "kendall_tau_b": 1.0,
+            "pairwise_accuracy": 1.0,
+            "comparable_pairs": 3,
+            "concordant_pairs": 3,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          },
+          "200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt": {
+            "n_scenarios": 1,
+            "spearman": null,
+            "kendall_tau_b": null,
+            "pairwise_accuracy": null,
+            "comparable_pairs": 0,
+            "concordant_pairs": 0,
+            "discordant_pairs": 0,
+            "true_only_ties": 0,
+            "predicted_only_ties": 0,
+            "joint_ties": 0
+          }
+        },
+        "ranking_mean_over_topologies": {
+          "spearman": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "kendall_tau_b": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          },
+          "pairwise_accuracy": {
+            "mean": 1.0,
+            "n_defined": 1,
+            "n_topologies": 3
+          }
+        },
+        "timing": {
+          "construct": {
+            "mean_ms": 9456.648022000172,
+            "median_ms": 9459.431221000159
+          },
+          "forward": {
+            "mean_ms": 961.9159619999664,
+            "median_ms": 972.8055119999226
+          },
+          "forward_fraction_of_total": 0.09232711566365455,
+          "mean_scenario_forward_fraction": 0.09239746147118078
+        }
+      }
+    }
+  },
+  "pairwise_policy": "True ties excluded; predicted ties on comparable pairs incorrect.",
+  "timing_policy": "Warm forward; construction excludes parsing and hop correction.",
+  "source": "/home/abaragithan/gnn-sdn-research/results/dec1/eval_v0_test_smoke.jsonl"
+}

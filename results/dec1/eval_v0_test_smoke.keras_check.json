@@ -1,0 +1,18 @@
+{
+  "n_scenarios": 5,
+  "tolerance": 0.01,
+  "models": {
+    "teacher": {
+      "pooled_mape": 2.08873456065722,
+      "keras_mape": 2.0887343883514404,
+      "absolute_difference": 1.723057794222882e-07,
+      "passed": true
+    },
+    "kd": {
+      "pooled_mape": 3.2379403087686995,
+      "keras_mape": 3.2379400730133057,
+      "absolute_difference": 2.3575539387366007e-07,
+      "passed": true
+    }
+  }
+}

@@ -1,0 +1,5 @@
+PASS: average ranks, positive/reverse correlations, tau-b ties, singleton nulls, flow weighting, timing fractions
+2026-11-22 12:56:09.810873: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-22 12:56:09.810912: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Recovered unfinished final record; saved bytes: /tmp/tmp74krj272/resume.jsonl.incomplete-1795332371004562738
+PASS: torn-write recovery preserves incomplete bytes and completed scenario

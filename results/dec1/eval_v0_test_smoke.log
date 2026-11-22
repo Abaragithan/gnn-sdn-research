@@ -1,0 +1,31 @@
+2026-11-22 12:55:29.361707: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-22 12:55:29.361729: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Resume: 0 completed scenarios
+2026-11-22 12:55:38.606078: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-22 12:55:38.606105: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-22 12:55:38.606131: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-11-22 12:55:38.606397: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading baseline /home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41
+2026-11-22 12:55:52.765024: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-22 12:55:53.101544: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: RaggedConcat_7/assert_equal_1/Assert/AssertGuard/branch_executed/_450
+Fixed signature matches original: baseline
+Loading teacher /home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26
+2026-11-22 12:56:04.042914: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_1027
+Fixed signature matches original: teacher
+Loading scratch /home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_scratch/ckpt-08
+2026-11-22 12:56:13.466106: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_271
+Fixed signature matches original: scratch
+Loading kd /home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19
+2026-11-22 12:56:17.371662: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_271
+Fixed signature matches original: kd
+Saved scenario 1 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt::0 nodes= 200
+Saved scenario 2 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-3.txt::1 nodes= 200
+Saved scenario 3 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt::2 nodes= 200
+Saved scenario 4 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-0.txt::3 nodes= 200
+Saved scenario 5 200/ch22-testing-scheduling-topo-200-40/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::200/ch22-testing-scheduling-topo-200-40/graphs/graph_topo-200-40-4.txt::4 nodes= 200
+5/5 - 75s - loss: 2.0887
+Keras comparison teacher {'pooled_mape': 2.08873456065722, 'keras_mape': 2.0887343883514404, 'absolute_difference': 1.723057794222882e-07, 'passed': True}
+5/5 - 71s - loss: 3.2379
+Keras comparison kd {'pooled_mape': 3.2379403087686995, 'keras_mape': 3.2379400730133057, 'absolute_difference': 2.3575539387366007e-07, 'passed': True}
+Finished: 5 scenarios in results/dec1/eval_v0_test_smoke.jsonl

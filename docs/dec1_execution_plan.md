@@ -85,7 +85,7 @@ The test split is `data/all_mixed_v1/test` (478 scenarios, 200–300 nodes). The
 
 **Done when:** the counts match. If they don't, stop.
 
-**Completed: 22 Nov 2026.** On `main`; `git pull` reported already up to date. Counts from `DatanetAPI` on `data/all_mixed_v1`: train **9,972**, validation **2,191**, test **478** — all match. Machine specifications and counts are recorded in `results/dec1/machine_specs.txt` (TensorFlow **2.6.5**, NetworkX **2.6.3**). T1 passed; T2 has not started.
+**Completed: 22 Nov 2026.** On `main`; `git pull` reported already up to date. Counts from `DatanetAPI` on `data/all_mixed_v1`: train **9,972**, validation **2,191**, test **478** — all match. Machine specifications and counts are recorded in `results/dec1/machine_specs.txt` (TensorFlow **2.6.5**, NetworkX **2.6.3**). T1 passed.
 
 ---
 
@@ -129,11 +129,22 @@ A separate script, `all_mixed/evaluation/aggregate_eval.py`, writes `results/dec
 - **timing:** median and mean of `construct_ms` and `forward_ms`, and `forward / (construct + forward)`.
 
 ### Steps
-1. [ ] Run with `--limit 5`. Compare with Keras: `model.evaluate(input_fn(test).take(5))` for teacher and kd. The pooled MAPE must match to within 0.01.
+1. [x] Run with `--limit 5`. Compare with Keras: `model.evaluate(input_fn(test).take(5))` for teacher and kd. The pooled MAPE must match to within 0.01.
 2. [ ] Full run overnight: `nohup PY eval_multi.py --out ../../results/dec1/eval_v0_test.jsonl > ../../results/dec1/eval_v0_test.log 2>&1 &`
 3. [ ] Aggregate.
 
 **Done when (gate for everything that follows):** the pooled MAPE with `ref` order reproduces **8.4011 / 5.3734 / 11.9244 / 9.8280** to within 0.01, and the file has 478 scenarios. If any value is off, find out why before T6, because every later number depends on this evaluator.
+
+**R1 review stop: 22 Nov 2026.** Implemented `eval_multi.py`, `hop_order.py` and `aggregate_eval.py`. The five-scenario smoke run completed for all four fixed checkpoints under both orders. A fixed input signature prevents graph-size retracing; its predictions matched the original model call for all four models under both orders (`rtol=1e-6`, `atol=1e-9`). The independent historical Keras pipeline reproduced the pooled reference-order metrics:
+
+| Model | Five-scenario pooled MAPE (%) | Keras evaluate MAPE (%) | Absolute difference (points) | Check |
+|---|---|---|---|---|
+| teacher | 2.088734561 | 2.088734388 | 0.000000172 | PASS |
+| kd | 3.237940309 | 3.237940073 | 0.000000236 | PASS |
+
+Evidence: `results/dec1/eval_v0_test_smoke.jsonl`, `.meta.json`, `.keras_check.json` and `.log`; aggregation: `eval_v0_test_smoke_summary.json` and `eval_v0_test_smoke_aggregate.log`. `results/dec1/eval_t2_checks.log` records passing checks for flow weighting, ranking ties, undefined correlations, timing fractions and recovery of a partial JSONL write. Ranking metrics use NumPy; no SciPy installation is needed. Historical scripts and checkpoints are unchanged.
+
+**Awaiting user review at R1. The full 478-scenario run has not started; the full-test reproduction gate remains pending.**
 
 ---
 
