@@ -39,6 +39,16 @@ A review of the work against the report (22 Nov) found these problems. The tasks
 6. **Python:** `/home/abaragithan/miniconda3/envs/routenet-fermi/bin/python` (TF 2.6). Repo root: `~/gnn-sdn-research`. Below, `PY` means that interpreter.
 7. **If a "done when" check fails, stop and write down what happened** in `results/dec1/SUMMARY.md` under "Problems". Do not work around it silently. Report honestly if any result goes against the expected direction.
 
+8. **Review stops.** After writing the code for **T2, T3, T4, T5 and T7**, stop before running the full job. Commit and push the new files plus the output of the small check run (`--limit 5` or smoke test), then wait for the user to confirm.
+
+| Stop | Before which run | Push for review |
+|---|---|---|
+| R1 (**required**) | T2 full overnight run | `eval_multi.py`, `hop_order.py`, `aggregate_eval.py`, and the `--limit 5` output next to the Keras `evaluate` values |
+| R2 (recommended) | T3 benchmark | `latency_v2.py` and the output for one model on one scenario |
+| R3 (recommended) | T4 re-score | `rescore_hop_order.py` and its JSON output (it runs in minutes, so run it, then wait for review before writing it into `SUMMARY.md`) |
+| R4 (**required**) | T6 training queue | `train_student_v2.py`, the full smoke-test output (checks 1–3), and `config.json` from both smoke runs |
+| R5 (**required**, if T7 is done) | T7 ablation run | the `delay_model.py` diff and the check that reloaded `ckpt-26` reproduces the teacher's T2 predictions |
+
 ### Fixed checkpoints (v0)
 
 | Name | Class | Checkpoint (relative to `all_mixed/`) | Test MAPE in report |
