@@ -71,6 +71,25 @@ def timing(values):
     return dict(mean_ms=float(np.mean(values)), median_ms=float(np.median(values)))
 
 
+def topology_folder(topology_id):
+    """'200/<topo-folder>/graphs/graph_x.txt' -> '200/<topo-folder>'.
+
+    A graph file is one topology plus one scheduling/QoS configuration; the
+    folder is the topology itself, so it gives the larger, main ranking groups.
+    """
+    return Path(topology_id).parent.parent.as_posix()
+
+
+def ranking_summary(groups):
+    rankings = {key: ranking_metrics(values) for key, values in sorted(groups.items())}
+    means = {}
+    for key in ("spearman", "kendall_tau_b", "pairwise_accuracy"):
+        values = [v[key] for v in rankings.values() if v[key] is not None]
+        means[key] = dict(mean=float(np.mean(values)) if values else None,
+                          n_defined=len(values), n_groups=len(rankings))
+    return rankings, means
+
+
 def aggregate(rows):
     if not rows or len({r["scenario_id"] for r in rows}) != len(rows):
         raise ValueError("Need nonempty JSONL with unique scenario IDs")
@@ -84,7 +103,11 @@ def aggregate(rows):
             groups[name, order].append((row, row["models"][name][order]))
     summary = dict(n_scenarios=len(rows), models={},
                    pairwise_policy="True ties excluded; predicted ties on comparable pairs incorrect.",
-                   timing_policy="Warm forward; construction excludes parsing and hop correction.")
+                   timing_policy="parse = DatanetAPI next() (schema >= 2); construct = DiGraph + "
+                                 "hypergraph + tensors; warm forward; hop correction excluded.",
+                   ranking_policy="Main: per topology folder. Secondary: per graph file "
+                                  "(topology + scheduling config). Groups differ mostly in "
+                                  "traffic intensity, so high scores may be easy to reach.")
     for (name, order), entries in sorted(groups.items()):
         items = [item for _, item in entries]
         invalid = sum(x["n_nonfinite"] for x in items)
@@ -94,25 +117,32 @@ def aggregate(rows):
             result["accuracy_unavailable"] = "Nonfinite predictions; inspect JSONL. No flows excluded."
         else:
             result.update(pooled(items))
-            by_size, by_topology = defaultdict(list), defaultdict(list)
+            by_size, by_folder, by_graph = defaultdict(list), defaultdict(list), defaultdict(list)
             for row, item in entries:
                 by_size[str(row["n_nodes"])].append(item)
-                by_topology[row["topology_id"]].append(item)
+                by_folder[topology_folder(row["topology_id"])].append(item)
+                by_graph[row["topology_id"]].append(item)
             result["by_topology_size"] = {size: pooled(values) for size, values in sorted(by_size.items())}
-            rankings = {key: ranking_metrics(values) for key, values in sorted(by_topology.items())}
-            result["ranking_by_topology"] = rankings
-            result["ranking_mean_over_topologies"] = {}
-            for key in ("spearman", "kendall_tau_b", "pairwise_accuracy"):
-                values = [v[key] for v in rankings.values() if v[key] is not None]
-                result["ranking_mean_over_topologies"][key] = dict(
-                    mean=float(np.mean(values)) if values else None,
-                    n_defined=len(values), n_topologies=len(rankings))
+            # Main ranking view: per topology folder. Secondary: per graph file
+            # (topology + scheduling configuration), which gives small groups.
+            # Within a group, scenarios differ mostly in traffic intensity.
+            result["ranking_by_topology"], result["ranking_mean_over_topologies"] = \
+                ranking_summary(by_folder)
+            result["ranking_by_graph_config"], result["ranking_mean_over_graph_configs"] = \
+                ranking_summary(by_graph)
         construction = [row["construct_ms"] for row, _ in entries]
         forwards = [x["forward_ms"] for x in items]
         result["timing"] = dict(construct=timing(construction), forward=timing(forwards),
-                                forward_fraction_of_total=sum(forwards) / (sum(construction) + sum(forwards)),
+                                forward_fraction_of_construct_plus_forward=sum(forwards) / (
+                                    sum(construction) + sum(forwards)),
                                 mean_scenario_forward_fraction=float(np.mean([
                                     f / (c + f) for c, f in zip(construction, forwards)])))
+        if all(row.get("parse_ms") is not None for row, _ in entries):  # schema_version >= 2
+            parsing = [row["parse_ms"] for row, _ in entries]
+            result["timing"]["parse"] = timing(parsing)
+            result["timing"]["forward_fraction_of_end_to_end"] = sum(forwards) / (
+                sum(parsing) + sum(construction) + sum(forwards))
+        result["n_nonpositive_labels"] = sum(row.get("n_nonpositive_labels", 0) for row, _ in entries)
         summary["models"].setdefault(name, {})[order] = result
     return summary
 

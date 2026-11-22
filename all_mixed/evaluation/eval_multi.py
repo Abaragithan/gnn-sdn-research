@@ -3,8 +3,11 @@
 Run from any directory. Custom checkpoint paths are relative to the repo root.
 Example: python all_mixed/evaluation/eval_multi.py --limit 5 --keras-check
 Resume requires identical split, orders, model classes and checkpoint contents.
-Forward timings exclude tracing/warm-up; construction excludes dataset parsing
-and the additional hop-order correction/check (recorded separately).
+Timing per scenario: parse_ms = DatanetAPI next() (tar read + sample parsing);
+construct_ms = DiGraph + hypergraph + input tensors; forward_ms = warm forward
+pass. The hop-order correction is timed separately (hop_correction_ms).
+APE uses the Keras MAPE rule |y - pred| / max(|y|, 1e-7), so labels <= 0 do not
+stop the run; they are counted in n_nonpositive_labels.
 """
 
 import argparse
@@ -36,6 +39,7 @@ DEFAULT_MODELS = [
     "scratch:student:all_mixed/student/ckpt_dirs_scratch/ckpt-08",
     "kd:student:all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19",
 ]
+KERAS_EPSILON = 1e-7  # tf.keras.backend.epsilon(), used by Keras MAPE.
 
 
 def write_json(path, value):
@@ -113,8 +117,9 @@ def metrics(y, pred, forward_ms):
         raise ValueError("Prediction/label shape mismatch")
     finite = bool(np.all(np.isfinite(pred)))
     error = pred - y
+    denominator = np.maximum(np.abs(y), KERAS_EPSILON)  # Same rule as Keras MAPE.
     return dict(n_flows=len(y),
-                sum_ape=float(np.sum(np.abs(error) / np.abs(y))) if finite else None,
+                sum_ape=float(np.sum(np.abs(error) / denominator)) if finite else None,
                 sum_ae=float(np.sum(np.abs(error))) if finite else None,
                 sum_se=float(np.sum(error ** 2)) if finite else None,
                 mean_true=float(y.mean()), mean_pred=float(pred.mean()) if finite else None,
@@ -155,9 +160,11 @@ def run(args):
         raise FileNotFoundError(str(args.split))
     args.out.parent.mkdir(parents=True, exist_ok=True)
     meta_path = args.out.with_suffix(".meta.json")
-    metadata = dict(schema_version=1, split=str(args.split), models=configs, orders=orders,
+    metadata = dict(schema_version=2, split=str(args.split), models=configs, orders=orders,
                     inference="fixed_signature_python_function_checked_against_original",
-                    timing="warm forward; construction excludes parsing and hop correction")
+                    ape="keras_rule_abs_error_over_max_abs_label_1e-7",
+                    timing="parse=DatanetAPI next(); construct=DiGraph+hypergraph+tensors; "
+                           "warm forward; hop correction separate")
     if meta_path.exists():
         if json.loads(meta_path.read_text()) != metadata:
             raise ValueError("Resume configuration differs; use a new output file")
@@ -175,7 +182,13 @@ def run(args):
     if args.limit:
         iterator = itertools.islice(iterator, args.limit)
     with args.out.open("a") as output:
-        for sample in iterator:
+        while True:
+            started = time.perf_counter()
+            try:
+                sample = next(iterator)  # Reads the tar file and parses one sample.
+            except StopIteration:
+                break
+            parse_ms = (time.perf_counter() - started) * 1000
             archive = Path(sample._get_data_set_file_name()).relative_to(args.split).as_posix()
             ordinal = archive_counts.get(archive, 0)
             archive_counts[archive] = ordinal + 1
@@ -184,16 +197,20 @@ def run(args):
             seen.add(scenario_id)
             if scenario_id in completed:
                 continue
-            graph = nx.DiGraph(sample.get_topology_object())
             started = time.perf_counter()
+            graph = nx.DiGraph(sample.get_topology_object())
             hg = network_to_hypergraph(graph, sample.get_routing_matrix(),
                                       sample.get_traffic_matrix(), sample.get_performance_matrix())
             raw, labels = hypergraph_to_input_data(hg)
             reference = to_tensors(raw)
             labels = tf.convert_to_tensor(labels, dtype=tf.float32).numpy().astype(np.float64)
             construct_ms = (time.perf_counter() - started) * 1000
-            if labels.ndim != 1 or not len(labels) or not np.all(np.isfinite(labels)) or np.any(labels <= 0):
-                raise ValueError("MAPE requires finite positive labels: " + scenario_id)
+            if labels.ndim != 1 or not len(labels) or not np.all(np.isfinite(labels)):
+                raise ValueError("Labels must be a nonempty finite vector: " + scenario_id)
+            n_nonpositive = int(np.sum(labels <= 0))
+            if n_nonpositive:
+                print("Warning:", n_nonpositive, "labels <= 0 in", scenario_id,
+                      "(Keras epsilon rule applied)", flush=True)
             inputs = {"ref": reference}
             correction_ms = None
             if "hop" in orders:
@@ -202,8 +219,9 @@ def run(args):
                 correction_ms = (time.perf_counter() - started) * 1000
             record = dict(scenario_id=scenario_id, topology_id=topology,
                           n_nodes=graph.number_of_nodes(), n_links=int(reference["capacity"].shape[0]),
-                          n_queues=int(reference["queue_size"].shape[0]), construct_ms=construct_ms,
-                          hop_correction_ms=correction_ms, models={})
+                          n_queues=int(reference["queue_size"].shape[0]),
+                          n_nonpositive_labels=n_nonpositive, parse_ms=parse_ms,
+                          construct_ms=construct_ms, hop_correction_ms=correction_ms, models={})
             if not models:
                 for name, config in configs.items():
                     print("Loading", name, config["checkpoint"], flush=True)

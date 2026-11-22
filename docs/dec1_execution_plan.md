@@ -152,12 +152,23 @@ Evidence: `results/dec1/eval_v0_test_smoke.jsonl`, `.meta.json`, `.keras_check.j
 
 **Awaiting user review at R1. The full 478-scenario run has not started; the full-test reproduction gate remains pending.**
 
-**R1 review result (22 Nov): approved after fix 1. Fix 2 is also wanted before the full run; fix 3 can come later.**
-1. **Required before the full run:** `eval_multi.py` raises an error when a label is ≤ 0. One such flow would stop the overnight run, and resuming would fail on the same scenario again. Replace this with the Keras MAPE rule, `|y−ŷ| / max(|y|, 1e-7)` (also in `sum_ape`). Add `n_nonpositive_labels` to each scenario record. Keep the error only for non-finite labels. Rerun `--limit 5 --keras-check` to a **new** output file; the gate must still pass.
-2. **Wanted before the full run:** also time the `DatanetAPI` iterator's `next()` (tar read and parsing) as `parse_ms` in each record. Report it in the aggregation's timing section, together with `construct_ms` and `forward_ms`. Without it, "most of the time is input preparation" can't be fully supported.
-3. **Aggregation only, no rerun needed:** `topology_id` is the graph file, which is topology plus scheduling configuration (`graph_topo-200-40-0.txt`, `-3`, `-4`). Add a second ranking grouping by **topology folder** (for example `ch22-testing-scheduling-topo-200-40`), derived from `topology_id`. Report both, and use the topology-folder grouping as the main one. Within a group, scenarios differ mostly in traffic intensity, so note in `SUMMARY.md` that the ranking metrics may be easy to score well on.
+**R1 review result (22 Nov): approved. The three fixes below are already in the code, made during the review on the other laptop.** Do not redo them; read the diff so you know what changed.
+1. **No crash on labels ≤ 0** (`eval_multi.py`). The old code raised an error, which would have stopped the overnight run, and resuming would have failed on the same scenario. APE now uses the Keras MAPE rule, `|y−ŷ| / max(|y|, 1e-7)` (constant `KERAS_EPSILON`). For positive labels the values are unchanged. Each record has `n_nonpositive_labels`, and a warning is printed. Only empty or non-finite labels still raise an error.
+2. **Parsing is timed** (`eval_multi.py`). `parse_ms` = time of the `DatanetAPI` iterator's `next()` (tar read plus sample parsing). `construct_ms` now also includes `nx.DiGraph(...)`. Metadata is `schema_version: 2`, so old smoke files can't be resumed into a new run; use new output files.
+3. **Ranking by topology folder** (`aggregate_eval.py`). `topology_id` is a graph file, i.e. topology plus scheduling configuration (`graph_topo-200-40-0.txt`, `-3`, `-4`), which gives tiny groups. The main ranking keys are now per topology folder (`ranking_by_topology`, `ranking_mean_over_topologies`, for example `200/ch22-testing-scheduling-topo-200-40`). The graph-file view is kept as `ranking_by_graph_config` / `ranking_mean_over_graph_configs`. Timing adds `parse` and `forward_fraction_of_end_to_end`. Tested on the existing smoke JSONL: pooled MAPE is unchanged and the 5 scenarios form one topology group. **Caveat for `SUMMARY.md`:** within a group, scenarios differ mostly in traffic intensity, so high ranking scores may be easy to reach. Report them with that caveat.
 
-After fix 1 (and 2) and the new smoke check, start the full run without waiting for another review.
+**Next steps for the agent (no further review needed for T2), from the repo root:**
+```bash
+git pull
+# a) new smoke check: the gate must still PASS (teacher and kd within 0.01 of Keras)
+PY all_mixed/evaluation/eval_multi.py --limit 5 --keras-check --out results/dec1/eval_v0_test_smoke_v2.jsonl
+PY all_mixed/evaluation/aggregate_eval.py --input results/dec1/eval_v0_test_smoke_v2.jsonl --out results/dec1/eval_v0_test_smoke_v2_summary.json
+# b) if it passes and parse_ms appears in the records: full run (~4-5 h)
+nohup PY all_mixed/evaluation/eval_multi.py --out results/dec1/eval_v0_test.jsonl > results/dec1/eval_v0_test.log 2>&1 &
+# c) when it finishes (478 scenarios): aggregate and check the gate (8.4011 / 5.3734 / 11.9244 / 9.8280)
+PY all_mixed/evaluation/aggregate_eval.py
+```
+If the smoke check fails, stop and report it; do not start the full run.
 
 ---
 
