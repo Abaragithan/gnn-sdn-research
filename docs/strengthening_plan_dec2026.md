@@ -1,5 +1,8 @@
 # Plan: Strengthening the Research Before Submission
 
+> **Superseded on 22 Nov 2026 by [`dec1_execution_plan.md`](dec1_execution_plan.md).** Kept for history; do not execute this plan.
+
+
 **Period:** 18 Nov – 3 Dec 2026
 **Hard deadlines:** video upload before 08:00 on 1 Dec · printed report by 3 Dec
 **Machine:** the Fedora CPU-only box used for all earlier runs

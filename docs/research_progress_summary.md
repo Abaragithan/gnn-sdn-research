@@ -1,6 +1,6 @@
 # RouteNet-Fermi Research — Full Progress Summary
 
-> Last updated: 2026-11-21 (15-trial Mininet validation completed; Abilene checkpoint comparison investigated) | Historical offline results retained separately from new deployment evidence
+> Last updated: 2026-11-22 (report now includes the emulation; Dec 1 work order in [`dec1_execution_plan.md`](dec1_execution_plan.md)) | Historical offline results retained separately from new deployment evidence
 
 ---
 
@@ -298,7 +298,7 @@ With the teacher model established, a **lightweight student model** (`student_de
 
 > [!NOTE]
 > Baseline and Teacher have identical architectures and parameter counts, with similar measured inference times. Their training data differ.
-> The historical 5.2× speedup is a model-only CPU benchmark on one 9,900-flow sample. It is not total SDN controller latency or a real-time guarantee. Separate six-switch deployment-input timings are reported below; the workloads must not be mixed.
+> The historical 5.2× speedup is a model-only CPU benchmark on one validation sample. (An earlier note said "9,900 flows", but no saved file records the size; the report states it was not recorded. Task T3 of `dec1_execution_plan.md` re-measures it.) It is not total SDN controller latency or a real-time guarantee. Separate six-switch deployment-input timings are reported below; the workloads must not be mixed.
 
 ### The Research Narrative
 
@@ -494,9 +494,11 @@ and Git-ignored; an agent using only GitHub cannot claim to have inspected them.
   [`mininet_experiment/README.md`, Section 9](../mininet_experiment/README.md#9-handoff-for-the-agent-updating-the-report).
 
 ### Immediate Next Steps
-- [ ] **Report update:** incorporate the completed controlled pilot and limitations
-  into the current LaTeX report. The handoff is ready; this progress update does
-  not edit the report or imply that its deployment section is already updated.
+- [x] **Report update (22 Nov):** the LaTeX report now includes the controlled
+  emulation, the Abilene diagnostic, the physical checks and their limitations
+  (Ch3 §3.7, Ch4 §4.3.3, Ch5 §5.3–5.4, Appendix A).
+- [ ] **Dec 1 strengthening work:** controlled KD study, per-size and hop-order
+  evaluation, latency v2. See [`dec1_execution_plan.md`](dec1_execution_plan.md).
 - [ ] **Optional further validation:** predeclare additional traffic/load conditions
   and check predictions before collecting measurements. These experiments are
   proposed, not completed; the planned five-repetition fixed scenario is finished.

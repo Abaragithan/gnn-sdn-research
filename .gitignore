@@ -17,4 +17,7 @@ few_shot
 all_mixed/student/ckpt_dirs_scratch/
 all_mixed/student/ckpt_dirs_kd_alpha0.5/
 pid*
-/runs
+# Dec 1 runs: commit config/history/logs, never weights
+runs/**/ckpt-*
+runs/**/checkpoint
+runs/init/

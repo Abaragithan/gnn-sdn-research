@@ -186,6 +186,10 @@ bridge/controller connections, and stops its own resources. Do not use global
 
 ## 9. Handoff for the agent updating the report
 
+> **Status (22 Nov 2026): done.** The report now contains this material. Remaining
+> emulation work for Dec 1 (re-scoring with the training hop order) is task T4
+> in [`docs/dec1_execution_plan.md`](../docs/dec1_execution_plan.md).
+
 **Scope:** incorporate the completed findings and limitations below into the
 current LaTeX report, whose entry point is `report/main.tex`. This README update
 does not itself change the report. Older `report_source.md`, `evidence_manifest.json`

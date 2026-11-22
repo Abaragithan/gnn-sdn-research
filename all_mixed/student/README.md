@@ -149,5 +149,5 @@ cd ~/gnn-sdn-research/all_mixed/evaluation
 | Iterations | 8 | 4 |
 | MP stages/iter | 3 | 2 |
 | Total MP stages | 24 | **8 (67% reduction)** |
-| Parameters | ~4,945 | ~1,241 (**75% reduction**) |
+| Parameters | 27,025 | 4,505 (**83.3% reduction**) |
 | Readout formula | queue_delay + trans_delay | same (preserved) |

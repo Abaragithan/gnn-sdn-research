@@ -1,5 +1,8 @@
 # Research Plan: Finish by Dec 1
 
+> **Superseded on 22 Nov 2026 by [`dec1_execution_plan.md`](dec1_execution_plan.md).** Kept for history; do not execute this plan.
+
+
 This plan assumes the written report and final presentation are both due Dec 1, 2026, and CPU overnight runs are available. The priority is to complete the missing student OOD evaluation, add limited repeatability evidence, then prepare the report and presentation from verified results.
 
 ## Current Evidence
