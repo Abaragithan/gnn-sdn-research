@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "split": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/test",
+  "models": {
+    "baseline": {
+      "kind": "fermi",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs/ckpt_dir_0_10000/15-6.41",
+      "sha256": {
+        "15-6.41.index": "f0963a0cfa49c33c7a16cb31ac8b6ad8e35af9fb831292fc6c4f97ea2ad5ab63",
+        "15-6.41.data-00000-of-00001": "4e5b97f53fc594be102fd963914030157c6d5682aa478dd1b2a2bc1ca4bfac37"
+      }
+    },
+    "teacher": {
+      "kind": "fermi",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+      "sha256": {
+        "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6",
+        "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d"
+      }
+    },
+    "scratch": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_scratch/ckpt-08",
+      "sha256": {
+        "ckpt-08.index": "252503bc39aed25d5f34b851b411302bcfc5eda91dd426bbe186c6d467c56c94",
+        "ckpt-08.data-00000-of-00001": "325a9a4f9de77c945214fee8d2b1aad8bebf21d780f50ac336af9a9634211abf"
+      }
+    },
+    "kd": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/student/ckpt_dirs_kd_alpha0.5/ckpt-19",
+      "sha256": {
+        "ckpt-19.index": "b5dfd77a9bc0e3d2f26a5a016b04d6feb80a1570c72017fbd3c3064219ac7725",
+        "ckpt-19.data-00000-of-00001": "6ba1c4bfbba39761309d09f317025d1ca2fdc0ee0f548d46d97d8a941f889159"
+      }
+    }
+  },
+  "orders": [
+    "ref",
+    "hop"
+  ],
+  "inference": "fixed_signature_python_function_checked_against_original",
+  "ape": "keras_rule_abs_error_over_max_abs_label_1e-7",
+  "timing": "parse=DatanetAPI next(); construct=DiGraph+hypergraph+tensors; warm forward; hop correction separate"
+}

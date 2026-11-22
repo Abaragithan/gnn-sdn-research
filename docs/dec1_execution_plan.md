@@ -136,8 +136,8 @@ A separate script, `all_mixed/evaluation/aggregate_eval.py`, writes `results/dec
 
 ### Steps
 1. [x] Run with `--limit 5`. Compare with Keras: `model.evaluate(input_fn(test).take(5))` for teacher and kd. The pooled MAPE must match to within 0.01.
-2. [ ] Full run overnight: `nohup PY eval_multi.py --out ../../results/dec1/eval_v0_test.jsonl > ../../results/dec1/eval_v0_test.log 2>&1 &`
-3. [ ] Aggregate.
+2. [x] Full run overnight: `nohup PY eval_multi.py --out ../../results/dec1/eval_v0_test.jsonl > ../../results/dec1/eval_v0_test.log 2>&1 &`
+3. [x] Aggregate.
 
 **Done when (gate for everything that follows):** the pooled MAPE with `ref` order reproduces **8.4011 / 5.3734 / 11.9244 / 9.8280** to within 0.01, and the file has 478 scenarios. If any value is off, find out why before T6, because every later number depends on this evaluator.
 
@@ -150,25 +150,41 @@ A separate script, `all_mixed/evaluation/aggregate_eval.py`, writes `results/dec
 
 Evidence: `results/dec1/eval_v0_test_smoke.jsonl`, `.meta.json`, `.keras_check.json` and `.log`; aggregation: `eval_v0_test_smoke_summary.json` and `eval_v0_test_smoke_aggregate.log`. `results/dec1/eval_t2_checks.log` records passing checks for flow weighting, ranking ties, undefined correlations, timing fractions and recovery of a partial JSONL write. Ranking metrics use NumPy; no SciPy installation is needed. Historical scripts and checkpoints are unchanged.
 
-**Awaiting user review at R1. The full 478-scenario run has not started; the full-test reproduction gate remains pending.**
+**R1 status: approved. The subsequent v2 smoke check and full evaluation are complete; see the T2 completion hand-off below.**
 
 **R1 review result (22 Nov): approved. The three fixes below are already in the code, made during the review on the other laptop.** Do not redo them; read the diff so you know what changed.
 1. **No crash on labels ≤ 0** (`eval_multi.py`). The old code raised an error, which would have stopped the overnight run, and resuming would have failed on the same scenario. APE now uses the Keras MAPE rule, `|y−ŷ| / max(|y|, 1e-7)` (constant `KERAS_EPSILON`). For positive labels the values are unchanged. Each record has `n_nonpositive_labels`, and a warning is printed. Only empty or non-finite labels still raise an error.
 2. **Parsing is timed** (`eval_multi.py`). `parse_ms` = time of the `DatanetAPI` iterator's `next()` (tar read plus sample parsing). `construct_ms` now also includes `nx.DiGraph(...)`. Metadata is `schema_version: 2`, so old smoke files can't be resumed into a new run; use new output files.
 3. **Ranking by topology folder** (`aggregate_eval.py`). `topology_id` is a graph file, i.e. topology plus scheduling configuration (`graph_topo-200-40-0.txt`, `-3`, `-4`), which gives tiny groups. The main ranking keys are now per topology folder (`ranking_by_topology`, `ranking_mean_over_topologies`, for example `200/ch22-testing-scheduling-topo-200-40`). The graph-file view is kept as `ranking_by_graph_config` / `ranking_mean_over_graph_configs`. Timing adds `parse` and `forward_fraction_of_end_to_end`. Tested on the existing smoke JSONL: pooled MAPE is unchanged and the 5 scenarios form one topology group. **Caveat for `SUMMARY.md`:** within a group, scenarios differ mostly in traffic intensity, so high ranking scores may be easy to reach. Report them with that caveat.
 
-**Next steps for the agent (no further review needed for T2), from the repo root:**
-```bash
-git pull
-# a) new smoke check: the gate must still PASS (teacher and kd within 0.01 of Keras)
-PY all_mixed/evaluation/eval_multi.py --limit 5 --keras-check --out results/dec1/eval_v0_test_smoke_v2.jsonl
-PY all_mixed/evaluation/aggregate_eval.py --input results/dec1/eval_v0_test_smoke_v2.jsonl --out results/dec1/eval_v0_test_smoke_v2_summary.json
-# b) if it passes and parse_ms appears in the records: full run (~4-5 h)
-nohup PY all_mixed/evaluation/eval_multi.py --out results/dec1/eval_v0_test.jsonl > results/dec1/eval_v0_test.log 2>&1 &
-# c) when it finishes (478 scenarios): aggregate and check the gate (8.4011 / 5.3734 / 11.9244 / 9.8280)
-PY all_mixed/evaluation/aggregate_eval.py
-```
-If the smoke check fails, stop and report it; do not start the full run.
+### T2 completion hand-off (22 Nov 2026)
+
+**T2 COMPLETE — full-test reproduction gate PASS.** After R1 approval, the user ran the fresh schema-v2 smoke check, full evaluation and aggregation on the Fedora machine. No T2 rerun is needed.
+
+- **Fresh v2 smoke check:** teacher and KD both passed the independent Keras comparison (absolute differences 0.000000172 and 0.000000236 MAPE points). `parse_ms` was present. Evidence: `results/dec1/eval_v0_test_smoke_v2.jsonl`, `eval_v0_test_smoke_v2.meta.json`, `eval_v0_test_smoke_v2.keras_check.json`, `eval_v0_test_smoke_v2.log` and `eval_v0_test_smoke_v2_summary.json`.
+- **Full coverage:** 478 records with 478 unique scenario IDs; all four fixed v0 checkpoints under both `ref` and `hop` orders. Scenario counts by node count: 200 → 80; 240 → 160; 260 → 79; 280 → 79; 300 → 80. Each model/order covers **31,028,940 flows**.
+- **Validity:** zero nonfinite predictions, zero negative predictions and zero nonpositive labels across the full run. The log ends with `Finished: 478 scenarios`.
+- **Runtime:** approximately **6.8 hours**, measured from the metadata and final log modification times, longer than the planned 4–5 hours. Account for this when scheduling later evaluations.
+
+| Model | Expected ref MAPE (%) | Obtained ref MAPE (%) | Hop MAPE (%) | Hop − ref (points) | Reproduction |
+|---|---:|---:|---:|---:|---|
+| baseline | 8.4011 | 8.401104 | 8.301324 | −0.099780 | PASS |
+| teacher | 5.3734 | 5.373394 | 5.328621 | −0.044773 | PASS |
+| scratch | 11.9244 | 11.924413 | 12.118968 | +0.194555 | PASS |
+| kd | 9.8280 | 9.827972 | 9.922264 | +0.094292 | PASS |
+
+All four reference-order results match their expected values within **0.01 MAPE points**. Correcting hop order slightly improves baseline and teacher MAPE and slightly worsens both students on this test set. These are aggregate effects; the per-size results are in the JSON summary.
+
+**Full-run artifacts for the other agent:**
+
+- `results/dec1/eval_v0_test.jsonl` — per-scenario results, both orders, including parsing/construction/forward timing.
+- `results/dec1/eval_v0_test.meta.json` — schema v2, exact checkpoint paths and hashes, split and metric/timing definitions.
+- `results/dec1/eval_v0_test.log` — full execution log.
+- `results/dec1/eval_v0_test_summary.json` — final pooled MAPE, MAE/RMSE, per-size errors, both ranking views and timing summaries. Use this as the source for T8 and the report hand-off.
+
+**Interpretation for T8:** main ranking metrics cover 12 topology-folder groups. Retain the review caveat that scenarios differ mostly in traffic intensity; high correlations do not establish routing-decision accuracy. Mean parsing time was about **2.520 s/scenario** and construction **16.995 s/scenario**; reference-order mean forward times were baseline **1.789 s**, teacher **1.812 s**, scratch **0.287 s**, KD **0.292 s**. These single-pass T2 timings do not replace the dedicated repeated T3 benchmark.
+
+**Next task: T3.** It has not started. Follow its code/small-check review stop (R2) and run timing measurements with no competing jobs. T4 onward also remain pending. Preserve the historical checkpoints and keep the test split out of model selection.
 
 ---
 
