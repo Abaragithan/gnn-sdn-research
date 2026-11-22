@@ -1,184 +1,42 @@
-\chapter{Per-Epoch Training Records}
-\label{app:logs}
-
-This appendix reproduces the per-epoch values recorded in the training logs. For RouteNet-Fermi runs and for the scratch student, validation values are flow-weighted MAPE computed by Keras; for the distillation run they are unweighted means over scenarios (\cref{sec:metrics}).
-
-\section{Baseline (RouteNet-Fermi, 10-node training data)}
-
-Each epoch consisted of 2,500 steps. Validation is on the original validation split (25 scenarios, 100--300 nodes).
-
-\begin{table}[H]
-\centering
-\small
-\caption{Baseline training: training loss and validation MAPE (\%) per epoch for both runs.}
-\label{tab:app-baseline}
-\begin{tabular}{@{}c cc cc@{}}
-\toprule
- & \multicolumn{2}{c}{\textbf{Run 1}} & \multicolumn{2}{c}{\textbf{Run 2}} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-\textbf{Epoch} & Train & Val & Train & Val \\
-\midrule
-1  & 11.6487 & 7.3709 & 11.6487 & 7.3709 \\
-2  & 7.2014  & 7.3790 & 7.2014  & 7.3790 \\
-3  & 6.1348  & \textbf{6.4990} & 6.1348  & 6.4990 \\
-4  & 5.8512  & 7.0333 & 5.8512  & 7.0333 \\
-5  & 5.5800  & 7.9782 & 5.3712  & 8.3544 \\
-6  & 4.9295  & 7.7501 & 5.2279  & 7.9246 \\
-7  & 4.9842  & 7.4529 & 4.5600  & 7.2414 \\
-8  & 4.4184  & 7.4296 & 5.3617  & 7.4563 \\
-9  & 4.7914  & 6.8492 & 4.5370  & 7.6325 \\
-10 & 4.4159  & 7.3902 & 4.5885  & 7.5861 \\
-11 & 4.3443  & 6.6989 & 4.0268  & 7.0683 \\
-12 & 3.9967  & 7.7768 & 4.6370  & 7.1695 \\
-13 & 4.2514  & 7.6684 & 4.0519  & 8.1650 \\
-14 & 3.9100  & 6.9326 & 4.3640  & 7.3174 \\
-15 & 3.8650  & 7.0676 & 3.6902  & \textbf{6.4095} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Teacher (RouteNet-Fermi, 10--170-node training data)}
-
-Each epoch consisted of 9,972 steps (one pass over the training split). The checkpoint was saved only when validation MAPE improved.
-
-\begin{table}[H]
-\centering
-\small
-\caption{Teacher training: training loss and validation MAPE (\%) per epoch. Bold marks the selected epoch.}
-\label{tab:app-teacher}
-\begin{tabular}{@{}ccc@{\hspace{10mm}}ccc@{\hspace{10mm}}ccc@{}}
-\toprule
-\textbf{Ep.} & Train & Val & \textbf{Ep.} & Train & Val & \textbf{Ep.} & Train & Val \\
-\midrule
-1  & 7.6173 & 7.7157 & 11 & 4.3999 & 6.2160 & 21 & 3.9641 & 4.7331 \\
-2  & 6.0447 & 7.2879 & 12 & 4.2246 & 5.1928 & 22 & 4.0405 & 4.9076 \\
-3  & 5.9251 & 7.9793 & 13 & 4.1303 & 5.2589 & 23 & 4.0208 & 5.5545 \\
-4  & 5.7016 & 7.4936 & 14 & 4.1656 & 5.7631 & 24 & 3.8710 & 5.5437 \\
-5  & 5.0794 & 6.0834 & 15 & 4.1494 & 5.7563 & 25 & 3.8707 & 5.1506 \\
-6  & 4.8996 & 6.4913 & 16 & 4.0491 & 5.4061 & 26 & 3.8044 & \textbf{4.7139} \\
-7  & 4.8883 & 6.4972 & 17 & 4.0895 & 5.0863 & 27 & 3.8249 & 5.2744 \\
-8  & 4.5263 & 6.0524 & 18 & 4.0708 & 6.7599 & 28 & 3.8205 & 5.4711 \\
-9  & 4.6338 & 6.0155 & 19 & 4.0458 & 5.4792 & 29 & 3.6957 & 5.0402 \\
-10 & 4.3966 & 5.4865 & 20 & 3.8289 & 5.1151 & 30 & 3.6569 & 5.2150 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Student-KD}
-
-\begin{table}[H]
-\centering
-\small
-\caption{Student-KD training: total loss, hard (MAPE) and soft (MSE) components on the training split, and validation MAPE (\%, unweighted over scenarios). Early stopping ended training after epoch 24 and restored epoch 19.}
-\label{tab:app-kd}
-\begin{tabular}{@{}ccccc@{\hspace{8mm}}ccccc@{}}
-\toprule
-\textbf{Ep.} & Total & Hard & Soft & Val & \textbf{Ep.} & Total & Hard & Soft & Val \\
-\midrule
-1  & 5.0932 & 9.9645 & 0.2219 & 12.1137 & 13 & 3.6590 & 7.1431 & 0.1750 & 9.7496 \\
-2  & 4.2186 & 8.2266 & 0.2106 & 11.7319 & 14 & 3.6431 & 7.1124 & 0.1738 & 9.8157 \\
-3  & 4.0983 & 7.9904 & 0.2062 & 11.0272 & 15 & 3.6324 & 7.0925 & 0.1723 & 9.6898 \\
-4  & 4.0179 & 7.8328 & 0.2030 & 10.9029 & 16 & 3.6293 & 7.0871 & 0.1715 & 9.7258 \\
-5  & 3.9472 & 7.6954 & 0.1991 & 10.5883 & 17 & 3.6190 & 7.0677 & 0.1703 & 9.6723 \\
-6  & 3.8794 & 7.5641 & 0.1948 & 10.3335 & 18 & 3.6105 & 7.0516 & 0.1694 & 9.7076 \\
-7  & 3.8299 & 7.4693 & 0.1904 & 10.2322 & 19 & 3.6045 & 7.0404 & 0.1686 & \textbf{9.6439} \\
-8  & 3.7856 & 7.3852 & 0.1861 & 10.1161 & 20 & 3.5944 & 7.0209 & 0.1680 & 9.7374 \\
-9  & 3.7491 & 7.3156 & 0.1826 & 9.9722  & 21 & 3.5886 & 7.0095 & 0.1678 & 9.7480 \\
-10 & 3.7200 & 7.2600 & 0.1800 & 10.0181 & 22 & 3.5820 & 6.9965 & 0.1674 & 9.6928 \\
-11 & 3.6957 & 7.2133 & 0.1782 & 9.8867  & 23 & 3.5811 & 6.9952 & 0.1669 & 9.6622 \\
-12 & 3.6755 & 7.1745 & 0.1766 & 9.8760  & 24 & 3.5735 & 6.9804 & 0.1666 & 9.9065 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Student-scratch}
-
-The console output of the scratch training run was overwritten when the log file was later reused, so the per-epoch values below are taken from the running notes kept during the project. They are corroborated by the saved checkpoint directory, which contains checkpoints for epochs 1--4 and 6--8 only. This is exactly the set of epochs at which the notes record an improvement, since the checkpoint callback saved weights only when validation MAPE improved. The final value for epoch 8 agrees with the separately logged evaluation of that checkpoint (10.6455\%).
-
-\begin{table}[H]
-\centering
-\small
-\caption{Student-scratch validation MAPE (\%) per epoch, from project notes. Early stopping ended training after epoch 13 and restored epoch 8.}
-\label{tab:app-scratch}
-\begin{tabular}{@{}l ccccccccccccc@{}}
-\toprule
-\textbf{Epoch} & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 \\
-\midrule
-\textbf{Val} & 13.19 & 12.89 & 12.40 & 11.68 & 11.76 & 11.60 & 11.23 & \textbf{10.65} & 11.26 & 11.07 & 11.10 & 10.86 & 11.05 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\chapter{Reproducibility Guide}
+\chapter{Reproducibility}
 \label{app:repro}
 
-\section{Data}
-
-The all-mixed dataset can be downloaded from the Barcelona Neural Networking Center \cite{bnn2023allmixed}. The scripts expect it under a \texttt{data/} directory at the repository root, organised as follows:
-\begin{itemize}
-  \item \texttt{data/all\_mixed/\{train,validation,test\}}: the original splits (\cref{tab:orig-split}), used by the baseline.
-  \item \texttt{data/all\_mixed\_v1/\{train,validation,test\}}: the topology-diverse re-split (\cref{tab:v1-split}), used by the teacher and both students. The test split holds the twelve 200--300-node topologies.
-\end{itemize}
-The re-split is produced by moving the topology directories as described in \cref{sec:resplit}. The topologies placed in the re-split validation set are \texttt{topo-10-7}, \texttt{topo-50-0}, \texttt{topo-75-10}, \texttt{topo-100-20}, \texttt{topo-130-26} and \texttt{topo-170-34}; the other 50- to 170-node topologies and the remaining six 10-node topologies form the training set.
-
-\section{Commands}
-
-All commands are run from the indicated directory with the project's Python environment (TensorFlow 2.6).
-\begin{center}
-\small
-\begin{tabularx}{\textwidth}{@{}l l Y@{}}
-\toprule
-\textbf{Step} & \textbf{Directory} & \textbf{Command} \\
-\midrule
-Train baseline        & \texttt{all\_mixed/}            & \texttt{python few\_shot\_all.py} \\
-Evaluate baseline     & \texttt{all\_mixed/}            & \texttt{python validation\_all.py} (set \texttt{TEST\_PATH} to the required test split) \\
-Train teacher         & \texttt{all\_mixed/}            & \texttt{python train\_teacher.py} \\
-Evaluate teacher      & \texttt{all\_mixed/}            & \texttt{python test\_teacher.py} \\
-Train student-scratch & \texttt{all\_mixed/student/}    & \texttt{python train\_scratch.py} \\
-Train student-KD      & \texttt{all\_mixed/student/}    & \texttt{python train\_kd.py} \\
-Evaluate students     & \texttt{all\_mixed/student/}    & \texttt{python evaluate.py} \\
-Latency benchmark     & \texttt{all\_mixed/evaluation/} & \texttt{python inference\_benchmark.py} \\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-\section{Checkpoints and result files}
-
-\begin{center}
-\small
-\begin{tabularx}{\textwidth}{@{}l Y Y@{}}
-\toprule
-\textbf{Model} & \textbf{Selected checkpoint} & \textbf{Result file(s)} \\
-\midrule
-Baseline        & \texttt{all\_mixed/ckpt\_dirs/ckpt\_dir\_0\_10000/15-6.41} & \texttt{all\_mixed/results\_baseline\_ood.json}, \texttt{all\_mixed/baseline\_ood.log}, \texttt{all\_mixed/results\_all.json} \\
-Teacher         & \texttt{all\_mixed/ckpt\_dirs\_teacher/ckpt\_dir\_0\_9972/ckpt-26} & \texttt{all\_mixed/results\_teacher.json} \\
-Student-scratch & \texttt{all\_mixed/student/ckpt\_dirs\_scratch/ckpt-08} & \texttt{all\_mixed/student/results\_student.json} \\
-Student-KD      & \texttt{all\_mixed/student/ckpt\_dirs\_kd\_alpha0.5/ckpt-19} & \texttt{all\_mixed/student/results\_student.json}, \texttt{all\_mixed/student/results\_kd\_alpha0.5.json}, \texttt{all\_mixed/student/logs\_kd.txt} \\
-Latency (all)   & --- & \texttt{all\_mixed/evaluation/inference\_benchmark\_results.json} \\
-\bottomrule
-\end{tabularx}
-\end{center}
-
-Training logs for the baseline and the teacher, the dataset split commands and the dataset counts are kept in the \texttt{logs/} directory of the repository.
-
-\chapter{Preliminary Experiment with the Original RouteNet}
-\label{app:routenet}
-
-Before working with RouteNet-Fermi, the original RouteNet implementation \cite{rusek2020routenet} was set up to become familiar with the model family and its data. A pre-trained RouteNet delay model (checkpoint at global step 260,380) was evaluated on 120 evaluation files of the GEANT2 dataset distributed with RouteNet, covering shortest-path and weighted routing configurations. This experiment involved no training and is not part of the main study; it served to confirm that the software environment and data handling worked as expected.
+The code is in the project repository. The all-mixed dataset \cite{bnn2023allmixed} is expected under \path{data/}: the original splits in \path{data/all_mixed/} (used by the baseline) and the re-split in \path{data/all_mixed_v1/} (used by the teacher and students). The re-split validation set contains the topologies \path{topo-10-7}, \path{topo-50-0}, \path{topo-75-10}, \path{topo-100-20}, \path{topo-130-26} and \path{topo-170-34}.
 
 \begin{table}[H]
 \centering
-\small
-\caption{Evaluation of the pre-trained original RouteNet model on the GEANT2 evaluation files, as logged by the reference evaluation script. The loss and MAE are on the script's normalised delay scale.}
-\label{tab:app-routenet}
-\begin{tabular}{@{}l c@{}}
+\footnotesize
+\caption{Main scripts, selected checkpoints and result files.}
+\label{tab:repro}
+\begin{tabularx}{\textwidth}{@{}p{22mm} Y >{\raggedright\arraybackslash}p{66mm}@{}}
 \toprule
-\textbf{Metric} & \textbf{Value} \\
+\textbf{Step} & \textbf{Script (directory)} & \textbf{Checkpoint / output} \\
 \midrule
-Loss (as reported)     & 0.0211 \\
-MAE (normalised)       & 0.0600 \\
-Mean relative error    & 0.0299 \\
-Pearson correlation    & 0.9894 \\
+Baseline        & \path{few_shot_all.py}, \path{validation_all.py} (\path{all_mixed/}) & \path{ckpt_dir_0_10000/15-6.41}, \path{results_baseline_ood.json} \\
+Teacher         & \path{train_teacher.py}, \path{test_teacher.py} (\path{all_mixed/}) & \path{ckpt_dir_0_9972/ckpt-26}, \path{results_teacher.json} \\
+Student-scratch & \path{train_scratch.py} (\path{all_mixed/student/}) & \path{ckpt_dirs_scratch/ckpt-08} \\
+Student-KD      & \path{train_kd.py} (\path{all_mixed/student/}) & \path{ckpt_dirs_kd_alpha0.5/ckpt-19} \\
+Student tests   & \path{evaluate.py} (\path{all_mixed/student/}) & \path{results_student.json} \\
+Latency         & \path{inference_benchmark.py} (\path{all_mixed/evaluation/}) & \path{inference_benchmark_results.json} \\
+Emulation       & \path{run.py} (\path{mininet_experiment/}) & \path{outputs/six_validation_summary.json} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
+
+The emulation is run from the repository root. For example, a model-driven run and a forced-path measurement are started with:
+{\footnotesize
+\begin{verbatim}
+sudo python mininet_experiment/run.py --method kd \
+     --seconds 60 --name kd_60_01
+sudo python mininet_experiment/run.py --method shortest \
+     --candidate 1 --seconds 60 --name path1_new
+\end{verbatim}
+}
+\noindent A model's predictions can be checked without Mininet by running \path{model_worker.py} with the model name and the \path{--check} option.
+
+\paragraph{Notes on the files.}
+\begin{itemize}
+  \item As committed, \path{validation_all.py} evaluates the original test split and writes \path{results_all.json} (8.22\%). The held-out result in \path{results_baseline_ood.json} (8.40\%) was produced by running the same script with \path{TEST_PATH} set to \path{data/all_mixed_v1/test} and the output file renamed; the console output of that run is in \path{all_mixed/baseline_ood.log}.
+  \item The emulation's raw outputs (\path{mininet_experiment/outputs/}, including \path{six_validation_summary.json}, \path{six_validation_predictions.json} and \path{author_real_traffic/}) are excluded from the Git repository. They are kept with the research data backups, and their contents are summarised in \path{mininet_experiment/README.md}.
+  \item The console log of the scratch student's training run was not kept; only its checkpoints and evaluation log remain.
+\end{itemize}

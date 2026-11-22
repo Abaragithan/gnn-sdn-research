@@ -1,240 +1,219 @@
 \chapter{Methodology}
 \label{ch:method}
 
-This chapter describes the approach taken to meet the objectives in \cref{sec:objectives}. It first gives the overall workflow, then formulates the prediction problem, describes the teacher (RouteNet-Fermi) and the proposed student (Queue-Link Fusion), and finally sets out how the student is trained with knowledge distillation.
-
-\section{Overall Workflow}
+\section{Overview}
 \label{sec:workflow}
 
-\Cref{fig:workflow} summarises the workflow. The same data pipeline turns each simulated network scenario into a graph, and four models are trained from it. The \emph{baseline} is RouteNet-Fermi trained on the dataset's original training split, which contains only 10-node topologies. The \emph{teacher} has the same architecture but is trained on a re-split of the data that includes topologies of 10 to 170 nodes. The \emph{student} is trained twice on the same re-split: once on the ground truth alone (\emph{student-scratch}) and once with distillation from the frozen teacher (\emph{student-KD}). All four models are then evaluated on one held-out test set of 200- to 300-node topologies, and their size and inference latency are measured.
+\Cref{fig:workflow} shows the workflow. Each simulated scenario in the dataset is turned into a graph, and four models are trained: a \emph{baseline} RouteNet-Fermi on the original 10-node training data; a \emph{teacher} with the same architecture on a re-split that includes 10- to 170-node topologies; and the proposed student, trained once on the ground truth alone (\emph{student-scratch}) and once with distillation from the teacher (\emph{student-KD}). All four are evaluated offline on the same held-out 200- to 300-node topologies. The teacher and the two students are then used, without retraining, as route scorers in an SDN emulation.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
-  node distance=6mm and 8mm,
-  box/.style={draw, rounded corners=2pt, align=center, font=\small, minimum height=10mm, text width=27mm, fill=gray!8},
-  data/.style={draw, align=center, font=\small, minimum height=10mm, text width=27mm, fill=blue!6},
-  arr/.style={-{Stealth[length=2.2mm]}, thick}
+  node distance=5mm and 7mm,
+  box/.style={draw, rounded corners=2pt, align=center, font=\small, minimum height=9mm, text width=27mm, fill=gray!8},
+  data/.style={draw, align=center, font=\small, minimum height=9mm, text width=27mm, fill=blue!6},
+  arr/.style={-{Stealth[length=2mm]}, thick}
 ]
-\node[data] (raw) {All-mixed dataset\\(simulated scenarios)};
-\node[box, right=of raw] (hg) {Graph construction\\(paths, links, queues)};
-\node[data, right=of hg] (split) {Topology-based\\data splits};
-
-\node[box, below=12mm of hg] (teach) {Teacher\\RouteNet-Fermi\\(10--170-node train)};
-\node[box, left=8mm of teach] (base) {Baseline\\RouteNet-Fermi\\(10-node train)};
-\node[box, right=8mm of teach] (stud) {Student\\Queue-Link Fusion\\(scratch / KD)};
-
-\node[data, below=12mm of teach] (test) {Held-out test set\\(200--300 nodes)};
-\node[box, below=6mm of test, text width=70mm] (eval) {Evaluation: MAPE, parameters, model size, latency};
-
+\node[data] (raw) {All-mixed dataset};
+\node[box, right=of raw] (hg) {Graph construction};
+\node[data, right=of hg] (split) {Topology-based splits};
+\node[box, below=11mm of hg] (teach) {Teacher\\(10--170 nodes)};
+\node[box, left=7mm of teach] (base) {Baseline\\(10 nodes)};
+\node[box, right=7mm of teach] (stud) {Student\\(scratch / KD)};
+\node[data, below=9mm of teach, text width=62mm] (off) {Offline test: 200--300-node topologies\\MAPE, size, latency};
+\node[box, below=5mm of off, text width=62mm, fill=green!8] (emu) {SDN emulation (Mininet + Ryu):\\route scoring and measured delay};
 \draw[arr] (raw) -- (hg);
 \draw[arr] (hg) -- (split);
-\coordinate (bus) at ($(split.south)+(0,-6mm)$);
+\coordinate (bus) at ($(split.south)+(0,-5mm)$);
 \draw[thick] (split.south) -- (bus);
 \draw[thick] (base.north |- bus) -- (stud.north |- bus);
-\draw[arr] (base.north |- bus) -- (base.north);
-\draw[arr] (teach.north |- bus) -- (teach.north);
-\draw[arr] (stud.north |- bus) -- (stud.north);
+\foreach \n in {base,teach,stud} \draw[arr] (\n.north |- bus) -- (\n.north);
 \draw[arr, dashed] (teach) -- (stud);
-\draw[arr] (base) |- (test);
-\draw[arr] (teach) -- (test);
-\draw[arr] (stud) |- (test);
-\draw[arr] (test) -- (eval);
+\draw[arr] (base.south) |- (off.west);
+\draw[arr] (teach) -- (off);
+\draw[arr] (stud.south) |- (off.east);
+\draw[arr] (off) -- (emu);
 \end{tikzpicture}
-\caption{Overall workflow of the project. The dashed arrow shows the teacher's predictions being used as an additional training signal for the student.}
+\caption{Workflow of the project. The dashed arrow shows the teacher's predictions used as an extra training signal for the student.}
 \label{fig:workflow}
 \end{figure}
 
 \section{Problem Formulation}
 \label{sec:problem}
 
-A network scenario consists of a topology, a routing configuration and a traffic matrix. The topology has a set of directed links $\mathcal{L}$; each link $l$ has a capacity $c_l$ and inherits a scheduling policy $\pi_l \in \{\text{WFQ}, \text{SP}, \text{DRR}, \text{FIFO}\}$ from its source node. Each link has a set of output queues $\mathcal{Q}(l)$, with at most three queues per link. Queue $q$ has a buffer size $b_q$, a priority index $r_q$ and, for weighted policies, a normalised weight $w_q$.
-
-Traffic is described by a set of flows $\mathcal{P}$, each following a fixed path. A path $p$ is an ordered sequence of links $(l_{p,1}, \dots, l_{p,|p|})$ and, at each hop $k$, uses the queue $q_{p,k}$ that its type-of-service (ToS) class maps to on that link. Each flow has a mean bit rate $\lambda_p$, a packet generation rate $n_p$, a traffic model $m_p$ (one of seven, encoded one-hot) and up to eight parameters of its time distribution $\bm{\theta}_p$.
-
-The task is to predict, for every flow $p$ in a scenario, its mean end-to-end delay $y_p$ as measured by the packet-level simulator that generated the dataset. A model $f$ receives the whole scenario and outputs $\hat{y}_p$ for all flows at once. Accuracy is measured with the mean absolute percentage error,
+A scenario consists of a topology, a routing and a traffic matrix. Each directed link $l$ has a capacity $c_l$, a scheduling policy $\pi_l$ (WFQ, SP, DRR or FIFO) and up to three output queues $\mathcal{Q}(l)$; each queue $q$ has a buffer size $b_q$, a priority $r_q$ and, for weighted policies, a weight $w_q$. Each flow $p$ follows a path of links $(l_{p,1},\dots,l_{p,|p|})$ and uses, at hop $k$, the queue $q_{p,k}$ assigned to its type-of-service (ToS) class. A flow has a mean rate $\lambda_p$, a packet rate $n_p$, a traffic model $m_p$ (one of seven) and up to eight traffic-distribution parameters $\bm{\theta}_p$. The task is to predict each flow's mean delay $y_p$. Accuracy is measured by
 \begin{equation}
 \mathrm{MAPE} = \frac{100}{|\mathcal{P}|} \sum_{p \in \mathcal{P}} \frac{|y_p - \hat{y}_p|}{|y_p|},
 \label{eq:mape}
 \end{equation}
-which is also the training loss for the baseline, the teacher and the scratch student. A relative error is used because delays in the dataset span more than two orders of magnitude (\cref{sec:datasets}), so an absolute error would be dominated by the slowest flows.
-
-Two derived quantities are computed from the inputs before any learning takes place. The offered load of a link is
-\begin{equation}
-\rho_l = \frac{1}{c_l} \sum_{p \,:\, l \in p} \lambda_p ,
-\label{eq:load}
-\end{equation}
-and the mean packet size of a flow is $s_p = \lambda_p / n_p$.
-
-\section{Graph Representation}
-\label{sec:graph}
-
-Each scenario is converted into a graph whose nodes are of three types: \emph{paths}, \emph{links} and \emph{queues}. A path is connected to every link and every queue it traverses; a queue is connected to the link it belongs to. This representation follows RouteNet-Fermi \cite{ferriolgalmes2023routenetfermi} and is built by the data pipeline distributed with its reference implementation, which reads the simulator output through the dataset's API and produces, for each scenario, the feature tensors and index tensors needed for message passing (for example, which links and queues each path visits, in order).
-
-The graphs are large. One scenario from the dataset's original test split, used during development to inspect the pipeline, contained 852 links, 2,124 queues and 57,360 flows, and therefore 57,360 delay labels. Every training step in this project processes one such scenario; there is no batching across scenarios.
+which is also the training loss. A relative error is used because delays span more than two orders of magnitude (\cref{sec:datasets}). Two quantities are computed from the inputs: link load $\rho_l = \sum_{p \ni l} \lambda_p / c_l$ and mean packet size $s_p = \lambda_p / n_p$.
 
 \section{Teacher Model: RouteNet-Fermi}
 \label{sec:teacher}
 
-The teacher is RouteNet-Fermi \cite{ferriolgalmes2023routenetfermi}, used without architectural changes. It keeps a hidden state $\mathbf{h}_p$, $\mathbf{h}_l$ and $\mathbf{h}_q$ of dimension 32 for every path, link and queue.
-
-\paragraph{Initial states.}
-Each state is initialised by a two-layer MLP with ReLU activations applied to the entity's features, where $z(\cdot)$ denotes z-score normalisation with fixed dataset statistics:
-\begin{align}
-\mathbf{h}_p^{(0)} &= \mathrm{MLP}_p\big([\,z(\lambda_p),\, z(n_p),\, \mathrm{onehot}(m_p),\, z(\bm{\theta}_p)\,]\big) && \text{(17 inputs)}\\
-\mathbf{h}_l^{(0)} &= \mathrm{MLP}_l\big([\,\rho_l,\, \mathrm{onehot}(\pi_l)\,]\big) && \text{(5 inputs)}\\
-\mathbf{h}_q^{(0)} &= \mathrm{MLP}_q\big([\,z(b_q),\, \mathrm{onehot}(r_q),\, w_q\,]\big) && \text{(5 inputs)}
-\end{align}
-
-\paragraph{Message passing.}
-The model then runs $T = 8$ iterations, each consisting of three stages.
+The teacher is RouteNet-Fermi \cite{ferriolgalmes2023routenetfermi}, used unchanged with the data pipeline of its reference implementation. It keeps a 32-dimensional state for every path, link and queue. The initial states come from two-layer MLPs over each entity's normalised features: 17 path inputs ($\lambda_p$, $n_p$, one-hot $m_p$, $\bm{\theta}_p$), 5 link inputs ($\rho_l$ and one-hot $\pi_l$) and 5 queue inputs ($b_q$, one-hot $r_q$, $w_q$). The model then runs $T=8$ iterations of three stages:
 \begin{enumerate}
-  \item \emph{Links and queues to paths.} A GRU \cite{cho2014gru} reads, hop by hop, the concatenated states of the queue and link used at each hop, starting from the current path state:
-  \begin{equation}
-  \mathbf{s}_p^{(k)} = \mathrm{GRU}_p\big(\,[\mathbf{h}_{q_{p,k}} \,\|\, \mathbf{h}_{l_{p,k}}],\ \mathbf{s}_p^{(k-1)}\big), \qquad \mathbf{s}_p^{(0)} = \mathbf{h}_p,
-  \end{equation}
-  and the new path state is $\mathbf{h}_p \leftarrow \mathbf{s}_p^{(|p|)}$. The intermediate states $\mathbf{s}_p^{(k)}$ are kept.
-  \item \emph{Paths to queues.} Each queue sums the states of the paths that use it, taken at the point where each path arrives at the queue, and updates its state with a second GRU cell:
-  \begin{equation}
-  \mathbf{h}_q \leftarrow \mathrm{GRU}_q\Big(\sum_{(p,k)\,:\,q_{p,k}=q} \mathbf{s}_p^{(k-1)},\ \mathbf{h}_q\Big).
-  \end{equation}
-  \item \emph{Queues to links.} Each link runs a third GRU over the states of its queues, starting from its own state, and keeps the final output as its new state.
+  \item \emph{Links and queues to paths:} a GRU \cite{cho2014gru} reads, hop by hop, the concatenated states of the queue and link used at each hop,
+  $\mathbf{s}_p^{(k)} = \mathrm{GRU}_p([\mathbf{h}_{q_{p,k}} \| \mathbf{h}_{l_{p,k}}], \mathbf{s}_p^{(k-1)})$, with $\mathbf{s}_p^{(0)}=\mathbf{h}_p$ and $\mathbf{h}_p \leftarrow \mathbf{s}_p^{(|p|)}$;
+  \item \emph{Paths to queues:} each queue sums the states of the paths arriving at it and updates its state with a second GRU cell;
+  \item \emph{Queues to links:} each link runs a third GRU over the states of its queues.
 \end{enumerate}
-
-\paragraph{Readout.}
-After the last iteration, an MLP (32--16--16--1) maps each per-hop path state to a value $o_{p,k}$ interpreted as the queue occupancy seen by flow $p$ at hop $k$. Delay is then computed from the physics of a store-and-forward network rather than predicted directly:
+An MLP then maps each per-hop path state to a queue occupancy $o_{p,k}$, and delay is assembled from link capacities:
 \begin{equation}
-\hat{y}_p = \underbrace{\sum_{k=1}^{|p|} \frac{o_{p,k}}{c_{l_{p,k}}}}_{\text{queueing delay}} \;+\; \underbrace{s_p \sum_{k=1}^{|p|} \frac{1}{c_{l_{p,k}}}}_{\text{transmission delay}} .
+\hat{y}_p = \sum_{k=1}^{|p|} \frac{o_{p,k}}{c_{l_{p,k}}} + s_p \sum_{k=1}^{|p|} \frac{1}{c_{l_{p,k}}} ,
 \label{eq:readout}
 \end{equation}
-Dividing by link capacity means that the network only has to learn occupancy, which is less sensitive to the absolute link speed than delay itself. This is one of the reasons RouteNet-Fermi is reported to generalise to networks with link capacities outside the training range \cite{ferriolgalmes2023routenetfermi}.
+where the first term is queueing delay and the second is transmission delay. The teacher has 27,025 parameters and performs $8 \times 3 = 24$ message-passing stages.
 
-In total the teacher has 27,025 trainable parameters, and each forward pass performs $8 \times 3 = 24$ message-passing stages.
-
-\section{Proposed Student Model: Queue-Link Fusion}
+\section{Proposed Student: Queue-Link Fusion}
 \label{sec:student}
 
-The student is designed to cut the cost of message passing while keeping the parts of RouteNet-Fermi that are most closely tied to how delay arises: the per-hop recurrent reading of each path and the capacity-based readout of \cref{eq:readout}.
-
-\subsection{Design idea}
-
-In a real router, the queues of a link are not independent objects; they are buffers on that link's output port, and their combined behaviour determines how long a packet waits before transmission on that link. The student exploits this by merging each link and its queues into a single \emph{interface} entity before message passing begins. The tripartite path--link--queue graph of the teacher becomes a bipartite path--interface graph (\cref{fig:graphs}). This removes the queue states, the queue GRU, the paths-to-queues stage and the queues-to-links stage.
+The queues of a link are buffers on that link's output port, so the student merges each link and its queues into one \emph{interface} entity before message passing (\cref{fig:graphs}). For link $l$, the queue features are averaged and appended to the link features:
+\begin{equation}
+\mathbf{h}_l^{(0)} = \mathrm{MLP}_I\big(\big[\rho_l,\ \mathrm{onehot}(\pi_l),\ \overline{b_q},\ \overline{\mathrm{onehot}(r_q)},\ \overline{w_q},\ |\mathcal{Q}(l)|/3\big]\big),
+\label{eq:fusion}
+\end{equation}
+where the bars denote means over $\mathcal{Q}(l)$. This removes the queue states, the queue GRU and two of the three stages. The student runs $T=4$ iterations of (1) interfaces to paths, with a path GRU over the interface states along the path, and (2) paths to interfaces, where each interface sums the arriving path states and updates with a GRU. The state size is 16, the path inputs are the same as the teacher's, and the delay is assembled with \cref{eq:readout}. The student has 4,505 parameters and performs $4 \times 2 = 8$ stages. \Cref{fig:student-arch} shows the complete architecture.
 
 \begin{figure}[ht]
 \centering
 \begin{subfigure}[b]{0.48\textwidth}
 \centering
-\begin{tikzpicture}[
-  ent/.style={circle, draw, minimum size=8mm, font=\small, inner sep=0pt},
-  every edge/.style={draw, -{Stealth[length=1.6mm]}, thin}
-]
-\node[ent, fill=orange!20] (p1) at (0,2.2) {$p_1$};
-\node[ent, fill=orange!20] (p2) at (2.4,2.2) {$p_2$};
-\node[ent, fill=green!15] (q1) at (0,0.9) {$q_1$};
-\node[ent, fill=green!15] (q2) at (1.2,0.9) {$q_2$};
-\node[ent, fill=green!15] (q3) at (2.4,0.9) {$q_3$};
-\node[ent, fill=blue!12] (l1) at (0.6,-0.4) {$l_1$};
-\node[ent, fill=blue!12] (l2) at (2.4,-0.4) {$l_2$};
-\draw[-{Stealth[length=1.6mm]}] (q1) -- (p1);
-\draw[-{Stealth[length=1.6mm]}] (q2) -- (p2);
-\draw[-{Stealth[length=1.6mm]}] (q3) -- (p2);
-\draw[-{Stealth[length=1.6mm]}] (q1) -- (l1);
-\draw[-{Stealth[length=1.6mm]}] (q2) -- (l1);
-\draw[-{Stealth[length=1.6mm]}] (q3) -- (l2);
-\draw[-{Stealth[length=1.6mm]}, bend right=40] (l1) to (p1);
-\draw[-{Stealth[length=1.6mm]}, bend left=10] (l1) to (p2);
-\draw[-{Stealth[length=1.6mm]}, bend right=40] (l2) to (p2);
+\begin{tikzpicture}[ent/.style={circle, draw, minimum size=7mm, font=\small, inner sep=0pt}, a/.style={-{Stealth[length=1.5mm]}}]
+\node[ent, fill=orange!20] (p1) at (0,2) {$p_1$};
+\node[ent, fill=orange!20] (p2) at (2.4,2) {$p_2$};
+\node[ent, fill=green!15] (q1) at (0,0.85) {$q_1$};
+\node[ent, fill=green!15] (q2) at (0.95,0.85) {$q_2$};
+\node[ent, fill=green!15] (q3) at (2.4,0.85) {$q_3$};
+\node[ent, fill=blue!12] (l1) at (0.6,-0.35) {$l_1$};
+\node[ent, fill=blue!12] (l2) at (2.4,-0.35) {$l_2$};
+\draw[a] (q1) -- (p1); \draw[a] (q2) -- (p2); \draw[a] (q3) -- (p2);
+\draw[a] (q1) -- (l1); \draw[a] (q2) -- (l1); \draw[a] (q3) -- (l2);
+\draw[a, bend right=40] (l1) to (p1); \draw[a, bend right=12] (l1) to (p2); \draw[a, bend right=40] (l2) to (p2);
 \end{tikzpicture}
-\caption{Teacher: paths, links and queues (3 stages per iteration).}
+\caption{Teacher: paths, links and queues.}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.48\textwidth}
 \centering
-\begin{tikzpicture}[
-  ent/.style={circle, draw, minimum size=8mm, font=\small, inner sep=0pt}
-]
-\node[ent, fill=orange!20] (p1) at (0,2.2) {$p_1$};
-\node[ent, fill=orange!20] (p2) at (2.4,2.2) {$p_2$};
-\node[ent, fill=blue!12, minimum size=11mm] (i1) at (0.6,0.0) {$i_1$};
-\node[ent, fill=blue!12, minimum size=11mm] (i2) at (2.4,0.0) {$i_2$};
-\node[font=\scriptsize, align=center] at (0.6,-1.0) {$l_1 + \{q_1,q_2\}$};
-\node[font=\scriptsize, align=center] at (2.4,-1.0) {$l_2 + \{q_3\}$};
-\draw[{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}] (i1) -- (p1);
-\draw[{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}] (i1) -- (p2);
-\draw[{Stealth[length=1.6mm]}-{Stealth[length=1.6mm]}] (i2) -- (p2);
+\begin{tikzpicture}[ent/.style={circle, draw, minimum size=7mm, font=\small, inner sep=0pt}, a/.style={{Stealth[length=1.5mm]}-{Stealth[length=1.5mm]}}]
+\node[ent, fill=orange!20] (p1) at (0,2) {$p_1$};
+\node[ent, fill=orange!20] (p2) at (2.4,2) {$p_2$};
+\node[ent, fill=blue!12, minimum size=10mm] (i1) at (0.6,0.1) {$i_1$};
+\node[ent, fill=blue!12, minimum size=10mm] (i2) at (2.4,0.1) {$i_2$};
+\node[font=\scriptsize] at (0.6,-0.8) {$l_1 + \{q_1,q_2\}$};
+\node[font=\scriptsize] at (2.4,-0.8) {$l_2 + \{q_3\}$};
+\draw[a] (i1) -- (p1); \draw[a] (i1) -- (p2); \draw[a] (i2) -- (p2);
 \end{tikzpicture}
-\caption{Student: paths and fused interfaces (2 stages per iteration).}
+\caption{Student: paths and fused interfaces.}
 \end{subfigure}
-\caption{Graph structures used by the teacher and the student, illustrated for two flows crossing two links. In the student, each interface $i$ represents a link together with all of its queues.}
+\caption{Graph structures of the teacher and the student for two flows crossing two links.}
 \label{fig:graphs}
 \end{figure}
 
-\subsection{Fusing queues into links}
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  font=\footnotesize,
+  every node/.append style={execute at begin node=\setstretch{1}},
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=4pt},
+  inp/.style={box, rounded corners=0pt, fill=blue!6},
+  lrn/.style={box, fill=gray!15},
+  fix/.style={box, fill=white},
+  arr/.style={-{Stealth[length=1.8mm]}, thick},
+  lab/.style={font=\scriptsize, align=center, inner sep=1pt}
+]
+\coordinate (Lx) at (-3.2,0);
+\coordinate (Rx) at (3.2,0);
+\coordinate (Ox) at (0,0);
+% ---- Inputs
+\node[inp] (pf) at (Lx) {\textbf{Path features (17)}\\rate, packet rate, traffic model,\\distribution parameters};
+\node[inp] (lf) at (1.6,0) {\textbf{Link features (5)}\\load $\rho_l$, policy};
+\node[inp] (qf) at (5.0,0) {\textbf{Queue features}\\buffer, priority, weight};
+% ---- Embeddings and fusion (placed relative to the boxes above)
+\node[lrn, anchor=north] (pm) at ($(pf.south)+(0,-7mm)$) {\textbf{Path MLP} 17$\to$16$\to$16\\560 parameters};
+\node[fix, anchor=north] (fu) at ($(qf.south -| Rx)+(0,-7mm)$) {\textbf{Queue-link fusion}\\mean of queue features per link\\+ queue count (11 values)};
+\node[lrn, anchor=north] (im) at ($(fu.south)+(0,-6mm)$) {\textbf{Interface MLP} 11$\to$16$\to$16\\464 parameters};
+% ---- Message passing (stages placed below the lowest box above)
+\node[lrn, anchor=north] (s1) at ($(im.south -| Lx)+(0,-11mm)$) {\textbf{Stage 1: interfaces $\to$ path}\\GRU$_p$ reads interface states\\hop by hop\\1,632 parameters};
+\node[lrn, anchor=north] (s2) at ($(im.south)+(0,-11mm)$) {\textbf{Stage 2: paths $\to$ interface}\\sum of arriving path states,\\then GRU$_I$\\1,632 parameters};
+\node[draw, dashed, rounded corners=3pt, inner sep=3mm, fit=(s1)(s2)] (mp) {};
+\node[lab, anchor=north] (mpt) at (mp.south -| Ox) {\textbf{Message passing, repeated $T=4$ times}};
+% ---- Readout and delay
+\node[lrn, anchor=north] (ro) at ($(mp.south -| Lx)+(0,-10mm)$) {\textbf{Readout MLP} 16$\to$8$\to$8$\to$1\\occupancy $o_{p,k}$ per hop\\217 parameters};
+\node[fix, anchor=north] (dl) at ($(mp.south -| Rx)+(0,-10mm)$) {\textbf{Delay assembly} (no parameters)\\[2pt]$\hat{y}_p=\sum_k \dfrac{o_{p,k}}{c_{l_{p,k}}} + s_p \sum_k \dfrac{1}{c_{l_{p,k}}}$};
+\node[lab, anchor=west] (side) at ($(dl.east)+(5mm,0)$) {link capacities $c_l$,\\packet size $s_p$};
+\node[lab, anchor=north] (out) at ($(dl.south)+(0,-6mm)$) {$\hat{y}_p$: predicted delay of every flow};
+% ---- Arrows
+\draw[arr] (pf) -- (pm);
+\draw[arr] (lf.south) -- (lf.south |- fu.north);
+\draw[arr] (qf.south) -- (qf.south |- fu.north);
+\draw[arr] (fu) -- (im);
+\draw[arr] (pm.south) -- node[lab, right] {$\mathbf{h}_p^{(0)}$} (s1.north);
+\draw[arr] (im.south) -- node[lab, right] {$\mathbf{h}_l^{(0)}$} (s2.north);
+\draw[arr] ([yshift=3mm]s1.east) -- node[lab, above] {path\\states} ([yshift=3mm]s2.west);
+\draw[arr] ([yshift=-3mm]s2.west) -- node[lab, below] {interface\\states} ([yshift=-3mm]s1.east);
+\draw[arr] (s1.south) -- node[lab, left, xshift=-1mm] {per-hop path states\\(last iteration)} (ro.north);
+\draw[arr] (ro) -- (dl);
+\draw[arr] (side) -- (dl);
+\draw[arr] (dl) -- (out);
+\end{tikzpicture}
+\caption{Architecture of the Queue-Link Fusion student (4,505 trainable parameters). Grey boxes contain trainable parameters; white boxes are fixed computations. The teacher instead keeps separate queue states with their own MLP and GRU, has a third stage (queues to links), uses 32-dimensional states, and runs eight iterations.}
+\label{fig:student-arch}
+\end{figure}
 
-For each link $l$, the features of its queues are averaged and appended to the link's own features. Writing $\overline{(\cdot)}_l$ for the mean over $q \in \mathcal{Q}(l)$, the initial interface state is
-\begin{equation}
-\mathbf{h}_l^{(0)} = \mathrm{MLP}_I\Big(\big[\,\rho_l,\ \mathrm{onehot}(\pi_l),\ \overline{z(b_q)}_l,\ \overline{\mathrm{onehot}(r_q)}_l,\ \overline{w_q}_l,\ |\mathcal{Q}(l)|/3\,\big]\Big),
-\label{eq:fusion}
-\end{equation}
-an 11-dimensional input. The averaged one-hot priority vector records which priority levels exist on the link, and the last term records how many queues it has. The fusion is computed once per forward pass with segment-mean operations and adds no trainable parameters.
-
-\subsection{Message passing and readout}
-
-The student uses $T = 4$ iterations of two stages and a state dimension of 16:
-\begin{enumerate}
-  \item \emph{Interfaces to paths:} $\mathbf{s}_p^{(k)} = \mathrm{GRU}_p\big(\mathbf{h}_{l_{p,k}},\ \mathbf{s}_p^{(k-1)}\big)$ with $\mathbf{s}_p^{(0)} = \mathbf{h}_p$, and $\mathbf{h}_p \leftarrow \mathbf{s}_p^{(|p|)}$.
-  \item \emph{Paths to interfaces:} $\mathbf{h}_l \leftarrow \mathrm{GRU}_I\big(\sum_{(p,k)\,:\,l_{p,k}=l} \mathbf{s}_p^{(k-1)},\ \mathbf{h}_l\big)$.
-\end{enumerate}
-The path embedding uses the same 17 inputs as the teacher. The readout MLP is reduced to 16--8--8--1, and the delay is assembled exactly as in \cref{eq:readout}. The student therefore performs $4 \times 2 = 8$ message-passing stages per forward pass, one third of the teacher's 24, and has 4,505 trainable parameters (\cref{tab:params}).
-
-\subsection{What the fusion gives up}
-\label{sec:fusion-cost}
-
-The fusion is not free of information loss, and this should be stated explicitly. In the teacher, the path GRU receives the state of the specific queue that the flow's ToS class maps to at each hop, so two flows crossing the same link in different priority classes see different queue states. In the student, every flow crossing a link sees the same interface state, and the path features (\cref{sec:teacher}) do not include the ToS class. The student therefore has no direct way to tell a high-priority flow from a low-priority flow on the same link if their traffic features are similar. Under strict-priority or weighted scheduling these flows can experience very different delays. This limitation is a deliberate trade for speed, and its likely effect on accuracy is discussed with the results in \cref{sec:discussion}.
+\paragraph{What the fusion gives up.} In the teacher, a flow's path update receives the state of the specific queue that its ToS class uses. In the student, every flow crossing a link sees the same interface state, and the path features do not include the ToS class. The student therefore cannot directly separate high- and low-priority flows on the same link, which can have very different delays under priority or weighted scheduling. The averaged queue features also carry less information than \cref{eq:fusion} suggests. In the data pipeline, a queue's priority is simply its index on the link, and the scheduling weights of a node are normalised to sum to one. Queues that no flow uses are removed after the weights are normalised, so for a weighted policy the mean weight over a link's remaining queues is close to $1/|\mathcal{Q}(l)|$ (exactly that when every queue is used), and the mean priority vector only records which queue indices are in use. The student sees how many queues a link has and which scheduling policy it uses, but not the individual weights.
 
 \section{Knowledge Distillation}
 \label{sec:kd}
 
-\subsection{Distillation loss}
-
-The student-KD model is trained with online, response-based distillation \cite{hinton2015distilling,gou2021kdsurvey}. At every training step the frozen teacher is run on the same scenario, and the student's loss combines its error against the simulator ground truth with its disagreement with the teacher:
+The student-KD model is trained with online, response-based distillation. At each step the frozen teacher predicts delays for the same scenario, and the student minimises
 \begin{equation}
-\mathcal{L}_{\mathrm{KD}} = \alpha \cdot \underbrace{\mathrm{MAPE}\big(\mathbf{y}, \hat{\mathbf{y}}^{S}\big)}_{\text{hard loss}} \;+\; (1-\alpha) \cdot \underbrace{\frac{1}{|\mathcal{P}|}\sum_{p\in\mathcal{P}} \big(\hat{y}^{T}_p - \hat{y}^{S}_p\big)^2}_{\text{soft loss (MSE)}} ,
+\mathcal{L}_{\mathrm{KD}} = \alpha \cdot \mathrm{MAPE}(\mathbf{y}, \hat{\mathbf{y}}^{S}) + (1-\alpha) \cdot \frac{1}{|\mathcal{P}|}\sum_{p} \big(\hat{y}^{T}_p - \hat{y}^{S}_p\big)^2 ,
 \label{eq:kd}
 \end{equation}
-where $\hat{\mathbf{y}}^{T}$ and $\hat{\mathbf{y}}^{S}$ are the teacher's and student's predictions and $\alpha = 0.5$. Only the student's parameters are updated.
+with $\alpha = 0.5$. Because delay is a regression target with no class distribution to soften, the teacher's predictions are used directly as soft targets through a mean squared error (MSE). The teacher is the topology-diverse model rather than the baseline, because its predictions are only useful targets if they extrapolate well to larger networks.
 
-Because delay is a regression target, there is no class distribution to soften with a temperature, as in the original formulation of distillation. The teacher's per-flow predictions are used directly as soft targets. They differ from the ground truth in a structured way, since they reflect what a model of this family can and cannot represent, and the hypothesis being tested is that matching them gives the student a smoother and easier target than the simulator labels alone.
-
-\subsection{Choice of teacher}
-
-The teacher used for distillation is the topology-diverse model (trained on 10- to 170-node topologies), not the baseline. The reason is that the student is evaluated on larger topologies than either model saw in training, and the teacher's predictions are only a useful target if they themselves extrapolate well. The results in \cref{sec:overall} confirm that the topology-diverse teacher is the more accurate of the two on the held-out set.
-
-\section{Topology-Diverse Training Data}
+\section{Topology-Diverse Re-Split}
 \label{sec:diverse}
 
-The dataset's original training split contains only 10-node topologies, while its original test split spans 50 to 300 nodes. To give the teacher wider coverage while still keeping a genuinely unseen test range, the data were re-split by topology size: topologies of 50 to 170 nodes were moved from the original test split into the training and validation splits, and only topologies of 200 to 300 nodes were kept for testing. Splitting by whole topology, rather than by individual scenario, ensures that no test topology was seen during training or model selection. The exact procedure and the resulting splits are given in \cref{sec:datasets}.
+The dataset's original training split has only 10-node topologies. To give the teacher wider coverage while keeping an unseen test range, topologies of 50 to 170 nodes were moved from the original test split into new training and validation splits, and only 200- to 300-node topologies were kept for testing. Splitting by whole topology ensures that no test topology is seen during training or model selection (details in \cref{sec:datasets}).
 
-\section{Summary of Design Choices}
+\section{SDN Emulation}
+\label{sec:emulation-method}
 
-\Cref{tab:design} summarises the main design decisions and the reason for each.
+To test the models as route scorers inside a controller, an emulation was built from three separate processes on one machine:
+\begin{itemize}
+  \item a \textbf{runner} that creates the network in Mininet \cite{lantz2010mininet} with Open vSwitch switches, shapes the links, sends traffic and records per-packet timestamps and switch counters;
+  \item a \textbf{Ryu controller} \cite{ryu} (OpenFlow 1.3) that installs explicit per-flow UDP forwarding rules, with no learning or flooding, and confirms installation with barrier messages;
+  \item a \textbf{model worker} that loads one frozen checkpoint, converts the emulated scenario into the model's input tensors, and returns a predicted delay for the foreground flow on each candidate path.
+\end{itemize}
+\looseness=-1 % layout only: set this paragraph one line shorter if possible
+\Cref{fig:emu-arch} shows how the processes interact in one model-driven decision. The runner sends the scenario and the forwarding rules of each candidate to the controller's REST interface. The controller asks the model worker to score the candidates, installs the rules of the selected path on the switches, and waits for barrier replies to confirm installation. It then returns the timings to the runner, which starts the traffic. The controller selects the candidate with the lowest predicted delay.
 
-\begin{table}[ht]
+\begin{figure}[ht]
 \centering
-\small
-\caption{Main design choices and their rationale.}
-\label{tab:design}
-\begin{tabularx}{\textwidth}{@{}p{42mm} Y@{}}
-\toprule
-\textbf{Choice} & \textbf{Rationale} \\
-\midrule
-RouteNet-Fermi as teacher & Published state-of-the-art GNN for per-flow delay with queue and scheduling support; open reference implementation and dataset. \\
-Re-split by topology size & Gives the teacher wider coverage while keeping test topologies (200--300 nodes) fully unseen. \\
-Merge queues into links & Removes one entity type, one GRU and two of three message-passing stages; queues are physically part of a link. \\
-State dimension 16, 4 iterations & Further reduces parameters and computation; chosen as half of the teacher's settings. \\
-Keep capacity-based readout & Preserves the physical structure of delay (\cref{eq:readout}), which supports extrapolation to unseen link speeds. \\
-MAPE as hard loss & Relative error suits targets spanning orders of magnitude; same loss as the baseline and teacher. \\
-MSE on teacher predictions & Regression target with no class distribution to soften; direct matching of predictions is the simplest response-based option. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\begin{tikzpicture}[
+  proc/.style={draw, rounded corners=2pt, align=center, font=\small, minimum height=11mm, text width=40mm, fill=gray!8},
+  lab/.style={font=\scriptsize, align=center},
+  arr/.style={-{Stealth[length=2mm]}, thick}
+]
+\node[proc, text width=48mm] (run) at (0,2.3) {\textbf{Runner}\\Mininet network, traffic,\\measurements};
+\node[proc, fill=blue!6] (ctl) at (0,0) {\textbf{Ryu controller}\\OpenFlow 1.3 + REST API};
+\node[proc, fill=green!8] (wrk) at (6.3,0) {\textbf{Model worker}\\frozen checkpoint,\\physical checks};
+\node[proc, fill=orange!10, text width=52mm] (net) at (0,-2.3) {\textbf{Emulated network}\\6 Open vSwitch switches, 6 hosts};
+\draw[arr] ([xshift=-6mm]run.south) -- node[lab, left] {(1) POST /decision\\scenario, rules} ([xshift=-6mm]ctl.north);
+\draw[arr] ([xshift=6mm]ctl.north) -- node[lab, right] {(5) selected path,\\timings} ([xshift=6mm]run.south);
+\draw[arr] ([yshift=2mm]ctl.east) -- node[lab, above] {(2) score\\candidates} ([yshift=2mm]wrk.west);
+\draw[arr] ([yshift=-2mm]wrk.west) -- node[lab, below] {(3) delays,\\choice} ([yshift=-2mm]ctl.east);
+\draw[arr] (ctl.south) -- node[lab, right] {(4) flow rules + barriers} (net.north);
+\draw[arr] (run.west) -- ++(-1.4,0) |- node[lab, pos=0.25, left] {(6) UDP traffic,\\timestamps,\\counters} (net.west);
+\end{tikzpicture}
+\caption{Processes of the SDN emulation and the order of messages in one model-driven decision.}
+\label{fig:emu-arch}
+\end{figure}
+
+The emulation's input converter differs from the reference converter in one respect. The reference converter, which was used for all training and offline evaluation, builds each path's list of links and queues from the incoming edges of the path node, and the graph relabelling step can change their order. During training, the path GRU therefore did not always receive a flow's hops in path order. The emulation's converter puts them in true hop order. The delay sums in \cref{eq:readout} do not depend on the order, but two other parts of the model do. The GRU reads the hops in the order it is given. In addition, when links and queues collect path states, they look them up by each hop's true position along the path; in the reference pipeline those positions index into a sequence that the GRU built in a different order, so a link or queue can receive the path state from the wrong hop. The models are therefore used in the emulation with a different input convention from the one they were trained on. On one validation sample, the teacher's MAPE was 4.14\% with the reference order and 4.04\% with hop order. The effect on the full test set and on the emulation's predictions was not measured.
+
+\looseness=-1 % layout only: set this paragraph one line shorter if possible
+Before any traffic is sent, the worker checks that every prediction is physically possible for this single-FIFO network: values must be finite, predicted queued bits must be non-negative and must not exceed the queue size, and each delay must lie between the pure serialisation delay and the serialisation delay plus a full queue's waiting time. Runs that fail stop before Mininet starts. Predictions are never clipped or repaired.

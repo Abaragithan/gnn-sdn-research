@@ -1,7 +1,8 @@
 % =====================================================================
 %  Final-Year Research Project Report
 %  Department of Computer Science, University of Jaffna
-%  Compile with pdfLaTeX + BibTeX (Overleaf default settings work).
+%  Compile with pdfLaTeX + BibTeX (Overleaf default settings).
+%  Figures are plain TikZ (no pgfplots) to keep compile time low.
 % =====================================================================
 \documentclass[12pt,a4paper,oneside]{report}
 
@@ -9,13 +10,11 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{microtype}
 
 % ---------- Page layout ----------
 \usepackage[a4paper,left=30mm,right=25mm,top=25mm,bottom=25mm]{geometry}
 \usepackage{setspace}
 \onehalfspacing
-\setlength{\parskip}{4pt}
 
 % ---------- Mathematics ----------
 \usepackage{amsmath,amssymb}
@@ -24,38 +23,75 @@
 % ---------- Tables ----------
 \usepackage{booktabs}
 \usepackage{tabularx}
-\usepackage{multirow}
 \usepackage{array}
-\usepackage{longtable}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
 
 % ---------- Figures ----------
-\usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
 \captionsetup{font=small,labelfont=bf}
 \usepackage{subcaption}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.17}
+\usetikzlibrary{arrows.meta,positioning,calc,fit}
+% single line spacing inside diagram boxes (the body text uses 1.5 spacing)
+\tikzset{every node/.append style={execute at begin node=\setstretch{1}}}
 
-% ---------- Lists, colour, misc ----------
+% ---------- Lists and headings ----------
 \usepackage{enumitem}
-\setlist{itemsep=2pt,topsep=4pt}
-\usepackage{xcolor}
-\usepackage[nottoc]{tocbibind}
-\usepackage{titlesec}
-\titleformat{\chapter}[display]{\normalfont\Large\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\LARGE}
-\titlespacing*{\chapter}{0pt}{-10pt}{20pt}
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage[raggedright]{titlesec}  % no hyphenation in headings
+\titleformat{\chapter}[display]{\normalfont\Large\bfseries\raggedright}{\chaptertitlename\ \thechapter}{8pt}{\LARGE}
+\titlespacing*{\chapter}{0pt}{-20pt}{24pt}
+% more space around section headings
+\titlespacing*{\section}{0pt}{5ex plus 1ex minus .2ex}{2.5ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{4ex plus 1ex minus .2ex}{1.8ex plus .2ex}
+\titlespacing*{\paragraph}{0pt}{2.5ex plus .5ex minus .2ex}{1em}
+
+% ---------- Breathing room ----------
+\setlength{\parskip}{6pt plus 1pt}                  % space between paragraphs
+\renewcommand{\arraystretch}{1.25}                   % taller table rows
+\setlength{\textfloatsep}{20pt plus 4pt minus 2pt}   % space between text and top/bottom floats
+\setlength{\intextsep}{18pt plus 4pt minus 2pt}      % space around floats placed in the text
+\setlength{\abovecaptionskip}{8pt}
+\setlist{itemsep=3pt,topsep=5pt}
+
+% ---------- Keep headings with their content ----------
+% If less than this much space is left on the page, the heading moves to the
+% next page instead of starting near the bottom with its content overleaf.
+\usepackage{needspace}
+\usepackage{etoolbox}
+\pretocmd{\section}{\needspace{12\baselineskip}}{}{}
+\pretocmd{\subsection}{\needspace{8\baselineskip}}{}{}
+\pretocmd{\paragraph}{\needspace{5\baselineskip}}{}{}
+
+% ---------- Page breaking and float placement ----------
+% Let pages end at slightly different heights. With 1.5 spacing a page has
+% almost no vertical stretch, so without this TeX may push a whole section to
+% the next page and leave a large gap (e.g. a chapter heading alone on a page).
+\raggedbottom
+\addtolength{\topskip}{0pt plus 30pt}
+% allow a little extra inter-word space instead of lines running into the margin
+\setlength{\emergencystretch}{2em}
+% avoid single lines stranded at the top or bottom of a page
+\widowpenalty=10000
+\clubpenalty=10000
+% let figures and tables share pages with text instead of floating far away
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.7}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
 
 % ---------- Citations and links ----------
 \usepackage{cite}
+\usepackage{xurl}  % lets long paths and URLs break at any character
 \usepackage[hidelinks]{hyperref}
 \usepackage[nameinlink,capitalise]{cleveref}
 
-% ---------- Project-wide macros (edit here if details change) ----------
+% ---------- Project details (edit here) ----------
 \newcommand{\reporttitle}{Lightweight Graph Neural Networks for QoS-Aware Delay Prediction in Software-Defined Networks}
 \newcommand{\studentname}{K. Abaragithan}
 \newcommand{\regno}{2021/SP/061}
@@ -64,25 +100,16 @@
 \newcommand{\university}{University of Jaffna}
 \newcommand{\submissiondate}{December 2026}
 
-% Short names used throughout the text
-\newcommand{\rnf}{RouteNet-Fermi}
-\newcommand{\qlf}{Queue-Link Fusion}
-
 \begin{document}
 
-% ---------------------------------------------------------------------
 \pagenumbering{roman}
 \input{frontmatter/titlepage}
 \input{frontmatter/declaration}
 \input{frontmatter/acknowledgements}
 \input{frontmatter/abstract}
-
 \tableofcontents
-\listoffigures
-\listoftables
 \input{frontmatter/abbreviations}
 
-% ---------------------------------------------------------------------
 \clearpage
 \pagenumbering{arabic}
 \input{chapters/ch1_introduction}
@@ -92,11 +119,11 @@
 \input{chapters/ch5_results}
 \input{chapters/ch6_conclusion}
 
-% ---------------------------------------------------------------------
 \bibliographystyle{IEEEtran}
+% references are set with tighter line spacing than the body text
+\AtBeginEnvironment{thebibliography}{\setstretch{1.1}}
 \bibliography{references}
 
-% ---------------------------------------------------------------------
 \appendix
 \input{chapters/appendices}
 
