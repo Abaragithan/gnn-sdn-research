@@ -1,0 +1,79 @@
+{
+  "status": "all_smoke_gates_passed",
+  "review_status": "pending_R4",
+  "seed": 99,
+  "identical_init_hashes": true,
+  "init_sha256": {
+    "student_init_s99.data-00000-of-00001": "c80dd9e7a565c687e80b43b1caa10695568523ed6f2bd04f0cf88841c4d6a887",
+    "student_init_s99.index": "1ec120a670c12d749b0ddf33b2ed8fc5166196102df7d2ae2d56d0f957937ec1"
+  },
+  "init_status": {
+    "smoke_scratch": "created",
+    "smoke_kdrel": "loaded",
+    "smoke_kdmse": "loaded"
+  },
+  "first_step_hard_loss": {
+    "smoke_scratch": 31.252909,
+    "smoke_kdrel": 31.252909,
+    "smoke_kdmse": 31.252909
+  },
+  "validation": {
+    "n_scenarios": 5,
+    "history_mape_flow": 18.998365520112273,
+    "evaluator_pooled_mape": 18.998365520112273,
+    "absolute_difference": 0.0,
+    "tolerance": 0.01,
+    "passed": true
+  },
+  "epoch_metrics": {
+    "smoke_scratch": {
+      "epoch": 1,
+      "time_unix": 1795394816.2301555,
+      "loss": 23.478565216064453,
+      "hard": 23.478565216064453,
+      "soft": 0.0,
+      "val_mape_flow": 18.998365520112273,
+      "val_mape_unweighted": 18.99836540222168
+    },
+    "smoke_kdrel": {
+      "epoch": 1,
+      "time_unix": 1795394876.954498,
+      "loss": 23.496267318725586,
+      "hard": 23.478540420532227,
+      "soft": 23.514001846313477,
+      "val_mape_flow": 18.998277313383735,
+      "val_mape_unweighted": 18.99827766418457
+    },
+    "smoke_kdmse": {
+      "epoch": 1,
+      "time_unix": 1795395148.0588334,
+      "loss": 11.897557258605957,
+      "hard": 23.47863006591797,
+      "soft": 0.31648021936416626,
+      "val_mape_flow": 18.998422465229183,
+      "val_mape_unweighted": 18.998422622680664
+    }
+  },
+  "source_file": "all_mixed/student/train_student_v2.py",
+  "source_sha256": "33736e9bf865a45a698fd4482acf809553759d6ad799270b86f9a14253e1358b",
+  "preserved_file_sha256": {
+    "smoke_scratch/config.json": "7817ecd29d0bde90efabbe14cb8f6b1a068da30c7579d1b9c510c9f8171aa761",
+    "smoke_scratch/history.json": "177cfd401db03adc4495ea3669b609e929cc2732897c16b0fc462232d3d2a49a",
+    "smoke_scratch/best.json": "9356b3ac6851fb095fbc81d26b83e69e68a798c5987f23d46db0d904d44374f6",
+    "smoke_scratch/train.log": "ebe6aef15f197f6075fb457be1a3bd10f9986f077acd546a1f9d9024711f1fab",
+    "smoke_kdrel/config.json": "05a7588b427d58c8474e011aad83d9bd335e5d4eb08eaa83be8fda85f4ea8dec",
+    "smoke_kdrel/history.json": "eb813ee108bf7d89e00c67261a029e79ffc2d37551d80e7c148a8cda687f4402",
+    "smoke_kdrel/best.json": "8fb540cd6e1f29e0766638ad5af068d668a803d8341df8338d7a1c75ab8778f7",
+    "smoke_kdrel/train.log": "121eb5bc40cc8f5c46544f11295685f3095868353009c5ee850d3d9b1262e567",
+    "smoke_kdmse/config.json": "fea7edb525d3659c5e716531b493f55186d0fd4130e6a0e26e4403e9b171afad",
+    "smoke_kdmse/history.json": "e3095a19f253505f09f2387d1f4acc31e6c4b0155ef79c25320bccd41d7c4d24",
+    "smoke_kdmse/best.json": "57de145cf1fc6f2aedca613ec6703db124c2554282121907443cb7d5b13b1f2d",
+    "smoke_kdmse/train.log": "181da8436db22ed9b5d93cebd0f5268eceb31bad0eb42e553d4cac03efbb277f",
+    "validation/smoke_t5_val.jsonl": "dcc50190be75008b1205cee2c9f3d3d879ebf3e4b28092404bb662e3917ef51f",
+    "validation/smoke_t5_val.log": "ff1b3acdc53e7892f5e333dd6b1f7c169717d1bafed1d5742c7cac3546a8872b",
+    "validation/smoke_t5_val.meta.json": "f6b910c8d8948a1f3eca6404b6dcb101376df0486d50a37700c2aa351cd27b9f",
+    "validation/smoke_t5_val_summary.json": "82ae3e8c9a8fad16d995c66fc1f2c1daa702ff38a0db4e9d0c809635f9b4fa69"
+  },
+  "checkpoints_preserved": false,
+  "note": "Seed-99 smoke only; full training not started. Raw validation output and review evidence preserved here before cleanup."
+}

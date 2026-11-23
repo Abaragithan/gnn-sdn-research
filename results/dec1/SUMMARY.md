@@ -12,3 +12,33 @@ T3 historical-timing deviation (22 Nov 2026): teacher/default/validation measure
 T4 preflight stopped: ValueError: Current and frozen scenarios differ. The failed output and log are preserved as `emulation_hop_order_preflight_failed.json` and `emulation_hop_order_preflight_failed.log` in this folder.
 
 Preflight resolution (22 Nov 2026): the only scenario difference was the frozen validation metadata `measurement_s: 60.0`, which is not read by the model input adapter. The diagnostic now verifies equality of every other scenario field, then uses the exact frozen configuration and hash. Checkpoint hashes and measurement-source provenance are also checked. The diagnostic was rerun; its outputs are ready for R3 review in `emulation_hop_order.json` and `.log`. T4 ranking/choice conclusions have not been added here pending R3.
+
+## Emulation under the training hop order — R3 approved, 23 Nov 2026
+
+With the training-time (reference) hop order, all three models still rank the candidates **1, 0, 2**, still select **candidate 1**, and pass all physical checks. Foreground predictions change by at most **0.21 ms** between orders. True-hop-order predictions reproduce the frozen predictions exactly (maximum difference **0.0 ms**). The emulation's ranking and selected candidate therefore survive the change in input-order convention for this fixed six-switch scenario.
+
+| Model | Mean foreground trial APE, true hop order (%) | Mean foreground trial APE, training/ref order (%) |
+|---|---:|---:|
+| teacher | 7.198059 | 7.246069 |
+| scratch | 5.280694 | 5.283797 |
+| kd | 6.770033 | 6.739159 |
+
+APEs use the 15 measured foreground trial means (five per candidate), not fallback values, training seeds or all background flows. Results and source/checkpoint hashes: `results/dec1/emulation_hop_order.json`; log: `results/dec1/emulation_hop_order.log`. The JSON's `review_status: pending_R3` records its generation-time status; approval is documented in the execution plan's R3 review result dated 23 Nov.
+
+Report impact: the statement in §3.7 that the effect on the emulation's predictions was not measured, and the matching threat/future-work items, are resolved. Together with T2, the effect was measured and small offline and in this emulation; this does not establish general routing-decision accuracy.
+
+## T5 student-training smoke checks — passed, R4 pending (23 Nov 2026)
+
+The reviewer-provided `all_mixed/student/train_student_v2.py` ran unchanged. Three seed-99 runs each completed 50 training steps, one epoch and five validation scenarios. Scratch created the shared init; both KD runs loaded it. All initial-file SHA-256 hashes matched and every first-step hard loss was **31.252909**. Seeds 1 and 2 were not used.
+
+| Run | Hard loss | Soft loss | Validation MAPE (%) |
+|---|---:|---:|---:|
+| smoke_scratch | 23.478565216 | 0.000000000 | 18.998365520 |
+| smoke_kdrel | 23.478540421 | 23.514001846 | 18.998277313 |
+| smoke_kdmse | 23.478630066 | 0.316480219 | 18.998422465 |
+
+Independent T2 evaluator on scratch `ckpt-01` and the same five validation scenarios: **18.998365520112%**, matching training validation MAPE **18.998365520112%** exactly (difference **0.0**, tolerance 0.01 points). Relative KD soft loss is on the hard-loss scale; original MSE is much smaller; scratch soft loss is zero. All three T5 smoke gates passed. These short runs are functional checks, not final accuracy evidence.
+
+R4 review evidence is preserved in `results/dec1/t5_smoke/`: all three configs, histories, best records and complete logs; validation JSONL/metadata/log/summary; and `checks.json` with gate numbers and SHA-256 manifest. Per the plan, the original smoke folders, seed-99 init and original validation smoke files are removed after this preservation; checkpoint paths in copied metadata remain historical provenance. Full T6 training has not started. Await R4 review.
+
+Warning/logging note for R4: each smoke run emitted 12 sparse-IndexedSlices-to-dense UserWarnings. All three logs together occupy about 42 KiB; warning text accounts for approximately 23 KiB. The original logs remain unfiltered and their hashes are unchanged. The user requested less repetitive logging. An optional future command prefix, `PYTHONWARNINGS='ignore:Converting sparse IndexedSlices:UserWarning:tensorflow.python.framework.indexed_slices'`, selectively hides this exact warning without training-code edits; a synthetic filter check preserved an unrelated warning. No training run has used this filter. It hides output only and does not reduce dense-gradient memory consumption.

@@ -1,0 +1,10 @@
+{
+  "epoch": 1,
+  "time_unix": 1795395148.0588334,
+  "loss": 11.897557258605957,
+  "hard": 23.47863006591797,
+  "soft": 0.31648021936416626,
+  "val_mape_flow": 18.998422465229183,
+  "val_mape_unweighted": 18.998422622680664,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/smoke_kdmse/ckpt-01"
+}

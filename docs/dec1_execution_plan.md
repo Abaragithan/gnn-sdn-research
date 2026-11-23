@@ -310,7 +310,7 @@ New file: `mininet_experiment/rescore_hop_order.py`. This is a diagnostic, not p
 
 **Done when:** both orders are scored for all 3 models, and the `True` order matches the frozen predictions.
 
-### T4 diagnostic completed — awaiting R3 review (22 Nov 2026)
+### T4 diagnostic completed (22 Nov); R3 approved (23 Nov 2026)
 
 Added and ran `mininet_experiment/rescore_hop_order.py`, importing the unchanged worker's `scenario`, `build_inputs`, `load_model`, `prediction` and `physical_checks`. No Mininet, sudo, servers, network trials or training were run. All **18 candidate/model/order combinations** were scored (3 candidates × 3 models × 2 orders).
 
@@ -333,7 +333,7 @@ Measured candidate means came from `mininet_experiment/outputs/six_validation_su
 - `results/dec1/emulation_hop_order.log` — successful execution log.
 - `results/dec1/emulation_hop_order_preflight_failed.json` and `.log` — preserved preflight failure.
 
-**Stop at R3:** ready for the other agent's review. Do not put the T4 ranking/choice conclusion into `SUMMARY.md` until that review. No commits or pushes made by the execution agent. T5 has not started.
+**R3 complete:** review approved on 23 Nov (see below), and the approved T4 conclusion and APE table have been added to `results/dec1/SUMMARY.md`. The diagnostic JSON retains its original generation-time `review_status: pending_R3`; this plan records the subsequent approval. No commits or pushes made by the execution agent. The reviewer supplied T5's script; its smoke tests subsequently passed and are awaiting R4 (see T5 hand-off).
 
 ### R3 review result (user/reviewer, 23 Nov): approved; add to `SUMMARY.md` now
 - **Accepted.**
@@ -400,13 +400,31 @@ PY all_mixed/student/train_student_v2.py --mode scratch --seed 99 --max-steps 50
 PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mape --seed 99 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_kdrel 2>&1 | tee runs/smoke_kdrel/train.log
 PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mse --seed 99 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_kdmse 2>&1 | tee runs/smoke_kdmse/train.log
 ```
-1. [ ] **Same starting weights.** The first run says `init_status: created`; the two kd runs say `loaded`. All three `config.json` files have the **same `init_sha256`**, and all three logs print the **same "First-step hard loss"** (same init and same first batch). If the loss differs, stop and report.
-2. [ ] **Validation metric is correct.** For `runs/smoke_scratch`, the `val_mape_flow` in `history.json` must equal the pooled MAPE from T2's evaluator on the same checkpoint, to within 0.01:
+1. [x] **Same starting weights.** The first run says `init_status: created`; the two kd runs say `loaded`. All three `config.json` files have the **same `init_sha256`**, and all three logs print the **same "First-step hard loss"** (same init and same first batch). If the loss differs, stop and report.
+2. [x] **Validation metric is correct.** For `runs/smoke_scratch`, the `val_mape_flow` in `history.json` must equal the pooled MAPE from T2's evaluator on the same checkpoint, to within 0.01:
    `PY all_mixed/evaluation/eval_multi.py --split data/all_mixed_v1/validation --limit 5 --orders ref --models smoke:student:runs/smoke_scratch/ckpt-01 --out results/dec1/smoke_t5_val.jsonl`, then aggregate it with `aggregate_eval.py --input … --out …`.
-3. [ ] **The soft loss is meaningful.** In `runs/smoke_kdrel/history.json`, `soft` is of the same order as `hard` (for example 2–30), while in `runs/smoke_kdmse` it is small (≈ 0.1–2, as in the original). In `runs/smoke_scratch`, `soft` is 0.
-4. [ ] Delete `runs/smoke_*`, `runs/init/student_init_s99*` and `results/dec1/smoke_t5_val*` after recording the results in `SUMMARY.md`.
+3. [x] **The soft loss is meaningful.** In `runs/smoke_kdrel/history.json`, `soft` is of the same order as `hard` (for example 2–30), while in `runs/smoke_kdmse` it is small (≈ 0.1–2, as in the original). In `runs/smoke_scratch`, `soft` is 0.
+4. [x] Delete `runs/smoke_*`, `runs/init/student_init_s99*` and `results/dec1/smoke_t5_val*` after recording the results in `SUMMARY.md`.
 
 **Done when:** checks 1–3 pass. **Then stop at R4:** push the smoke logs, the three `config.json` and `history.json` files (copy them to `results/dec1/t5_smoke/` before deleting), and the check-2 numbers. Wait for review.
+
+### T5 smoke gates passed — awaiting R4 review (23 Nov 2026)
+
+The user ran all three seed-99 smoke jobs (50 steps, one epoch, five validation scenarios) and the independent validation evaluator. **The reviewer-provided training script ran unchanged; no fixes or refactoring were needed.** Scratch created the init, both KD jobs loaded it, every init-file SHA-256 matched, and all first-step hard losses were **31.252909**.
+
+| Run | Epoch hard loss | Epoch soft loss | Validation flow-weighted MAPE (%) |
+|---|---:|---:|---:|
+| scratch | 23.478565216 | 0.000000000 | 18.998365520 |
+| KD relative/MAPE | 23.478540421 | 23.514001846 | 18.998277313 |
+| KD MSE | 23.478630066 | 0.316480219 | 18.998422465 |
+
+**Independent metric check PASS:** scratch `ckpt-01`, first five validation scenarios: training `val_mape_flow` = **18.998365520112273%**; evaluator pooled MAPE = **18.998365520112273%**; difference **0.0 points**, within 0.01. Relative soft loss is on the hard-loss scale, MSE soft loss is much smaller, and scratch soft loss is zero. These functional smoke results are not final accuracy evidence.
+
+**R4 evidence preserved before cleanup:** `results/dec1/t5_smoke/` contains three per-run folders (`smoke_scratch`, `smoke_kdrel`, `smoke_kdmse`), each with `config.json`, `history.json`, `best.json` and `train.log`; `validation/` contains the evaluator JSONL, metadata, log and aggregate summary; `checks.json` records all gate values, init hashes, training-source hash and a SHA-256 manifest of the 16 preserved evidence files. Copies were checksum-verified. Config/best checkpoint paths retain their original run provenance; smoke checkpoint binaries are intentionally not retained.
+
+Results were recorded in `SUMMARY.md`, then only the three temporary smoke folders, seed-99 init files and four original validation smoke files were deleted as specified above. Real seeds 1 and 2 were not used. **Stop at R4: ready for the other agent's review. T6 has not started.** No commits or pushes made by the execution agent.
+
+**Warning/logging note for R4 (user request):** each smoke run emitted 12 `UserWarning: Converting sparse IndexedSlices ... to a dense Tensor of unknown shape` messages. The three complete training logs total only about **42 KiB**, with approximately **23 KiB** of warning text; these warnings were not a disk-space problem and did not prevent the smoke runs from completing. Preserve the unfiltered smoke logs and their manifest. For future runs, this exact Python warning can be suppressed without changing the training script by prefixing its command with `PYTHONWARNINGS='ignore:Converting sparse IndexedSlices:UserWarning:tensorflow.python.framework.indexed_slices'`. A synthetic filter check confirmed that this message is suppressed while a different UserWarning in the same module remains visible. This filter has not been applied to a training run; it does not affect CUDA/C++ logs or reduce memory usage. The warning describes actual dense-gradient conversion, so suppression must not be presented as a memory fix.
 
 ---
 

@@ -1,0 +1,18 @@
+2026-11-23 06:23:28.006908: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-23 06:23:28.006934: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+Resume: 0 completed scenarios
+2026-11-23 06:23:30.360573: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-23 06:23:30.360600: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-23 06:23:30.360613: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-11-23 06:23:30.360874: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Loading smoke /home/abaragithan/gnn-sdn-research/runs/smoke_scratch/ckpt-01
+2026-11-23 06:23:32.312361: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-23 06:23:32.420283: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_271
+Fixed signature matches original: smoke
+Saved scenario 1 ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt::0 nodes= 100
+Saved scenario 2 ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-0.txt::1 nodes= 100
+Saved scenario 3 ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-3.txt::2 nodes= 100
+Saved scenario 4 ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt::3 nodes= 100
+Saved scenario 5 ch22-testing-scheduling-topo-100-20/results_ch22-testing-scheduling_800-4000_0_24.tar.gz::ch22-testing-scheduling-topo-100-20/graphs/graph_topo-100-20-4.txt::4 nodes= 100
+Finished: 5 scenarios in results/dec1/smoke_t5_val.jsonl

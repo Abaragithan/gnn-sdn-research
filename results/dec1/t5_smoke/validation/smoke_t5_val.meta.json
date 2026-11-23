@@ -1,0 +1,20 @@
+{
+  "schema_version": 2,
+  "split": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/validation",
+  "models": {
+    "smoke": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/smoke_scratch/ckpt-01",
+      "sha256": {
+        "ckpt-01.index": "614c0c8cd114e27d26b59899491f2f4c395c4fa28d50c2e66b1ec4efc129de42",
+        "ckpt-01.data-00000-of-00001": "b6fbcfa2106c5cdf7496cca0ffe94cf7e93deaa83b93a79537e6f03846e37ffb"
+      }
+    }
+  },
+  "orders": [
+    "ref"
+  ],
+  "inference": "fixed_signature_python_function_checked_against_original",
+  "ape": "keras_rule_abs_error_over_max_abs_label_1e-7",
+  "timing": "parse=DatanetAPI next(); construct=DiGraph+hypergraph+tensors; warm forward; hop correction separate"
+}

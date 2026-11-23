@@ -1,0 +1,10 @@
+{
+  "epoch": 1,
+  "time_unix": 1795394876.954498,
+  "loss": 23.496267318725586,
+  "hard": 23.478540420532227,
+  "soft": 23.514001846313477,
+  "val_mape_flow": 18.998277313383735,
+  "val_mape_unweighted": 18.99827766418457,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/smoke_kdrel/ckpt-01"
+}
