@@ -426,6 +426,20 @@ Results were recorded in `SUMMARY.md`, then only the three temporary smoke folde
 
 **Warning/logging note for R4 (user request):** each smoke run emitted 12 `UserWarning: Converting sparse IndexedSlices ... to a dense Tensor of unknown shape` messages. The three complete training logs total only about **42 KiB**, with approximately **23 KiB** of warning text; these warnings were not a disk-space problem and did not prevent the smoke runs from completing. Preserve the unfiltered smoke logs and their manifest. For future runs, this exact Python warning can be suppressed without changing the training script by prefixing its command with `PYTHONWARNINGS='ignore:Converting sparse IndexedSlices:UserWarning:tensorflow.python.framework.indexed_slices'`. A synthetic filter check confirmed that this message is suppressed while a different UserWarning in the same module remains visible. This filter has not been applied to a training run; it does not affect CUDA/C++ logs or reduce memory usage. The warning describes actual dense-gradient conversion, so suppression must not be presented as a memory fix.
 
+### R4 review result (user/reviewer, 23 Nov): approved; start T6 now
+- **All three gates pass.**
+  - Identical init hashes; `created` then `loaded` twice; the first-step hard loss is identical (31.252909) in all three runs.
+  - Training `val_mape_flow` equals T2's evaluator exactly (difference 0.0).
+  - Relative soft loss ≈ hard loss (23.51 vs 23.48), MSE soft loss small (0.32), scratch soft = 0.
+  - The script ran unchanged.
+- **Expected, not a bug:** after 50 steps the three runs have almost identical hard loss and validation MAPE. Early in training the student's error (≈ 20–30%) is far larger than the teacher's (≈ 5%), so the teacher's predictions and the true delays pull in almost the same direction; Adam also ignores the overall loss scale. Any KD effect can only appear later, once the student's error approaches the teacher's level. Do not read anything into the smoke-run differences.
+- **Logging-only change after the smoke test (reviewer, 23 Nov):** `train_student_v2.py` now:
+  1. filters exactly the `Converting sparse IndexedSlices` UserWarning inside the script, so no `PYTHONWARNINGS` prefix is needed;
+  2. calls `fit(..., verbose=2)`: one line per epoch instead of a progress bar (the old KD log was 16 MB).
+
+  Nothing else changed: training, loss, validation, initialisation and saving are identical, so **no new smoke test is needed**. `config.json` records the new git commit. Because the source hash differs from the one in `t5_smoke/checks.json`, note this change under "Problems and deviations" in `SUMMARY.md`.
+- **Start T6 now**, in the table's order, from the repo root (commands in T6). After `scratch_s1`'s first epoch, check that `train.log` shows one line per epoch plus the "First-step hard loss" line. When `kdrel_s1` starts, confirm its `init_status` is `loaded`, its `init_sha256` equals `scratch_s1`'s, and its first-step hard loss equals `scratch_s1`'s.
+
 ---
 
 ## T6. Training queue (fixes P1–P3)

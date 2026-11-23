@@ -18,6 +18,7 @@ import random
 import subprocess
 import sys
 import time
+import warnings
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -69,6 +70,8 @@ def main():
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    # Logging only: this harmless gather-gradient warning repeats at every trace.
+    warnings.filterwarnings("ignore", message="Converting sparse IndexedSlices")
     sys.path.insert(0, str(ROOT))
     sys.path.insert(0, str(ROOT / "all_mixed"))
     import numpy as np
@@ -207,8 +210,9 @@ def main():
     trainer.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001))
     early_stop = tf.keras.callbacks.EarlyStopping(monitor="val_mape_flow", mode="min",
                                                   patience=args.patience, verbose=1)
+    # verbose=2: one log line per epoch instead of a progress bar (the old KD log was 16 MB).
     trainer.fit(train, epochs=args.epochs, steps_per_epoch=args.steps_per_epoch,
-                validation_data=val, callbacks=[Record(), early_stop])
+                validation_data=val, callbacks=[Record(), early_stop], verbose=2)
     print("Finished. Best checkpoint:", json.loads((args.out_dir / "best.json").read_text())["checkpoint"])
 
 
