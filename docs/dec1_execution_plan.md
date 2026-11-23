@@ -192,7 +192,7 @@ T2 results reviewed and accepted. These interpretations are fixed; use the same 
 4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
 5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
 
-**T3 benchmark completed; see its completion hand-off below for the scratch historical-timing deviation. T4 diagnostic completed; R3 review is pending (see T4).**
+**T3 benchmark completed and accepted (see "T3 review findings"). T4 diagnostic completed and R3 approved (see "R3 review result"). Next: T5, then stop at R4.**
 
 ---
 
@@ -278,6 +278,15 @@ The scratch upper 20% bound is **41.04 ms**; the measured mean is **41.1798 ms**
 
 Use the merged JSON for all six scenarios' construction medians, mean/SD/median/p95 forward times and raw repeats. Construction plus forward excludes dataset parsing; `selection_and_parse_ms` is separate and includes selection overhead. RSS values are cumulative process peaks including TensorFlow, construction and earlier scenarios, not model-weight size or isolated per-scenario allocations. Carry the scratch deviation and the resolved selector failure into T8's Problems and deviations. T4 subsequently completed its diagnostic; see its R3 hand-off below.
 
+### T3 review findings (user/reviewer, 23 Nov): accepted; copy into `SUMMARY.md` in T8
+- **Accepted.** All 48 combinations are complete. Parameter counts are 27,025 and 4,505. Construction times agree across the four model processes (within ≈ 10%), so the scenario selection is consistent. The selector workaround is justified: `DatanetAPI.set_files_to_process` really does shadow `tuple` with its loop variable, so its type check rejects every entry. The read-only selector check matched T2's first scenario for every size.
+- **Scratch deviation (+20.4% vs the historical 34.2 ms) is accepted as a reported deviation, not a failure.** Use the new values everywhere. The historical 5.2× was a single earlier measurement; this benchmark is the reproducible one.
+- **Forward-pass speed-up, teacher/student, default threads:** **4.4×** on the 100-node validation scenario (181.6 vs 41.2 ms); **5.7–7.9×** on the 200–300-node test scenarios. One thread: 5.6× and 6.4–7.5×. Student-KD is now measured and equals scratch (same architecture; differences ≤ 3%).
+- **End to end (construction + forward):** the student is only **1.08–1.10× faster with default threads** and **1.20–1.28× with one thread**, because construction (1.5–24.7 s, growing with graph size) dominates. Consistent with T2 finding 4.
+- **Memory:** peak process RSS is ≈ 3.1–3.6 GiB with default threads and ≈ 2.3–2.5 GiB with one thread. The student saves only ≈ 0.2–0.4 GiB, because input tensors and the TensorFlow runtime dominate. The 105.6 KB vs 17.6 KB weight size is not the memory that matters. Report RSS as a cumulative process peak.
+- Forward time does not grow strictly with flow count (240 nodes is slower than 260); graph structure such as path lengths also matters. Report per-size values, not a fitted trend.
+- **Report impact:** the abstract, §5.2 and the conclusion must replace "about 5.2 times faster" with the forward-pass range above, and add the end-to-end figure. Table 5.2's "not measured" for student-KD and the "size not recorded" sentence are now resolved (100 nodes, 9,900 flows).
+
 ### Order of work from here
 1. **T3 full queue:** measurements completed; preserve the scratch historical-timing deviation above in the review/report hand-off.
 2. **T4** emulation re-score (minutes, no sudo). It can run right after T3, or meanwhile if it is only scored after T3 finishes. It must not run while T3 is timing.
@@ -326,9 +335,29 @@ Measured candidate means came from `mininet_experiment/outputs/six_validation_su
 
 **Stop at R3:** ready for the other agent's review. Do not put the T4 ranking/choice conclusion into `SUMMARY.md` until that review. No commits or pushes made by the execution agent. T5 has not started.
 
+### R3 review result (user/reviewer, 23 Nov): approved; add to `SUMMARY.md` now
+- **Accepted.**
+  - The preflight fix is justified: `build_inputs` never reads `measurement_s`, and every other field is verified.
+  - True-hop predictions reproduce the frozen predictions exactly (max difference 0.0 ms) for all three models.
+  - Measured means come from the real 15-trial summary (5 per candidate), not the fallback.
+- **Conclusion for `SUMMARY.md`:** with the training-time (reference) hop order, all three models still rank the candidates 1, 0, 2, still select candidate 1, and pass all physical checks. Foreground predictions change by at most 0.21 ms. Mean APE is essentially unchanged: teacher 7.20 → 7.25%, scratch 5.28 → 5.28%, KD 6.77 → 6.74%. The emulation result does not depend on the input-order convention.
+- **Report impact:** §3.7's "The effect … on the emulation's predictions was not measured" and the matching threat and future-work items are resolved. With T2 finding 1, the hop-order issue can be described as measured and negligible offline and in the emulation.
+
+**Next task: T5** (code and smoke tests), then **stop at R4**. This is now the critical path: T6 must start by **23 Nov, evening**.
+
 ---
 
 ## T5. Training script v2 for students (fixes P1, P2)
+
+> **Update 23 Nov: the script has already been written by the reviewer**: `all_mixed/student/train_student_v2.py` (≈ 215 lines). **Do not rewrite or restructure it.** Your task in T5 is only to run the smoke tests below and report the output at R4.
+> - If it fails on this machine, make the **smallest fix** that makes it work, and list every changed line and the reason in `SUMMARY.md` under "Problems and deviations".
+> - No refactoring, no extra features, no style changes.
+> - The specification below is kept for reference. Deviations already in the script, all intended:
+>   - **Soft MAPE uses the Keras rule** (`max(|t|, 1e-7)`): it reuses `MeanAbsolutePercentageError` with the teacher as the target.
+>   - **No `restore_best_weights`:** the best student weights are saved on every improvement and recorded in `best.json`, which is the checkpoint to use.
+>   - **Proof of identical starting weights:** `config.json` records the SHA-256 of the init files, and the log prints the first-step hard loss. A separate `np.allclose` script is not needed.
+>   - **Crash restart:** use `--resume-from <ckpt>` with a **new** `--out-dir`, because the script refuses to reuse a folder that already has a `config.json`.
+>   - `PYTHONHASHSEED` is not set: setting it inside a running process has no effect.
 
 New file: `all_mixed/student/train_student_v2.py`. **Scratch and KD use the same script and the same `train_step`.** Scratch is simply α = 1 with no teacher.
 
@@ -364,28 +393,37 @@ New file: `all_mixed/student/train_student_v2.py`. **Scratch and KD use the same
 - **Each epoch:** append to `<out-dir>/history.json`. At the start, write `<out-dir>/config.json` with all arguments, the git commit hash and the teacher checkpoint path.
 
 ### Smoke test (all must pass before T6)
-1. [ ] `--mode scratch --seed 1 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_scratch`, then the same with `--mode kd --soft-loss mape --out-dir runs/smoke_kd`. Both runs must load the **same** `runs/init/student_init_s1` file. Check with `np.allclose` on every variable of a freshly built student that loads that file, against the first saved weights of each run. Also check that both runs print the same first-step `hard` loss.
-2. [ ] The `val_mape_flow` value after the smoke epoch equals the pooled MAPE from `eval_multi.py --split validation --limit 5` on the same saved checkpoint, to within 0.01.
-3. [ ] In the kd smoke run, `soft` is of the same order as `hard` (for example 2–20, not 0.2).
-4. [ ] Delete `runs/smoke_*` and `runs/init/student_init_s1*` afterwards, so that the real runs create a fresh init. Alternatively keep the init, but then use it for both real s1 runs.
+Run from the repo root (`PY` = the conda Python). Use **seed 99** so that the smoke runs never create the init files of the real seeds 1 and 2:
+```bash
+mkdir -p runs/smoke_scratch runs/smoke_kdrel runs/smoke_kdmse
+PY all_mixed/student/train_student_v2.py --mode scratch --seed 99 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_scratch 2>&1 | tee runs/smoke_scratch/train.log
+PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mape --seed 99 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_kdrel 2>&1 | tee runs/smoke_kdrel/train.log
+PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mse --seed 99 --max-steps 50 --epochs 1 --val-take 5 --out-dir runs/smoke_kdmse 2>&1 | tee runs/smoke_kdmse/train.log
+```
+1. [ ] **Same starting weights.** The first run says `init_status: created`; the two kd runs say `loaded`. All three `config.json` files have the **same `init_sha256`**, and all three logs print the **same "First-step hard loss"** (same init and same first batch). If the loss differs, stop and report.
+2. [ ] **Validation metric is correct.** For `runs/smoke_scratch`, the `val_mape_flow` in `history.json` must equal the pooled MAPE from T2's evaluator on the same checkpoint, to within 0.01:
+   `PY all_mixed/evaluation/eval_multi.py --split data/all_mixed_v1/validation --limit 5 --orders ref --models smoke:student:runs/smoke_scratch/ckpt-01 --out results/dec1/smoke_t5_val.jsonl`, then aggregate it with `aggregate_eval.py --input … --out …`.
+3. [ ] **The soft loss is meaningful.** In `runs/smoke_kdrel/history.json`, `soft` is of the same order as `hard` (for example 2–30), while in `runs/smoke_kdmse` it is small (≈ 0.1–2, as in the original). In `runs/smoke_scratch`, `soft` is 0.
+4. [ ] Delete `runs/smoke_*`, `runs/init/student_init_s99*` and `results/dec1/smoke_t5_val*` after recording the results in `SUMMARY.md`.
 
-**Done when:** checks 1–3 pass.
+**Done when:** checks 1–3 pass. **Then stop at R4:** push the smoke logs, the three `config.json` and `history.json` files (copy them to `results/dec1/t5_smoke/` before deleting), and the check-2 numbers. Wait for review.
 
 ---
 
 ## T6. Training queue (fixes P1–P3)
 
-Run from `all_mixed/student/`, with `nohup PY train_student_v2.py ... 2>&1 | tee ../../runs/<name>/train.log`. Run them in this order, because the most important comparison comes first:
+Run from the **repo root**, one run at a time, for each run: `mkdir -p runs/<name> && nohup PY all_mixed/student/train_student_v2.py <arguments> > runs/<name>/train.log 2>&1 &`. Start the next run when the previous one has finished; a small shell loop over the table is fine. Run them in this order, because the most important comparison comes first:
 
-| # | Name | Command arguments | Est. time |
+| # | Name | Arguments | Est. time |
 |---|---|---|---|
-| 1 | `scratch_s1` | `--mode scratch --seed 1 --out-dir ../../runs/scratch_s1` | ~5.5 h |
-| 2 | `kdrel_s1` | `--mode kd --soft-loss mape --alpha 0.5 --seed 1 --out-dir ../../runs/kdrel_s1` | ~10 h |
-| 3 | `scratch_s2` | `--mode scratch --seed 2 --out-dir ../../runs/scratch_s2` | ~5.5 h |
-| 4 | `kdrel_s2` | `--mode kd --soft-loss mape --alpha 0.5 --seed 2 --out-dir ../../runs/kdrel_s2` | ~10 h |
-| 5 | `kdmse_s1` | `--mode kd --soft-loss mse --alpha 0.5 --seed 1 --out-dir ../../runs/kdmse_s1` | ~10 h |
+| 1 | `scratch_s1` | `--mode scratch --seed 1 --out-dir runs/scratch_s1` | ~5.5 h |
+| 2 | `kdrel_s1` | `--mode kd --soft-loss mape --alpha 0.5 --seed 1 --out-dir runs/kdrel_s1` | ~10 h |
+| 3 | `scratch_s2` | `--mode scratch --seed 2 --out-dir runs/scratch_s2` | ~5.5 h |
+| 4 | `kdrel_s2` | `--mode kd --soft-loss mape --alpha 0.5 --seed 2 --out-dir runs/kdrel_s2` | ~10 h |
+| 5 | `kdmse_s1` | `--mode kd --soft-loss mse --alpha 0.5 --seed 1 --out-dir runs/kdmse_s1` | ~10 h |
 
-- Check each run every morning and evening: is it alive, is `history.json` growing, is the loss finite? If a run crashes, restart it from its latest checkpoint with the same arguments. Note the restart in `SUMMARY.md`, because the restart resets the early-stopping counter.
+- After each run's first epoch, check that its `config.json` `init_sha256` matches its partner's (same seed), and that the "First-step hard loss" in `train.log` is identical within each seed pair.
+- Check each run every morning and evening: is it alive, is `history.json` growing, is the loss finite? If a run crashes, restart it with the same arguments plus `--resume-from <its latest ckpt-XX>` and a **new** `--out-dir` (e.g. `runs/kdrel_s1_resume`). Note the restart in `SUMMARY.md`, because the restart resets the early-stopping counter and the optimizer state.
 - **Do not evaluate on test between runs.** That happens in T8.
 
 **Done when:** runs 1–4 have finished (early stop or 30 epochs), each with `best.json`. Run 5 is next in priority; if it can't finish before the T8 start, stop it and record that.
