@@ -510,6 +510,25 @@ Mean best-validation MAPE across the two seeds: scratch **10.084022289%**, KD **
 
 **Requested review before further work:** assess the mixed validation finding and the value/schedule of the already-planned MSE replication. Do not use the unfavorable seed-2 result to change settings based on test data, discard a run, or skip reporting it. T8 must include both completed pairs, regardless of direction. No `kdmse_s1`, T7 run or T8 evaluation has been launched by the execution agent. The user requested this pause for review; no additional approval gate is being inferred from the original plan. No commits or pushes made by the execution agent.
 
+### Two-pair review result (user/reviewer, 25 Nov): accepted; run seed 3 first, then `kdmse_s1`, chained
+- **Accepted as valid evidence.** Pair checks pass, nothing is excluded, and the protocol stays unchanged (epoch cap, patience, α, seeds). Do not extend or rerun `kdrel_s2`.
+- **Interpretation (fixed wording for `SUMMARY.md`):** KD was better in seed 1 (−0.30 points) and worse in seed 2 (+1.90). The main driver is how noisy validation MAPE is from epoch to epoch. For example, `scratch_s2` jumped 12.58 → 10.15 between epochs 8 and 9, and `kdrel_s2` stopped at epoch 9 after five rising epochs, while scratch survived a three-epoch rise. Under this protocol the paired difference is dominated by training and selection noise, and **no consistent KD benefit is shown**. Report it like that, with no significance claims. Final test numbers come from T8.
+- **Next: a third pair is now the most valuable run**, because the two pairs disagree. Then `kdmse_s1`.
+- **The seed-2 runs had a ≈ 7 h idle gap.** Start the remaining runs **now, as one chained queue**, from the repo root, with nothing else running:
+  ```bash
+  nohup bash -c '
+  set -e
+  PY=/home/abaragithan/miniconda3/envs/routenet-fermi/bin/python
+  run() { name=$1; shift; mkdir -p runs/$name; $PY all_mixed/student/train_student_v2.py "$@" --out-dir runs/$name > runs/$name/train.log 2>&1; }
+  run scratch_s3 --mode scratch --seed 3
+  run kdrel_s3   --mode kd --soft-loss mape --alpha 0.5 --seed 3
+  run kdmse_s1   --mode kd --soft-loss mse  --alpha 0.5 --seed 1
+  ' > runs/t6_queue.log 2>&1 &
+  ```
+  Expected ≈ 8–10 h + 4–12 h + up to 12 h, so roughly 26 Nov morning to evening.
+- **Hard cut-off for T8:** at **27 Nov, 12:00**, stop whatever is still running and start T8 with all finished runs. Record the stopped run under "Problems and deviations". T7 (ablation) is dropped.
+- **T8 must evaluate on test:** all finished new students (`scratch_s1/s2/s3`, `kdrel_s1/s2/s3`, `kdmse_s1` if finished), using each run's `best.json` checkpoint, `--orders ref`, on the test split; then the same on the validation split. Report every run, favourable or not.
+
 ---
 
 ## T7. Optional, only if T6 finishes before ~26 Nov, 12:00
