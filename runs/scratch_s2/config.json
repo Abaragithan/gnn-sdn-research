@@ -1,0 +1,26 @@
+{
+  "mode": "scratch",
+  "soft_loss": null,
+  "alpha": 1.0,
+  "seed": 2,
+  "data_seed": 2,
+  "out_dir": "/home/abaragithan/gnn-sdn-research/runs/scratch_s2",
+  "epochs": 30,
+  "patience": 5,
+  "steps_per_epoch": 9972,
+  "resume_from": null,
+  "max_steps": null,
+  "val_take": null,
+  "git_commit": "1c6635b48d42f24beb1fa4f43a7c8d26d303a301",
+  "tensorflow": "2.6.5",
+  "started_unix": 1795481441.107307,
+  "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s2",
+  "init_status": "created",
+  "init_sha256": {
+    "student_init_s2.data-00000-of-00001": "1c878f25c1327f99cc297fa1ce486ecb1ade4fad5da5a9a7e34e5f1388e653e4",
+    "student_init_s2.index": "4cfdabacea71601b2c2985b9f9aa2a59614ab065906134a03fdf38318197a2bb"
+  },
+  "teacher_checkpoint": null,
+  "teacher_sha256": null,
+  "selection_metric": "val_mape_flow (flow-weighted)"
+}

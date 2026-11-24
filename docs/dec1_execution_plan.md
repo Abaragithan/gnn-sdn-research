@@ -192,7 +192,7 @@ T2 results reviewed and accepted. These interpretations are fixed; use the same 
 4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
 5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
 
-**T3/T4 accepted; T5/R4 approved. T6's seed-1 scratch/KD pair is complete. The user requested an interim results/schedule review before seed 2; see the T6 hand-off dated 24 Nov.**
+**T3/T4 accepted; T5/R4 approved. All four required T6 runs are complete. Validation gains are inconsistent across the two pairs; the user requested review before further work. See the T6 hand-off dated 25 Nov.**
 
 ---
 
@@ -460,6 +460,8 @@ Run from the **repo root**, one run at a time, for each run: `mkdir -p runs/<nam
 
 **Done when:** runs 1–4 have finished (early stop or 30 epochs), each with `best.json`. Run 5 is next in priority; if it can't finish before the T8 start, stop it and record that.
 
+**Required-run gate MET, 25 Nov:** all four required runs finished and have valid selected checkpoints. `kdmse_s1` remains pending. The user requested a review of the current results before starting anything else; see the two-pair hand-off below.
+
 ### T6 interim hand-off for reviewer — seed 1 complete (24 Nov 2026)
 
 **Status: 2 of 4 required runs complete; T6 is not complete.** The user ran `scratch_s1` and `kdrel_s1` sequentially. Both finished normally, all recorded losses/metrics are finite, and both selected checkpoint files are present. **No new test evaluation has been run.** Results below are full-validation, flow-weighted MAPE from the agreed checkpoint-selection procedure.
@@ -478,6 +480,35 @@ Run from the **repo root**, one run at a time, for each run: `mkdir -p runs/<nam
 **Evidence to commit/push for the other agent:** `runs/scratch_s1/` and `runs/kdrel_s1/` each contain `config.json`, `history.json`, `best.json` and `train.log`. `results/dec1/t6_seed1_review.json` records exact comparison values, matching-setting checks, local times and selected-checkpoint hashes. Commit those JSON/log files and this plan/summary update; **do not commit checkpoint binaries or shared init files**. Checkpoints remain on this machine for T8.
 
 **Requested interim review:** confirm the seed-1 interpretation and revised schedule, then continue in the existing order with `scratch_s2`, followed by `kdrel_s2`; keep the second pair ahead of `kdmse_s1` if time is constrained. One positive or negative seed does not establish repeatability. This hand-off does not change the training protocol or authorize test-based selection. **The execution agent has not started seed 2 or any additional run and has made no commits/pushes.**
+
+### T6 two-pair hand-off for reviewer — required training complete (25 Nov 2026)
+
+This supersedes the 24 Nov status snapshot above. The user subsequently completed `scratch_s2` and `kdrel_s2`. **All four required runs finished normally; no new test evaluation has been run.** Results are each run's best flow-weighted validation MAPE, selected using the unchanged protocol.
+
+| Run | Best validation MAPE (%) | Best epoch / epochs completed | Selected checkpoint | Stop reason | Actual hours |
+|---|---:|---:|---|---|---:|
+| scratch_s1 | 10.153210530 | 21 / 26 | `runs/scratch_s1/ckpt-21` | Early stopping | 10.17 |
+| kdrel_s1 | 9.851046374 | 30 / 30 | `runs/kdrel_s1/ckpt-30` | Epoch limit | 12.27 |
+| scratch_s2 | 10.014834048 | 15 / 20 | `runs/scratch_s2/ckpt-15` | Early stopping | 7.77 |
+| kdrel_s2 | 11.918671162 | 4 / 9 | `runs/kdrel_s2/ckpt-04` | Early stopping | 3.65 |
+
+| Paired seed | KD − scratch validation MAPE (points) | Direction |
+|---|---:|---|
+| 1 | −0.302164157 | KD better |
+| 2 | +1.903837114 | KD worse |
+| Mean paired difference | **+0.800836479** | KD worse on average |
+
+Mean best-validation MAPE across the two seeds: scratch **10.084022289%**, KD **10.884858768%**. **KD improves validation in only 1 of 2 pairs; there is no consistent validation benefit under this protocol.** Do not omit seed 2, describe the study as a repeatable gain, or infer statistical significance from two seeds. Test generalization remains unknown until T8.
+
+**Validity/provenance checks PASS:** all history values are finite; each `best.json` matches its minimum validation epoch and its checkpoint index/data files exist. Initial-weight hashes and first-step hard losses match within each pair: seed 1 **33.599453**, seed 2 **34.021622**. Within each pair, seeds, data seeds, epoch cap, patience, steps per epoch and code commit match. The training-source hashes are also identical across both runs' source commits. Both KD jobs used the same fixed teacher `ckpt-26` and its hashes match T2. The poor seed-2 result is a completed valid run, not a crash or initialization mismatch. No training-code or stopping-rule changes were made.
+
+**Seed-2 progression:** scratch's best was epoch 15, followed by five non-improving epochs; KD's best was epoch 4, followed by five non-improving epochs. KD stopped at epoch 9 under the predefined patience. Training loss continued decreasing, but validation did not improve; this alone does not identify the cause. Do not selectively extend KD seed 2 or replace it with a favorable seed.
+
+**Scheduling:** the four required runs consumed **33.85 h** of training/validation, excluding gaps. `scratch_s2` finished **24 Nov, 14:06**, and `kdrel_s2` finished **25 Nov, 00:37**, Asia/Colombo. The planned fifth run, `kdmse_s1`, remains pending; allow up to roughly **12–13 h** if it uses 30 epochs at the observed KD rate, with earlier stopping possible. T7 remains optional and subject to its time/review gate; T8 must still start by **27 Nov, 20:00**, with number lock **28 Nov, 08:00**.
+
+**Review evidence:** `results/dec1/t6_paired_validation_review.json` contains exact values for all four runs, pair checks, cross-seed source hashes, checkpoint hashes, timestamps and comparison results. `runs/scratch_s2/` and `runs/kdrel_s2/` each contain `config.json`, `history.json`, `best.json` and `train.log`; seed-1 evidence is already committed. Keep checkpoint binaries and shared init files local and uncommitted.
+
+**Requested review before further work:** assess the mixed validation finding and the value/schedule of the already-planned MSE replication. Do not use the unfavorable seed-2 result to change settings based on test data, discard a run, or skip reporting it. T8 must include both completed pairs, regardless of direction. No `kdmse_s1`, T7 run or T8 evaluation has been launched by the execution agent. The user requested this pause for review; no additional approval gate is being inferred from the original plan. No commits or pushes made by the execution agent.
 
 ---
 
