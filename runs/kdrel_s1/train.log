@@ -1,0 +1,135 @@
+nohup: ignoring input
+2026-11-23 17:19:23.170810: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+2026-11-23 17:19:23.170848: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+2026-11-23 17:19:23.832821: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libcuda.so.1'; dlerror: libcuda.so.1: cannot open shared object file: No such file or directory
+2026-11-23 17:19:23.832854: W tensorflow/stream_executor/cuda/cuda_driver.cc:269] failed call to cuInit: UNKNOWN ERROR (303)
+2026-11-23 17:19:23.832866: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (fedora): /proc/driver/nvidia/version does not exist
+2026-11-23 17:19:23.833086: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-11-23 17:19:23.863315: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:185] None of the MLIR Optimization Passes are enabled (registered 2)
+2026-11-23 17:19:30.290608: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_271
+2026-11-23 17:19:34.239699: W tensorflow/core/grappler/optimizers/loop_optimizer.cc:907] Skipping loop optimization for Merge node with control input: Assert_1/AssertGuard/branch_executed/_1027
+{
+  "mode": "kd",
+  "soft_loss": "mape",
+  "alpha": 0.5,
+  "seed": 1,
+  "data_seed": 1,
+  "out_dir": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s1",
+  "epochs": 30,
+  "patience": 5,
+  "steps_per_epoch": 9972,
+  "resume_from": null,
+  "max_steps": null,
+  "val_take": null,
+  "git_commit": "94eacee83fd4c68f43d1281cc01aaca817644a4c",
+  "tensorflow": "2.6.5",
+  "started_unix": 1795434574.9446685,
+  "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s1",
+  "init_status": "loaded",
+  "init_sha256": {
+    "student_init_s1.data-00000-of-00001": "f5d6afac7e8bf35102dc38fff40ee0728e379871fc28c299a56bb58588dd5005",
+    "student_init_s1.index": "b966495e1fd5a32f8112f8db20d6c4f059ee79d88559a516932614d454e943d7"
+  },
+  "teacher_checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+  "teacher_sha256": {
+    "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d",
+    "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6"
+  },
+  "selection_metric": "val_mape_flow (flow-weighted)"
+}
+Epoch 1/30
+
+First-step hard loss: 33.599453
+9972/9972 - 1473s - loss: 10.0390 - hard: 10.1332 - soft: 9.9447 - val_mape_flow: 12.4027 - val_mape_unweighted: 12.5408
+
+val_mape_flow improved to 12.4027; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-01
+Epoch 2/30
+9972/9972 - 1501s - loss: 8.3876 - hard: 8.5312 - soft: 8.2441 - val_mape_flow: 12.2179 - val_mape_unweighted: 12.5034
+
+val_mape_flow improved to 12.2179; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-02
+Epoch 3/30
+9972/9972 - 1476s - loss: 8.1952 - hard: 8.3493 - soft: 8.0411 - val_mape_flow: 11.8219 - val_mape_unweighted: 11.8765
+
+val_mape_flow improved to 11.8219; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-03
+Epoch 4/30
+9972/9972 - 1478s - loss: 8.0420 - hard: 8.2048 - soft: 7.8792 - val_mape_flow: 11.5476 - val_mape_unweighted: 11.4947
+
+val_mape_flow improved to 11.5476; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-04
+Epoch 5/30
+9972/9972 - 1475s - loss: 7.8723 - hard: 8.0422 - soft: 7.7023 - val_mape_flow: 11.2174 - val_mape_unweighted: 11.1221
+
+val_mape_flow improved to 11.2174; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-05
+Epoch 6/30
+9972/9972 - 1479s - loss: 7.7619 - hard: 7.9338 - soft: 7.5900 - val_mape_flow: 11.0874 - val_mape_unweighted: 10.8727
+
+val_mape_flow improved to 11.0874; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-06
+Epoch 7/30
+9972/9972 - 1483s - loss: 7.6738 - hard: 7.8493 - soft: 7.4983 - val_mape_flow: 10.9442 - val_mape_unweighted: 10.9130
+
+val_mape_flow improved to 10.9442; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-07
+Epoch 8/30
+9972/9972 - 1473s - loss: 7.6033 - hard: 7.7819 - soft: 7.4247 - val_mape_flow: 10.7779 - val_mape_unweighted: 10.7179
+
+val_mape_flow improved to 10.7779; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-08
+Epoch 9/30
+9972/9972 - 1474s - loss: 7.5253 - hard: 7.7005 - soft: 7.3501 - val_mape_flow: 10.8219 - val_mape_unweighted: 10.6741
+Epoch 10/30
+9972/9972 - 1472s - loss: 7.4664 - hard: 7.6473 - soft: 7.2854 - val_mape_flow: 10.7493 - val_mape_unweighted: 10.5750
+
+val_mape_flow improved to 10.7493; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-10
+Epoch 11/30
+9972/9972 - 1472s - loss: 7.4219 - hard: 7.6000 - soft: 7.2438 - val_mape_flow: 10.6162 - val_mape_unweighted: 10.5603
+
+val_mape_flow improved to 10.6162; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-11
+Epoch 12/30
+9972/9972 - 1476s - loss: 7.3520 - hard: 7.5328 - soft: 7.1713 - val_mape_flow: 10.6381 - val_mape_unweighted: 10.4539
+Epoch 13/30
+9972/9972 - 1471s - loss: 7.3103 - hard: 7.4936 - soft: 7.1269 - val_mape_flow: 10.6414 - val_mape_unweighted: 10.4716
+Epoch 14/30
+9972/9972 - 1589s - loss: 7.2686 - hard: 7.4519 - soft: 7.0853 - val_mape_flow: 10.6661 - val_mape_unweighted: 10.4294
+Epoch 15/30
+9972/9972 - 1510s - loss: 7.1991 - hard: 7.3854 - soft: 7.0130 - val_mape_flow: 10.7832 - val_mape_unweighted: 10.1982
+Epoch 16/30
+9972/9972 - 1467s - loss: 7.1711 - hard: 7.3558 - soft: 6.9863 - val_mape_flow: 10.4845 - val_mape_unweighted: 10.1339
+
+val_mape_flow improved to 10.4845; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-16
+Epoch 17/30
+9972/9972 - 1462s - loss: 7.1382 - hard: 7.3249 - soft: 6.9514 - val_mape_flow: 10.4636 - val_mape_unweighted: 10.1793
+
+val_mape_flow improved to 10.4636; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-17
+Epoch 18/30
+9972/9972 - 1459s - loss: 7.1130 - hard: 7.2993 - soft: 6.9267 - val_mape_flow: 10.5403 - val_mape_unweighted: 10.1065
+Epoch 19/30
+9972/9972 - 1460s - loss: 7.1084 - hard: 7.2945 - soft: 6.9223 - val_mape_flow: 10.6822 - val_mape_unweighted: 10.0453
+Epoch 20/30
+9972/9972 - 1453s - loss: 7.0875 - hard: 7.2735 - soft: 6.9015 - val_mape_flow: 10.9933 - val_mape_unweighted: 10.0871
+Epoch 21/30
+9972/9972 - 1456s - loss: 7.0626 - hard: 7.2454 - soft: 6.8798 - val_mape_flow: 10.2796 - val_mape_unweighted: 9.9444
+
+val_mape_flow improved to 10.2796; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-21
+Epoch 22/30
+9972/9972 - 1455s - loss: 7.0455 - hard: 7.2303 - soft: 6.8606 - val_mape_flow: 10.7379 - val_mape_unweighted: 9.9437
+Epoch 23/30
+9972/9972 - 1461s - loss: 7.0387 - hard: 7.2256 - soft: 6.8519 - val_mape_flow: 10.5332 - val_mape_unweighted: 9.9723
+Epoch 24/30
+9972/9972 - 1452s - loss: 7.0115 - hard: 7.1954 - soft: 6.8276 - val_mape_flow: 10.3749 - val_mape_unweighted: 9.9822
+Epoch 25/30
+9972/9972 - 1456s - loss: 7.0033 - hard: 7.1890 - soft: 6.8177 - val_mape_flow: 10.1864 - val_mape_unweighted: 9.8531
+
+val_mape_flow improved to 10.1864; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-25
+Epoch 26/30
+9972/9972 - 1454s - loss: 7.0023 - hard: 7.1873 - soft: 6.8174 - val_mape_flow: 10.1273 - val_mape_unweighted: 9.9393
+
+val_mape_flow improved to 10.1273; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-26
+Epoch 27/30
+9972/9972 - 1454s - loss: 6.9751 - hard: 7.1606 - soft: 6.7896 - val_mape_flow: 10.3506 - val_mape_unweighted: 9.8640
+Epoch 28/30
+9972/9972 - 1455s - loss: 6.9614 - hard: 7.1479 - soft: 6.7749 - val_mape_flow: 10.3890 - val_mape_unweighted: 9.7791
+Epoch 29/30
+9972/9972 - 1460s - loss: 6.9589 - hard: 7.1461 - soft: 6.7717 - val_mape_flow: 10.4032 - val_mape_unweighted: 9.7840
+Epoch 30/30
+9972/9972 - 1454s - loss: 6.9567 - hard: 7.1434 - soft: 6.7700 - val_mape_flow: 9.8510 - val_mape_unweighted: 9.8341
+
+val_mape_flow improved to 9.8510; saved /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-30
+Finished. Best checkpoint: /home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-30

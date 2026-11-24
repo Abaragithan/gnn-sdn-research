@@ -1,0 +1,10 @@
+{
+  "epoch": 30,
+  "time_unix": 1795478738.0500107,
+  "loss": 6.956712245941162,
+  "hard": 7.143393516540527,
+  "soft": 6.770048141479492,
+  "val_mape_flow": 9.851046373554615,
+  "val_mape_unweighted": 9.834101676940918,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-30"
+}

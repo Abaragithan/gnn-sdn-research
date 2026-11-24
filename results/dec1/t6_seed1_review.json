@@ -1,0 +1,122 @@
+{
+  "status": "seed1_pair_complete_pending_review",
+  "review_date": "2026-11-24",
+  "timezone": "Asia/Colombo",
+  "metric": "flow-weighted validation MAPE; no new test evaluation",
+  "runs": {
+    "scratch_s1": {
+      "config": {
+        "mode": "scratch",
+        "soft_loss": null,
+        "alpha": 1.0,
+        "seed": 1,
+        "data_seed": 1,
+        "out_dir": "/home/abaragithan/gnn-sdn-research/runs/scratch_s1",
+        "epochs": 30,
+        "patience": 5,
+        "steps_per_epoch": 9972,
+        "resume_from": null,
+        "max_steps": null,
+        "val_take": null,
+        "git_commit": "94eacee83fd4c68f43d1281cc01aaca817644a4c",
+        "tensorflow": "2.6.5",
+        "started_unix": 1795395998.909733,
+        "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s1",
+        "init_status": "created",
+        "init_sha256": {
+          "student_init_s1.data-00000-of-00001": "f5d6afac7e8bf35102dc38fff40ee0728e379871fc28c299a56bb58588dd5005",
+          "student_init_s1.index": "b966495e1fd5a32f8112f8db20d6c4f059ee79d88559a516932614d454e943d7"
+        },
+        "teacher_checkpoint": null,
+        "teacher_sha256": null,
+        "selection_metric": "val_mape_flow (flow-weighted)"
+      },
+      "best": {
+        "epoch": 21,
+        "time_unix": 1795425527.5335433,
+        "loss": 7.363271236419678,
+        "hard": 7.363271236419678,
+        "soft": 0.0,
+        "val_mape_flow": 10.153210530092851,
+        "val_mape_unweighted": 9.921422958374023,
+        "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/scratch_s1/ckpt-21"
+      },
+      "epochs_completed": 26,
+      "elapsed_hours": 10.173718207875888,
+      "first_step_hard_loss": 33.599453,
+      "stop_reason": "early_stopping",
+      "selected_checkpoint_sha256": {
+        "ckpt-21.index": "18f33a2d1b72c7f230339c745165ea044acac94e987ee221bf7562802c6b1719",
+        "ckpt-21.data-00000-of-00001": "ff7d6dd0aa417288f7b9de46d054a429688400f58abdc7754cb3a40a8e3713e8"
+      },
+      "started_local": "2026-11-23T06:36:38.909733+05:30",
+      "finished_local": "2026-11-23T16:47:04.295281+05:30"
+    },
+    "kdrel_s1": {
+      "config": {
+        "mode": "kd",
+        "soft_loss": "mape",
+        "alpha": 0.5,
+        "seed": 1,
+        "data_seed": 1,
+        "out_dir": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s1",
+        "epochs": 30,
+        "patience": 5,
+        "steps_per_epoch": 9972,
+        "resume_from": null,
+        "max_steps": null,
+        "val_take": null,
+        "git_commit": "94eacee83fd4c68f43d1281cc01aaca817644a4c",
+        "tensorflow": "2.6.5",
+        "started_unix": 1795434574.9446685,
+        "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s1",
+        "init_status": "loaded",
+        "init_sha256": {
+          "student_init_s1.data-00000-of-00001": "f5d6afac7e8bf35102dc38fff40ee0728e379871fc28c299a56bb58588dd5005",
+          "student_init_s1.index": "b966495e1fd5a32f8112f8db20d6c4f059ee79d88559a516932614d454e943d7"
+        },
+        "teacher_checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+        "teacher_sha256": {
+          "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d",
+          "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6"
+        },
+        "selection_metric": "val_mape_flow (flow-weighted)"
+      },
+      "best": {
+        "epoch": 30,
+        "time_unix": 1795478738.0500107,
+        "loss": 6.956712245941162,
+        "hard": 7.143393516540527,
+        "soft": 6.770048141479492,
+        "val_mape_flow": 9.851046373554615,
+        "val_mape_unweighted": 9.834101676940918,
+        "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-30"
+      },
+      "epochs_completed": 30,
+      "elapsed_hours": 12.26752926170826,
+      "first_step_hard_loss": 33.599453,
+      "stop_reason": "epoch_limit",
+      "selected_checkpoint_sha256": {
+        "ckpt-30.index": "fdffcb9fa60848fdbd8b616d969800c4411b40c9d013533b7ef1c572d7f68e97",
+        "ckpt-30.data-00000-of-00001": "522dc12473e5cb3cf1b046a1ace7e8b446d368daf614f3c9fc1077308b4c38e7"
+      },
+      "started_local": "2026-11-23T17:19:34.944669+05:30",
+      "finished_local": "2026-11-24T05:35:38.050011+05:30"
+    }
+  },
+  "paired_validation_comparison": {
+    "kd_minus_scratch_percentage_points": -0.30216415653823603,
+    "reduction_percentage_points": 0.30216415653823603,
+    "relative_error_reduction_percent": 2.976045415808715
+  },
+  "checks": {
+    "identical_init_sha256": true,
+    "identical_first_step_hard_loss": true,
+    "matched_pair_settings": true,
+    "teacher_matches_fixed_v0_checkpoint": true,
+    "selected_checkpoints_present": true
+  },
+  "next_planned_run": "scratch_s2",
+  "next_run_started_by_execution_agent": false,
+  "note": "One paired seed only. KD best is the final allowed epoch; keep the existing stopping protocol. Test comparison waits until T8."
+}

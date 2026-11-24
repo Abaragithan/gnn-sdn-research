@@ -1,0 +1,10 @@
+{
+  "epoch": 21,
+  "time_unix": 1795425527.5335433,
+  "loss": 7.363271236419678,
+  "hard": 7.363271236419678,
+  "soft": 0.0,
+  "val_mape_flow": 10.153210530092851,
+  "val_mape_unweighted": 9.921422958374023,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/scratch_s1/ckpt-21"
+}

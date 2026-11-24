@@ -192,7 +192,7 @@ T2 results reviewed and accepted. These interpretations are fixed; use the same 
 4. **Graph construction, not the model, dominates end-to-end time.** On test-size graphs the student's forward pass is ≈ 6.3× faster than the teacher's (0.287 s vs 1.812 s, mean). Each scenario also needs ≈ 2.52 s of parsing and ≈ 17.0 s of graph construction. End to end, the student is only ≈ 8% faster (≈ 19.8 s vs ≈ 21.3 s per scenario). The forward pass is ≈ 8.5% of the teacher's total time and ≈ 1.5% of the student's. The 5.2× figure must always be described as forward-pass only.
 5. **Runtime note:** T2 took 6.8 h. T8 evaluates only the new students (cheap forward passes) with `--orders ref`, so expect ≈ 3–3.5 h on test plus ≈ 15–20 min on validation. Plan T8's start accordingly.
 
-**T3 benchmark completed and accepted (see "T3 review findings"). T4 diagnostic completed and R3 approved (see "R3 review result"). Next: T5, then stop at R4.**
+**T3/T4 accepted; T5/R4 approved. T6's seed-1 scratch/KD pair is complete. The user requested an interim results/schedule review before seed 2; see the T6 hand-off dated 24 Nov.**
 
 ---
 
@@ -408,7 +408,7 @@ PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mse --seed 99 --m
 
 **Done when:** checks 1–3 pass. **Then stop at R4:** push the smoke logs, the three `config.json` and `history.json` files (copy them to `results/dec1/t5_smoke/` before deleting), and the check-2 numbers. Wait for review.
 
-### T5 smoke gates passed — awaiting R4 review (23 Nov 2026)
+### T5 smoke gates passed — R4 approved (23 Nov 2026)
 
 The user ran all three seed-99 smoke jobs (50 steps, one epoch, five validation scenarios) and the independent validation evaluator. **The reviewer-provided training script ran unchanged; no fixes or refactoring were needed.** Scratch created the init, both KD jobs loaded it, every init-file SHA-256 matched, and all first-step hard losses were **31.252909**.
 
@@ -422,7 +422,7 @@ The user ran all three seed-99 smoke jobs (50 steps, one epoch, five validation 
 
 **R4 evidence preserved before cleanup:** `results/dec1/t5_smoke/` contains three per-run folders (`smoke_scratch`, `smoke_kdrel`, `smoke_kdmse`), each with `config.json`, `history.json`, `best.json` and `train.log`; `validation/` contains the evaluator JSONL, metadata, log and aggregate summary; `checks.json` records all gate values, init hashes, training-source hash and a SHA-256 manifest of the 16 preserved evidence files. Copies were checksum-verified. Config/best checkpoint paths retain their original run provenance; smoke checkpoint binaries are intentionally not retained.
 
-Results were recorded in `SUMMARY.md`, then only the three temporary smoke folders, seed-99 init files and four original validation smoke files were deleted as specified above. Real seeds 1 and 2 were not used. **Stop at R4: ready for the other agent's review. T6 has not started.** No commits or pushes made by the execution agent.
+Results were recorded in `SUMMARY.md`, then only the three temporary smoke folders, seed-99 init files and four original validation smoke files were deleted as specified above. The smoke tests did not use real seeds 1 and 2. **R4 approved on 23 Nov (see below); logging-only changes and their source-hash difference are recorded in `SUMMARY.md`. T6's seed-1 pair subsequently completed; see the 24 Nov hand-off.** No commits or pushes made by the execution agent.
 
 **Warning/logging note for R4 (user request):** each smoke run emitted 12 `UserWarning: Converting sparse IndexedSlices ... to a dense Tensor of unknown shape` messages. The three complete training logs total only about **42 KiB**, with approximately **23 KiB** of warning text; these warnings were not a disk-space problem and did not prevent the smoke runs from completing. Preserve the unfiltered smoke logs and their manifest. For future runs, this exact Python warning can be suppressed without changing the training script by prefixing its command with `PYTHONWARNINGS='ignore:Converting sparse IndexedSlices:UserWarning:tensorflow.python.framework.indexed_slices'`. A synthetic filter check confirmed that this message is suppressed while a different UserWarning in the same module remains visible. This filter has not been applied to a training run; it does not affect CUDA/C++ logs or reduce memory usage. The warning describes actual dense-gradient conversion, so suppression must not be presented as a memory fix.
 
@@ -459,6 +459,25 @@ Run from the **repo root**, one run at a time, for each run: `mkdir -p runs/<nam
 - **Do not evaluate on test between runs.** That happens in T8.
 
 **Done when:** runs 1–4 have finished (early stop or 30 epochs), each with `best.json`. Run 5 is next in priority; if it can't finish before the T8 start, stop it and record that.
+
+### T6 interim hand-off for reviewer — seed 1 complete (24 Nov 2026)
+
+**Status: 2 of 4 required runs complete; T6 is not complete.** The user ran `scratch_s1` and `kdrel_s1` sequentially. Both finished normally, all recorded losses/metrics are finite, and both selected checkpoint files are present. **No new test evaluation has been run.** Results below are full-validation, flow-weighted MAPE from the agreed checkpoint-selection procedure.
+
+| Run | Epochs completed | Stop reason | Selected checkpoint | Best epoch | Best validation MAPE (%) | Actual training + validation time |
+|---|---:|---|---|---:|---:|---:|
+| scratch_s1 | 26 | Early stopping, patience 5 | `runs/scratch_s1/ckpt-21` | 21 | 10.153210530 | 10.17 h |
+| kdrel_s1 | 30 | Maximum epoch limit | `runs/kdrel_s1/ckpt-30` | 30 | 9.851046374 | 12.27 h |
+
+**Paired validation result:** KD − scratch = **−0.302164157 percentage points**, a **2.976% relative error reduction**. This is an observed validation gain for one paired seed, not evidence of significance, consistency across seeds or final test improvement. KD's best epoch is the last permitted epoch; do not extend its limit or alter patience/alpha to chase additional improvement. The historical runs used different training protocols and are context, not matched controls.
+
+**Pair/provenance checks PASS:** both runs use seed/data-seed **1**, 9,972 steps per epoch, a 30-epoch cap, patience 5 and code commit `94eacee`. Scratch created the init and KD loaded it. Both init-file SHA-256 hashes match, and both first-step hard losses are **33.599453**. KD uses the fixed teacher `ckpt-26`; its hashes match the teacher recorded in T2. Both use `val_mape_flow` for selection. Scratch soft loss remains zero; KD's final hard/soft losses are **7.143393517 / 6.770048141**, so both KD terms remain active.
+
+**Local times (Asia/Colombo):** scratch ran 23 Nov **06:36–16:47**; KD ran 23 Nov **17:19** to 24 Nov **05:35**. The successful pair consumed **22.44 h**, versus the original **15.5 h** estimate. Observed epochs were roughly 23.4 min for scratch and 24.5 min for KD. For scheduling, allow approximately **22–24 h for the remaining required seed-2 pair** and **12–13 h for optional `kdmse_s1`** if epoch counts and machine load are similar; early stopping may change these. The original 41-hour total is optimistic (roughly 57–60 hours for all five under similar conditions). Keep T8's latest start at **27 Nov, 20:00** and the number lock at **28 Nov, 08:00**.
+
+**Evidence to commit/push for the other agent:** `runs/scratch_s1/` and `runs/kdrel_s1/` each contain `config.json`, `history.json`, `best.json` and `train.log`. `results/dec1/t6_seed1_review.json` records exact comparison values, matching-setting checks, local times and selected-checkpoint hashes. Commit those JSON/log files and this plan/summary update; **do not commit checkpoint binaries or shared init files**. Checkpoints remain on this machine for T8.
+
+**Requested interim review:** confirm the seed-1 interpretation and revised schedule, then continue in the existing order with `scratch_s2`, followed by `kdrel_s2`; keep the second pair ahead of `kdmse_s1` if time is constrained. One positive or negative seed does not establish repeatability. This hand-off does not change the training protocol or authorize test-based selection. **The execution agent has not started seed 2 or any additional run and has made no commits/pushes.**
 
 ---
 
