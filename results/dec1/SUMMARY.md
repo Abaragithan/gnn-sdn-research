@@ -109,3 +109,42 @@ Paired KD − scratch validation differences: seed 1 **−0.302164157**, seed 2 
 If approved, freeze MSE settings before T8 and run it regardless of whether the first T8 results favor KD. Do not tune settings or decide whether to include MSE using test outcomes. Report all six completed runs, including unfavorable seed 2. **This request is not yet reviewer approval.** MSE remains planned, not silently removed. T7 ablation stays dropped. The latest approved T8 cutoff remains **27 Nov, 12:00 Asia/Colombo**, with number lock **28 Nov, 08:00**, unless explicitly revised by review. If MSE misses the agreed deadline, mark it as a deferred follow-up and report the limitation.
 
 **Evidence for user commit/push:** this plan, `results/dec1/SUMMARY.md`, `results/dec1/t6_three_pair_validation_review.json`, and the seed-3 run folders' `config.json`, `history.json`, `best.json`, `train.log`. Keep checkpoint binaries and shared init files local and uncommitted. No commit/push was made by the execution agent.
+
+## T8 six-run evaluation completed — 26 Nov 2026; MSE pending
+
+Test and validation evaluation both finished normally: **478 unique test scenarios and 2,191 unique validation scenarios**, all six selected checkpoints under reference order. Every model covers 31,028,940 test flows. Metadata checkpoint paths and hashes match the training review; all predictions are finite and nonnegative. **All six validation reproduction gates PASS** (absolute differences below 0.01 MAPE points; maximum 3.55e-15 points). Use validation-selected `best.json` checkpoints throughout; no test-based model selection was performed.
+
+| Run | Validation MAPE (%) | Test MAPE (%) | Test MAE (ms) | Best epoch / epochs run | Training + validation hours |
+|---|---:|---:|---:|---:|---:|
+| scratch_s1 | 10.153210530 | 11.434581472 | 6.649702 | 21 / 26 | 10.17 |
+| kdrel_s1 | 9.851046374 | 10.879031757 | 6.399950 | 30 / 30 | 12.27 |
+| scratch_s2 | 10.014834048 | 11.162406582 | 6.972258 | 15 / 20 | 7.77 |
+| kdrel_s2 | 11.918671162 | 13.263121811 | 7.373957 | 4 / 9 | 3.65 |
+| scratch_s3 | 10.162595209 | 11.091398643 | 6.654270 | 28 / 30 | 11.66 |
+| kdrel_s3 | 9.958502915 | 11.047944969 | 6.679723 | 30 / 30 | 12.22 |
+
+| Paired seed | Test KD − scratch MAPE (points) | Direction |
+|---|---:|---|
+| 1 | -0.555549716 | KD better |
+| 2 | +2.100715229 | KD worse |
+| 3 | -0.043453674 | KD better |
+| Mean | **+0.500570613** | **KD worse on average** |
+
+Mean test MAPE: **11.229462232% scratch**, **11.730032845% KD**. KD is better on test in **2 of 3 seeds**, by 0.556 and 0.043 points, but worse in seed 2 by 2.101 points. **No consistent KD benefit is shown.** No significance claims; the three paired outcomes are all retained. Both full-length KD runs selected epoch 30, the agreed cap; this does not justify selective extensions or explain causality. The validation pattern is similar (two small gains, one larger loss), but test results are reported separately.
+
+Per-size test MAPE (%):
+
+| Run | 200 nodes | 240 nodes | 260 nodes | 280 nodes | 300 nodes |
+|---|---:|---:|---:|---:|---:|
+| scratch_s1 | 11.250612 | 10.639297 | 11.693034 | 11.961790 | 11.888313 |
+| kdrel_s1 | 10.831633 | 9.717665 | 11.275720 | 11.603842 | 11.467939 |
+| scratch_s2 | 11.135934 | 9.946120 | 11.623325 | 11.868735 | 11.780547 |
+| kdrel_s2 | 13.345527 | 11.646176 | 13.847111 | 14.203813 | 14.052573 |
+| scratch_s3 | 11.093810 | 9.806911 | 11.448420 | 11.913542 | 11.761367 |
+| kdrel_s3 | 11.004372 | 9.885992 | 11.470855 | 11.769735 | 11.619063 |
+
+Evidence: `eval_v2_test.jsonl`, `eval_v2_test.meta.json`, `eval_v2_test_summary.json`, corresponding `eval_v2_val` files, shared `eval_v2.log`, and `eval_v2_checks.json` (coverage, checkpoint provenance, validation gates, paired test differences and artifact hashes). The existing T2/T3/T4 evidence remains the source for historical accuracy, timing and emulation claims. Do not use T8 timing fields as a new latency benchmark.
+
+**Scheduling deviation / next step:** the reviewer proposed parallel MSE training, but the user explicitly chose to finish T8 first. MSE has not started; no concurrent training was launched by the execution agent. The planned MSE settings remain frozen (seed 1, MSE soft loss, alpha 0.5, same saved initialization/teacher, epoch cap 30 and patience 5), independent of these test outcomes. Start it manually afterward; if finished by **27 Nov, 20:00 Asia/Colombo**, evaluate its best checkpoint separately on test and validation and append all results regardless of direction. Otherwise label it deferred follow-up. Push the six-run hand-off without waiting for MSE; number lock remains **28 Nov, 08:00**.
+
+**Report impact:** replace any claim of a repeatable or controlled KD improvement with the three paired test differences and the higher KD mean. Preserve the separate historical single-run result; it does not override this controlled study. Compression/forward-time evidence from T3 remains separate from KD's accuracy effect. MSE has not yet been evaluated and cannot be used to support a loss-function conclusion. The report files were not modified by the execution agent.

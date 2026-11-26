@@ -513,3 +513,7 @@ and Git-ignored; an agent using only GitHub cannot claim to have inspected them.
   evaluation for every compared model; no new training has been performed here.
 - Broader traffic/topology tests, jitter/loss prediction and resource profiling.
 - Stronger attribution of fusion benefits beyond width/iteration reduction.
+
+### Controlled KD test evaluation — 26 Nov 2026
+
+All six seed-1/2/3 scratch and MAPE-KD models completed T8 test and validation evaluation; every validation reproduction gate passed. KD had lower test MAPE in two seeds but higher mean test MAPE, so no consistent benefit is established. See [the T8 results and per-size tables](../results/dec1/SUMMARY.md) and [validation/coverage checks](../results/dec1/eval_v2_checks.json). The planned seed-1 MSE experiment remains pending; the user chose to run it after T8. Historical timing and emulation evidence are unchanged.

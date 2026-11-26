@@ -574,6 +574,16 @@ If approved, freeze MSE settings before T8 and run it regardless of whether the 
 
 ---
 
+### T8 six-run completion hand-off (26 Nov 2026)
+
+**Test and validation evaluations and all six validation gates PASS.** Full results and per-size tables: `results/dec1/SUMMARY.md`, latest T8 section. Machine-readable checks and paired results: `results/dec1/eval_v2_checks.json`. Coverage is 478 test / 2,191 validation scenarios, all six selected checkpoints, reference order, zero nonfinite/negative predictions.
+
+Test KD − scratch differences (seeds 1/2/3): **-0.555549716 / +2.100715229 / -0.043453674 points**; mean **+0.500570613 points**. KD is better in 2/3 seeds but worse on average. No consistent KD benefit or significance is established. All six runs are included.
+
+**Deviation:** user chose sequential execution, T8 first, rather than reviewer-proposed parallel MSE training. `kdmse_s1` is still pending; do not mark the MSE experiment or overall hand-off as complete. Run the already-fixed MSE protocol next, then separate test/validation evaluations if finished by 27 Nov 20:00; otherwise record follow-up. Push these six-run results now without waiting for MSE. No new training, commits, pushes or report edits were performed by the execution agent.
+
+---
+
 ## T7. Dropped by 25 Nov review (original instructions retained below)
 
 Historical instructions only: the 25 Nov review dropped this ablation; do not execute it. The seed-3 pair listed below has now completed.
@@ -588,8 +598,8 @@ Historical instructions only: the 25 Nov review dropped this ablation; do not ex
 
 ## T8. Final evaluation and summary (start by 27 Nov, 12:00 at the latest)
 
-1. [ ] Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2/s3 and kdrel_s1/s2/s3; include kdmse_s1 if finished. The requested T8-before-MSE order is pending review above. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
-2. [ ] Also run it on the validation split for the same checkpoints, so that the flow-weighted validation MAPE comes from one evaluator.
+1. [x] Six completed scratch/MAPE-KD runs evaluated; MSE pending. Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2/s3 and kdrel_s1/s2/s3; include kdmse_s1 if finished. The review approved T8 plus parallel MSE; the user chose T8 first, as recorded in the completion hand-off above. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
+2. [x] Six-run validation evaluation and 0.01-point gate passed. Also run it on the validation split for the same checkpoints, so that the flow-weighted validation MAPE comes from one evaluator.
 3. [ ] Write **`results/dec1/SUMMARY.md`**, the hand-off to the report agent, with these sections:
    - **Gate checks:** the T2 reproduction table (expected vs obtained).
    - **Offline accuracy, v0 models:** pooled MAPE, MAE, per-size MAPE, ranking metrics; `ref` vs `hop` order.

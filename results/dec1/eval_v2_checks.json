@@ -1,0 +1,117 @@
+{
+  "status": "six_run_T8_evaluation_and_validation_gates_pass_MSE_pending",
+  "date": "2026-11-26",
+  "coverage": {
+    "test": {
+      "n_scenarios": 478,
+      "unique_scenario_ids": 478,
+      "node_count_scenarios": {
+        "200": 80,
+        "240": 160,
+        "260": 79,
+        "280": 79,
+        "300": 80
+      },
+      "checkpoint_paths_and_hashes_match_review": true,
+      "nonfinite_predictions": 0,
+      "negative_predictions": 0
+    },
+    "val": {
+      "n_scenarios": 2191,
+      "unique_scenario_ids": 2191,
+      "node_count_scenarios": {
+        "10": 1991,
+        "100": 40,
+        "130": 40,
+        "170": 40,
+        "50": 40,
+        "75": 40
+      },
+      "checkpoint_paths_and_hashes_match_review": true,
+      "nonfinite_predictions": 0,
+      "negative_predictions": 0
+    }
+  },
+  "validation_gate": {
+    "kdrel_s1": {
+      "expected_best_validation_mape": 9.851046373554615,
+      "obtained_evaluator_validation_mape": 9.851046373554615,
+      "absolute_difference_points": 0.0,
+      "tolerance_points": 0.01,
+      "passed": true
+    },
+    "kdrel_s2": {
+      "expected_best_validation_mape": 11.918671161528156,
+      "obtained_evaluator_validation_mape": 11.918671161528156,
+      "absolute_difference_points": 0.0,
+      "tolerance_points": 0.01,
+      "passed": true
+    },
+    "kdrel_s3": {
+      "expected_best_validation_mape": 9.958502914593447,
+      "obtained_evaluator_validation_mape": 9.958502914593447,
+      "absolute_difference_points": 0.0,
+      "tolerance_points": 0.01,
+      "passed": true
+    },
+    "scratch_s1": {
+      "expected_best_validation_mape": 10.153210530092851,
+      "obtained_evaluator_validation_mape": 10.153210530092851,
+      "absolute_difference_points": 0.0,
+      "tolerance_points": 0.01,
+      "passed": true
+    },
+    "scratch_s2": {
+      "expected_best_validation_mape": 10.014834047575668,
+      "obtained_evaluator_validation_mape": 10.014834047575668,
+      "absolute_difference_points": 0.0,
+      "tolerance_points": 0.01,
+      "passed": true
+    },
+    "scratch_s3": {
+      "expected_best_validation_mape": 10.162595208615759,
+      "obtained_evaluator_validation_mape": 10.162595208615755,
+      "absolute_difference_points": 3.552713678800501e-15,
+      "tolerance_points": 0.01,
+      "passed": true
+    }
+  },
+  "paired_test_results": [
+    {
+      "seed": 1,
+      "scratch_test_mape": 11.43458147235463,
+      "kd_test_mape": 10.879031756598234,
+      "kd_minus_scratch_points": -0.5555497157563956
+    },
+    {
+      "seed": 2,
+      "scratch_test_mape": 11.16240658181171,
+      "kd_test_mape": 13.26312181070727,
+      "kd_minus_scratch_points": 2.1007152288955595
+    },
+    {
+      "seed": 3,
+      "scratch_test_mape": 11.091398642930319,
+      "kd_test_mape": 11.0479449689361,
+      "kd_minus_scratch_points": -0.04345367399421818
+    }
+  ],
+  "test_means": {
+    "scratch_test_mape": 11.229462232365554,
+    "kd_test_mape": 11.730032845413868,
+    "mean_kd_minus_scratch_points": 0.5005706130483153,
+    "kd_better_pairs": 2
+  },
+  "mse_status": "not_started_user_requested_sequential_execution_after_T8",
+  "timings_used_for_claims": false,
+  "interpretation": "KD has lower test MAPE in 2 of 3 paired seeds, but higher mean test MAPE. No consistent test benefit or significance is established. All runs retained.",
+  "artifact_sha256": {
+    "eval_v2.log": "8a2896814cf371c138de74931d349e243fa44bd552fb4e3074b9b4dae9340ffd",
+    "eval_v2_test.jsonl": "df0170e3d2e208a75f3d2d21a39b53f9361314304ab3cb8d7b42b14e0c2df846",
+    "eval_v2_test.meta.json": "7bdcd5507644ad7491aca9b5ed5446d1dea1b93159b1c9d80d69f445697dcafa",
+    "eval_v2_test_summary.json": "5114126d125227a6d55be4a5cc445a20d568d9a95bb0364ddf7d6bafc5933b6a",
+    "eval_v2_val.jsonl": "6f11e55f57655a2d97a979fac71a44ed3dfca307b0d9d08d18b04c5c3773510b",
+    "eval_v2_val.meta.json": "ffc50edea0d62bcb90497785599ec64e501be60f5948703263e4155588728f0b",
+    "eval_v2_val_summary.json": "1689d681be87248b1cc7feb88b2ef5ad0dd3b1deb9525e14774a577ef5ea7cb4"
+  }
+}

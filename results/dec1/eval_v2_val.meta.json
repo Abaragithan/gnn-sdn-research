@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "split": "/home/abaragithan/gnn-sdn-research/data/all_mixed_v1/validation",
+  "models": {
+    "scratch_s1": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/scratch_s1/ckpt-21",
+      "sha256": {
+        "ckpt-21.index": "18f33a2d1b72c7f230339c745165ea044acac94e987ee221bf7562802c6b1719",
+        "ckpt-21.data-00000-of-00001": "ff7d6dd0aa417288f7b9de46d054a429688400f58abdc7754cb3a40a8e3713e8"
+      }
+    },
+    "kdrel_s1": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s1/ckpt-30",
+      "sha256": {
+        "ckpt-30.index": "fdffcb9fa60848fdbd8b616d969800c4411b40c9d013533b7ef1c572d7f68e97",
+        "ckpt-30.data-00000-of-00001": "522dc12473e5cb3cf1b046a1ace7e8b446d368daf614f3c9fc1077308b4c38e7"
+      }
+    },
+    "scratch_s2": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/scratch_s2/ckpt-15",
+      "sha256": {
+        "ckpt-15.index": "dff6f40534771a10da62bd9714ea60b5653d297028e79e3cec66352d26ae94d6",
+        "ckpt-15.data-00000-of-00001": "245df259f029dbf157c68d43cb5023be5e753e98e9eede43e790d410cbb221df"
+      }
+    },
+    "kdrel_s2": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s2/ckpt-04",
+      "sha256": {
+        "ckpt-04.index": "7b59d972d3ef4bd41115629ba616960b9d9b363123dca48fd2241a85fbf93d94",
+        "ckpt-04.data-00000-of-00001": "3d8e3f66f8bfd4c231fc54209cb321e1a48eac14e14ec975d8676822fc3360dc"
+      }
+    },
+    "scratch_s3": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/scratch_s3/ckpt-28",
+      "sha256": {
+        "ckpt-28.index": "de2e90b1620afa126ef757a5dc4475f01625e6c2ffdc0d72d38b00c32f2ab676",
+        "ckpt-28.data-00000-of-00001": "2e179eeaaf581cc8bf6ede53ec46f876ba648f221f9aafffa03aed4f650072bd"
+      }
+    },
+    "kdrel_s3": {
+      "kind": "student",
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdrel_s3/ckpt-30",
+      "sha256": {
+        "ckpt-30.index": "9bde1be04dd77685efebae8f1a318302ec6207620dabfd3f2e06043b39e7f7c1",
+        "ckpt-30.data-00000-of-00001": "af49cc254e36602dc09b4bd17b9661d9165a986469f0dc39c51701f8642c53c2"
+      }
+    }
+  },
+  "orders": [
+    "ref"
+  ],
+  "inference": "fixed_signature_python_function_checked_against_original",
+  "ape": "keras_rule_abs_error_over_max_abs_label_1e-7",
+  "timing": "parse=DatanetAPI next(); construct=DiGraph+hypergraph+tensors; warm forward; hop correction separate"
+}
