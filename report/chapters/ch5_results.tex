@@ -1,7 +1,7 @@
 \chapter{Results and Discussion}
 \label{ch:results}
 
-The offline results (\cref{sec:overall,sec:efficiency}) and the emulation results (\cref{sec:emulation,sec:abilene}) come from separate experiments with different inputs and must not be compared directly. The baseline was trained twice, and the teacher and the first two students once, so differences between those models are differences between single runs. The controlled distillation study (\cref{sec:kdstudy}) uses three paired seeds.
+The offline results (\cref{sec:overall,sec:efficiency}) and the emulation results (\cref{sec:emulation}) come from separate experiments with different inputs and must not be compared directly. The baseline was trained twice, and the teacher and the first two students once, so differences between those models are differences between single runs. The controlled distillation study (\cref{sec:kdstudy}) uses three paired seeds.
 
 \section{Offline Accuracy}
 \label{sec:overall}
@@ -90,24 +90,24 @@ Student-KD      & 9.79  & 8.76  & 10.13 & 10.53 & 10.38 \\
 \toprule
 \textbf{Seed} & \textbf{Run} & \textbf{Best epoch / epochs run} & \textbf{Val. MAPE} & \textbf{Test MAPE} \\
 \midrule
-1 & Scratch   & 21 / 26 & 10.15 & \pending{T8} \\
-  & Distilled & 30 / 30 & 9.85  & \pending{T8} \\
-  & $\Delta$  &         & $-0.30$ & \pending{T8} \\
+1 & Scratch   & 21 / 26 & 10.15 & 11.43 \\
+  & Distilled & 30 / 30 & 9.85  & 10.88 \\
+  & $\Delta$  &         & $-0.30$ & $-0.56$ \\
 \midrule
-2 & Scratch   & 15 / 20 & 10.01 & \pending{T8} \\
-  & Distilled & 4 / 9   & 11.92 & \pending{T8} \\
-  & $\Delta$  &         & $+1.90$ & \pending{T8} \\
+2 & Scratch   & 15 / 20 & 10.01 & 11.16 \\
+  & Distilled & 4 / 9   & 11.92 & 13.26 \\
+  & $\Delta$  &         & $+1.90$ & $+2.10$ \\
 \midrule
-3 & Scratch   & 28 / 30 & 10.16 & \pending{T8} \\
-  & Distilled & 30 / 30 & 9.96  & \pending{T8} \\
-  & $\Delta$  &         & $-0.20$ & \pending{T8} \\
+3 & Scratch   & 28 / 30 & 10.16 & 11.09 \\
+  & Distilled & 30 / 30 & 9.96  & 11.05 \\
+  & $\Delta$  &         & $-0.20$ & $-0.04$ \\
 \midrule
-\multicolumn{2}{@{}l}{Mean $\Delta$} & & $+0.47$ & \pending{T8} \\
+\multicolumn{2}{@{}l}{Mean $\Delta$} & & $+0.47$ & $+0.50$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-On validation, distillation helped slightly in two pairs ($-0.30$ and $-0.20$ points) and hurt in one ($+1.90$ points); the mean difference is $+0.47$ points. In seed 2 the distilled run stopped at epoch 9, after five epochs without improvement, while its scratch partner survived a three-epoch rise and continued to epoch 20. Both distilled runs that trained for the full 30 epochs reached their best validation score at the last epoch. \pending{Test results and their interpretation from T8.} The controlled study therefore shows \textbf{no consistent benefit} from distillation, and it does not reproduce the 2.10-point gain of the first run.
+On validation, distillation helped slightly in two pairs ($-0.30$ and $-0.20$ points) and hurt in one ($+1.90$ points); the mean difference is $+0.47$ points. In seed 2 the distilled run stopped at epoch 9, after five epochs without improvement, while its scratch partner survived a three-epoch rise and continued to epoch 20. Both distilled runs that trained for the full 30 epochs reached their best validation score at the last epoch. The test set shows the same pattern: distillation helped in seed 1 ($-0.56$ points), made almost no difference in seed 3 ($-0.04$) and hurt in seed 2 ($+2.10$), with a mean difference of $+0.50$ points. The three scratch students were close together (11.09 to 11.43\% test MAPE), while the distilled students ranged from 10.88 to 13.26\%. All three controlled scratch students were more accurate than the first scratch student (11.92\%), and the first distilled student (9.83\%) remains the most accurate student, which again shows how far a single run can move. The controlled study therefore shows \textbf{no consistent benefit} from distillation, and it does not reproduce the 2.10-point gain of the first run.
 
 \paragraph{Why the effect is not visible.} Three properties of the setup make a small effect hard to detect, and none of them is specific to the student:
 \begin{itemize}
@@ -190,25 +190,12 @@ Student-KD      & 6.77 & 3.62 & 0.23 & 4.05 \\
 
 \paragraph{How strong is this evidence?} The emulation shows that the frozen models can be used as route scorers inside an SDN controller, but it is weak evidence of their accuracy, for four reasons. First, 100~ms of the roughly 113~ms measured on candidate 1 comes from the fixed transmission term of \cref{eq:readout} (see the worked example in \cref{sec:discussion}); only about 13~ms is learned queueing. Second, a 5--7\% error corresponds to roughly 6 to 14~ms, which is about the same size as the 10.9~ms gap between candidates 0 and 1. Third, candidate 1 has the lower load on both of its hops, so a simple least-loaded rule would also choose it; the only baseline compared here is the hop-count tie-break. Fourth, the traffic senders reuse the same packet phase offsets in every trial, so the five repetitions are near-identical replays, which explains the very small standard deviations.
 
-\section{Abilene Diagnostic}
-\label{sec:abilene}
-
-The 12-switch Abilene emulation passed its operational checks, but the predictions were wrong and sometimes physically impossible. For a route measured at 0.804~ms, the teacher predicted 1,842.831~ms; internal tracing showed very large embeddings, saturated GRU gates and about 3.07 million predicted queued bits per hop, against a 32,000-bit queue. The scratch student produced negative queue contributions, and student-KD produced invalid values for some background flows. Restoring the historical hop order did not change the failure.
-
-The likely cause is the input range. Per-flow rates in the training data range from about 75 to 4,367 bit/s, whereas the Abilene scenario reached 344,562 bit/s, and no single scaling brings every demand and capacity into the training range while keeping their ratios.
-
-To check this, the authors' real-traffic RouteNet-Fermi checkpoint \cite{routenetfermicode} and our teacher were run through the authors' unchanged pipeline on ten Abilene samples chosen in advance (1,320 flows). The authors' checkpoint gave 3.81\% MAPE (MAE 0.158~ms), while ours gave 12,636.82\% (MAE 74.621~ms). The two models have the same definition and normalisation; only the learned weights differ. The authors adapted their checkpoint to real traffic using 200 samples \cite{ferriolgalmes2023routenetfermi}, so this is a small diagnostic, not a reproduction of their result. Even their checkpoint predicted 38.56~ms for our adapted CBR route measured at 0.804~ms, because their trace pipeline encodes traffic features differently.
-
-The supported conclusion is that our checkpoints are incompatible with this input domain. It does not show that RouteNet-Fermi fails on real traffic in general, and it does not affect the offline results. As a result of this finding, the physical checks described in \cref{sec:emulation-method} were added so that invalid predictions stop a run before any route is installed. All six-switch predictions passed these checks.
-
 \section{Discussion}
 \label{sec:discussion}
 
 \paragraph{Training data and model size.} Both mattered, and in these experiments compression had the larger effect. Moving the full-size model from 10-node to 10- to 170-node training data lowered test MAPE by 3.03 points. Compressing it into the student on the same diverse data raised test MAPE by 6.55 points without distillation and 4.46 points with it. As a result, the small model trained on diverse topologies (11.92\% and 9.83\%) was still less accurate than the full-size model trained only on 10-node topologies (8.40\%). Topology diversity therefore improved accuracy on larger networks but did not compensate for compressing the model. Part of the teacher's gain may also come from its longer training.
 
-\paragraph{Coverage of the deployment conditions.} The Abilene diagnostic makes a separate point. Its failure was most likely caused by traffic rates far outside the training range, not by topology size, and with such inputs none of this project's checkpoints produced usable predictions. Coverage of the conditions a model will meet in operation is a precondition for using it at all; without it, neither model size nor topology diversity helps.
-
-\paragraph{Why the student loses accuracy.} The student is limited by its capacity, not by a lack of guidance. Its error on its own training data stayed at about 7.1 to 7.4\% in all six controlled runs, which is already higher than the teacher's validation error (4.7\%) and about twice the teacher's training error (3.7\%). Several features of the design may contribute, and these experiments do not separate them: the loss of per-queue information described in \cref{sec:student}, half as many message-passing iterations (which limits how far information travels in large networks), and smaller hidden states.
+\paragraph{Why the student loses accuracy.} The student is limited by its capacity, not by a lack of guidance. Its error on its own training data stayed at about 7.1 to 7.4\% in all six controlled runs, which is already higher than the teacher's validation error (4.7\%) and about twice the teacher's training error (3.7\%). Several features of the design may contribute: the loss of per-queue information described in \cref{sec:student}, half as many message-passing iterations (which limits how far information travels in large networks), and smaller hidden states.
 
 \paragraph{Worked example: one flow through the student.} The foreground flow of the emulation on candidate 1 ($s_0 \to s_4 \to s_5$) shows what the student computes and why the candidates are ranked as they are.
 \begin{enumerate}
