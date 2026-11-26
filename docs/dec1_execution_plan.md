@@ -529,11 +529,34 @@ Mean best-validation MAPE across the two seeds: scratch **10.084022289%**, KD **
 - **Hard cut-off for T8:** at **27 Nov, 12:00**, stop whatever is still running and start T8 with all finished runs. Record the stopped run under "Problems and deviations". T7 (ablation) is dropped.
 - **T8 must evaluate on test:** all finished new students (`scratch_s1/s2/s3`, `kdrel_s1/s2/s3`, `kdmse_s1` if finished), using each run's `best.json` checkpoint, `--orders ref`, on the test split; then the same on the validation split. Report every run, favourable or not.
 
+### T6 three-pair hand-off — request T8 before MSE (26 Nov 2026)
+
+**Current status: all six scratch/MAPE-KD runs finished; review of the requested order change is pending.** This supersedes earlier completion/status snapshots. The user ran seed 3 one job at a time, rather than using the proposed chained queue. No MSE training or T8 evaluation was launched during this check.
+
+| Run | Best flow-weighted validation MAPE (%) | Best epoch / epochs completed | Selected checkpoint | Hours |
+|---|---:|---:|---|---:|
+| scratch_s1 | 10.153210530 | 21 / 26 |`runs/scratch_s1/ckpt-21` | 10.17 |
+| kdrel_s1 | 9.851046374 | 30 / 30 |`runs/kdrel_s1/ckpt-30` | 12.27 |
+| scratch_s2 | 10.014834048 | 15 / 20 |`runs/scratch_s2/ckpt-15` | 7.77 |
+| kdrel_s2 | 11.918671162 | 4 / 9 |`runs/kdrel_s2/ckpt-04` | 3.65 |
+| scratch_s3 | 10.162595209 | 28 / 30 |`runs/scratch_s3/ckpt-28` | 11.66 |
+| kdrel_s3 | 9.958502915 | 30 / 30 |`runs/kdrel_s3/ckpt-30` | 12.22 |
+
+Paired KD − scratch validation differences: seed 1 **−0.302164157**, seed 2 **+1.903837114**, seed 3 **-0.204092294** percentage points. KD is better in **2 of 3** seeds, but mean best-validation MAPE is **10.110213262% scratch** versus **10.576073483% KD**, with mean paired difference **+0.465860221 points** (KD worse on average). Results remain mixed; no consistent KD benefit, statistical significance or final test improvement is established.
+
+**Seed-3 checks PASS:** both runs completed 30 epochs normally; every recorded history metric is finite; `best.json` matches each validation minimum; selected index/data files exist and were hashed. Initial-weight hashes, first-step hard losses (**32.87072**), data seeds and stopping settings match within the pair. Training source matches the earlier pairs, and KD uses the same fixed teacher hashes. Scratch's best is epoch 28; KD's best is epoch 30. Do not extend the training cap. Seed-3 scratch/KD took **11.66 / 12.22 h**, respectively. Exact values, timestamps, hashes and checks: `results/dec1/t6_three_pair_validation_review.json`. Original two-pair evidence is preserved unchanged.
+
+**Request to the reviewing agent:** may we start **T8 now for all six completed students**, then run the already-planned **`kdmse_s1` afterward**, using its fixed settings (`--mode kd --soft-loss mse --alpha 0.5 --seed 1`, 30 epochs, patience 5, existing seed-1 init and teacher)? After MSE finishes, evaluate its validation-selected `best.json` checkpoint with the same T8 test/ref and validation/ref protocol and add its results; existing completed evaluations need not be repeated. Please confirm this order and whether MSE can fit the final deadline or must be labeled follow-up.
+
+If approved, freeze MSE settings before T8 and run it regardless of whether the first T8 results favor KD. Do not tune settings or decide whether to include MSE using test outcomes. Report all six completed runs, including unfavorable seed 2. **This request is not yet reviewer approval.** MSE remains planned, not silently removed. T7 ablation stays dropped. The latest approved T8 cutoff remains **27 Nov, 12:00 Asia/Colombo**, with number lock **28 Nov, 08:00**, unless explicitly revised by review. If MSE misses the agreed deadline, mark it as a deferred follow-up and report the limitation.
+
+**Evidence for user commit/push:** this plan, `results/dec1/SUMMARY.md`, `results/dec1/t6_three_pair_validation_review.json`, and the seed-3 run folders' `config.json`, `history.json`, `best.json`, `train.log`. Keep checkpoint binaries and shared init files local and uncommitted. No commit/push was made by the execution agent.
+
 ---
 
-## T7. Optional, only if T6 finishes before ~26 Nov, 12:00
+## T7. Dropped by 25 Nov review (original instructions retained below)
 
-In priority order. Stop at the T8 deadline whatever happens.
+Historical instructions only: the 25 Nov review dropped this ablation; do not execute it. The seed-3 pair listed below has now completed.
 
 1. **Ablation, small RouteNet-Fermi with queues kept** (fixes P7).
    - Add constructor arguments to `RouteNet_Fermi` in `delay_model.py`, with **defaults equal to the current values** (`state_dim=32`, `iterations=8`). The teacher, baseline and emulation must behave exactly as before. Check this by reloading `ckpt-26` and reproducing the T2 teacher prediction on 2 test scenarios.
@@ -543,9 +566,9 @@ In priority order. Stop at the T8 deadline whatever happens.
 
 ---
 
-## T8. Final evaluation and summary (start by 27 Nov, 20:00 at the latest)
+## T8. Final evaluation and summary (start by 27 Nov, 12:00 at the latest)
 
-1. [ ] Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2, kdrel_s1/s2, kdmse_s1, and T7 runs if any. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
+1. [ ] Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2/s3 and kdrel_s1/s2/s3; include kdmse_s1 if finished. The requested T8-before-MSE order is pending review above. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
 2. [ ] Also run it on the validation split for the same checkpoints, so that the flow-weighted validation MAPE comes from one evaluator.
 3. [ ] Write **`results/dec1/SUMMARY.md`**, the hand-off to the report agent, with these sections:
    - **Gate checks:** the T2 reproduction table (expected vs obtained).

@@ -86,3 +86,26 @@ Scratch seed 2 stopped after epoch 20 with its best at 15; KD seed 2 stopped aft
 The four runs total **33.85 h** of training/validation, excluding gaps. Seed-2 runs finished on 24 Nov at **14:06** and 25 Nov at **00:37**, Asia/Colombo. The planned `kdmse_s1` remains pending and could take roughly 12–13 h if it reaches 30 epochs. Review its priority against the remaining schedule; keep T8's latest start of 27 Nov, 20:00 and the number lock of 28 Nov, 08:00.
 
 Exact review data and provenance: `results/dec1/t6_paired_validation_review.json`. New seed-2 configs, histories, best records and logs are in their run folders; checkpoint binaries must not be committed. The user requested review before proceeding. No further training, T7 experiment or T8 evaluation was started by the execution agent. The report agent should retain the mixed validation outcome; final claims about test accuracy await T8.
+
+## T6 three-pair hand-off — request T8 before MSE (26 Nov 2026)
+
+**Current status: all six scratch/MAPE-KD runs finished; review of the requested order change is pending.** This supersedes earlier completion/status snapshots. The user ran seed 3 one job at a time, rather than using the proposed chained queue. No MSE training or T8 evaluation was launched during this check.
+
+| Run | Best flow-weighted validation MAPE (%) | Best epoch / epochs completed | Selected checkpoint | Hours |
+|---|---:|---:|---|---:|
+| scratch_s1 | 10.153210530 | 21 / 26 |`runs/scratch_s1/ckpt-21` | 10.17 |
+| kdrel_s1 | 9.851046374 | 30 / 30 |`runs/kdrel_s1/ckpt-30` | 12.27 |
+| scratch_s2 | 10.014834048 | 15 / 20 |`runs/scratch_s2/ckpt-15` | 7.77 |
+| kdrel_s2 | 11.918671162 | 4 / 9 |`runs/kdrel_s2/ckpt-04` | 3.65 |
+| scratch_s3 | 10.162595209 | 28 / 30 |`runs/scratch_s3/ckpt-28` | 11.66 |
+| kdrel_s3 | 9.958502915 | 30 / 30 |`runs/kdrel_s3/ckpt-30` | 12.22 |
+
+Paired KD − scratch validation differences: seed 1 **−0.302164157**, seed 2 **+1.903837114**, seed 3 **-0.204092294** percentage points. KD is better in **2 of 3** seeds, but mean best-validation MAPE is **10.110213262% scratch** versus **10.576073483% KD**, with mean paired difference **+0.465860221 points** (KD worse on average). Results remain mixed; no consistent KD benefit, statistical significance or final test improvement is established.
+
+**Seed-3 checks PASS:** both runs completed 30 epochs normally; every recorded history metric is finite; `best.json` matches each validation minimum; selected index/data files exist and were hashed. Initial-weight hashes, first-step hard losses (**32.87072**), data seeds and stopping settings match within the pair. Training source matches the earlier pairs, and KD uses the same fixed teacher hashes. Scratch's best is epoch 28; KD's best is epoch 30. Do not extend the training cap. Seed-3 scratch/KD took **11.66 / 12.22 h**, respectively. Exact values, timestamps, hashes and checks: `results/dec1/t6_three_pair_validation_review.json`. Original two-pair evidence is preserved unchanged.
+
+**Request to the reviewing agent:** may we start **T8 now for all six completed students**, then run the already-planned **`kdmse_s1` afterward**, using its fixed settings (`--mode kd --soft-loss mse --alpha 0.5 --seed 1`, 30 epochs, patience 5, existing seed-1 init and teacher)? After MSE finishes, evaluate its validation-selected `best.json` checkpoint with the same T8 test/ref and validation/ref protocol and add its results; existing completed evaluations need not be repeated. Please confirm this order and whether MSE can fit the final deadline or must be labeled follow-up.
+
+If approved, freeze MSE settings before T8 and run it regardless of whether the first T8 results favor KD. Do not tune settings or decide whether to include MSE using test outcomes. Report all six completed runs, including unfavorable seed 2. **This request is not yet reviewer approval.** MSE remains planned, not silently removed. T7 ablation stays dropped. The latest approved T8 cutoff remains **27 Nov, 12:00 Asia/Colombo**, with number lock **28 Nov, 08:00**, unless explicitly revised by review. If MSE misses the agreed deadline, mark it as a deferred follow-up and report the limitation.
+
+**Evidence for user commit/push:** this plan, `results/dec1/SUMMARY.md`, `results/dec1/t6_three_pair_validation_review.json`, and the seed-3 run folders' `config.json`, `history.json`, `best.json`, `train.log`. Keep checkpoint binaries and shared init files local and uncommitted. No commit/push was made by the execution agent.
