@@ -1,0 +1,29 @@
+{
+  "mode": "kd",
+  "soft_loss": "mse",
+  "alpha": 0.5,
+  "seed": 1,
+  "data_seed": 1,
+  "out_dir": "/home/abaragithan/gnn-sdn-research/runs/kdmse_s1",
+  "epochs": 30,
+  "patience": 5,
+  "steps_per_epoch": 9972,
+  "resume_from": null,
+  "max_steps": null,
+  "val_take": null,
+  "git_commit": "b15df99d3e1ff8dfea6763c62248b8774d011207",
+  "tensorflow": "2.6.5",
+  "started_unix": 1795669201.9749603,
+  "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s1",
+  "init_status": "loaded",
+  "init_sha256": {
+    "student_init_s1.data-00000-of-00001": "f5d6afac7e8bf35102dc38fff40ee0728e379871fc28c299a56bb58588dd5005",
+    "student_init_s1.index": "b966495e1fd5a32f8112f8db20d6c4f059ee79d88559a516932614d454e943d7"
+  },
+  "teacher_checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+  "teacher_sha256": {
+    "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d",
+    "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6"
+  },
+  "selection_metric": "val_mape_flow (flow-weighted)"
+}

@@ -1,0 +1,10 @@
+{
+  "epoch": 10,
+  "time_unix": 1795684063.2899592,
+  "loss": 3.8961071968078613,
+  "hard": 7.616189479827881,
+  "soft": 0.17601382732391357,
+  "val_mape_flow": 10.281098880091587,
+  "val_mape_unweighted": 10.36075210571289,
+  "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdmse_s1/ckpt-10"
+}

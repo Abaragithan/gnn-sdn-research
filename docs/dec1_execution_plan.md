@@ -584,6 +584,20 @@ Test KD − scratch differences (seeds 1/2/3): **-0.555549716 / +2.100715229 / -
 
 ---
 
+### Final MSE / T8 completion hand-off (26 Nov 2026)
+
+**All seven planned trained students now have completed test and validation evaluations; all validation reproduction gates PASS.** T6/T8 execution is complete, T7 remains dropped, and no further run is planned. Final reviewer/report integration and user commit/push remain outstanding. This supersedes earlier MSE-pending snapshots.
+
+MSE seed 1 stopped normally at epoch 15; selected epoch 10 (`runs/kdmse_s1/ckpt-10`). Validation MAPE **10.281098880%**, test MAPE **11.355698164%**. Same seed-1 initialization/first hard loss, fixed teacher, settings and training source checked. Full 478/2,191 test/validation coverage, identical T8 scenario order, finite nonnegative predictions, checkpoint hashes verified. Training took **6.19 h**.
+
+Compared with scratch seed 1, MSE test MAPE improved by **0.078883308 points**, while validation was worse by **0.127888350 points**. MSE test MAPE is **0.476666408 points worse** than MAPE KD seed 1. Single-seed exploratory result, no consistent or significant benefit demonstrated; the soft-loss scales differ. Preserve the original three-pair mixed MAPE KD finding and every unfavorable result.
+
+Final seven-run table, MSE per-size results, loss-scale caveat, deviations and report implications: latest section of `results/dec1/SUMMARY.md`. Exact gates/provenance/comparisons: `results/dec1/eval_v2_kdmse_checks.json`. Original six-run evidence is preserved unchanged.
+
+**Request final review:** check evidence and conclusions, then integrate all results into the report. User chose sequential T8 then MSE; neither settings nor inclusion changed based on test results. Commit/push new JSON/log artifacts and documentation, keeping checkpoint/init binaries uncommitted. No commits, pushes or report edits were made by the execution agent.
+
+---
+
 ## T7. Dropped by 25 Nov review (original instructions retained below)
 
 Historical instructions only: the 25 Nov review dropped this ablation; do not execute it. The seed-3 pair listed below has now completed.
@@ -598,9 +612,9 @@ Historical instructions only: the 25 Nov review dropped this ablation; do not ex
 
 ## T8. Final evaluation and summary (start by 27 Nov, 12:00 at the latest)
 
-1. [x] Six completed scratch/MAPE-KD runs evaluated; MSE pending. Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2/s3 and kdrel_s1/s2/s3; include kdmse_s1 if finished. The review approved T8 plus parallel MSE; the user chose T8 first, as recorded in the completion hand-off above. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
-2. [x] Six-run validation evaluation and 0.01-point gate passed. Also run it on the validation split for the same checkpoints, so that the flow-weighted validation MAPE comes from one evaluator.
-3. [ ] Write **`results/dec1/SUMMARY.md`**, the hand-off to the report agent, with these sections:
+1. [x] All seven runs evaluated on test, including MSE; aggregation complete. Run `eval_multi.py` on the test split, `--orders ref`, with every **finished** run's `best.json` checkpoint: scratch_s1/s2/s3 and kdrel_s1/s2/s3; include kdmse_s1 if finished. The review approved T8 plus parallel MSE; the user chose T8 first, as recorded in the completion hand-off above. Output `results/dec1/eval_v2_test.jsonl`, then aggregate it.
+2. [x] All seven validation evaluations and 0.01-point gates passed. Also run it on the validation split for the same checkpoints, so that the flow-weighted validation MAPE comes from one evaluator.
+3. [x] Final seven-run hand-off written. Write **`results/dec1/SUMMARY.md`**, the hand-off to the report agent, with these sections:
    - **Gate checks:** the T2 reproduction table (expected vs obtained).
    - **Offline accuracy, v0 models:** pooled MAPE, MAE, per-size MAPE, ranking metrics; `ref` vs `hop` order.
    - **Latency v2:** the table from T3, including the size of the old benchmark scenario and the construction/forward split.
@@ -612,7 +626,7 @@ Historical instructions only: the 25 Nov review dropped this ablation; do not ex
    - **Ablation** (if run).
    - **Problems and deviations:** crashes, restarts, parallel runs, anything that differs from this plan.
    - **Report impact:** a list of the report sentences or tables whose numbers or claims change (see Section 3).
-4. [ ] Update `docs/research_progress_summary.md`: add a dated section pointing to `results/dec1/SUMMARY.md`.
+4. [x] Updated with final execution status. Update `docs/research_progress_summary.md`: add a dated section pointing to `results/dec1/SUMMARY.md`.
 5. [ ] Commit and push by **28 Nov, 08:00**.
 
 ---

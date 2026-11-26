@@ -148,3 +148,37 @@ Evidence: `eval_v2_test.jsonl`, `eval_v2_test.meta.json`, `eval_v2_test_summary.
 **Scheduling deviation / next step:** the reviewer proposed parallel MSE training, but the user explicitly chose to finish T8 first. MSE has not started; no concurrent training was launched by the execution agent. The planned MSE settings remain frozen (seed 1, MSE soft loss, alpha 0.5, same saved initialization/teacher, epoch cap 30 and patience 5), independent of these test outcomes. Start it manually afterward; if finished by **27 Nov, 20:00 Asia/Colombo**, evaluate its best checkpoint separately on test and validation and append all results regardless of direction. Otherwise label it deferred follow-up. Push the six-run hand-off without waiting for MSE; number lock remains **28 Nov, 08:00**.
 
 **Report impact:** replace any claim of a repeatable or controlled KD improvement with the three paired test differences and the higher KD mean. Preserve the separate historical single-run result; it does not override this controlled study. Compression/forward-time evidence from T3 remains separate from KD's accuracy effect. MSE has not yet been evaluated and cannot be used to support a loss-function conclusion. The report files were not modified by the execution agent.
+
+## Final seven-run hand-off — MSE completed, 26 Nov 2026
+
+**All planned training and evaluations are complete; final reviewer/report integration and user commit/push remain.** This supersedes the earlier MSE-pending snapshots. T7 ablation remains dropped. No further training or evaluation is planned.
+
+MSE seed 1 completed **15 epochs in 6.19 h**, stopping after five non-improving epochs. Its validation-selected best is **epoch 10**, `runs/kdmse_s1/ckpt-10`. Same seed-1 initial hashes and first-step hard loss (**33.599453**), same fixed teacher, unchanged stopping/data settings and training source all verified. Best checkpoint files exist and their hashes match both evaluation metadata files. All recorded training metrics are finite.
+
+MSE evaluation covers **478 test scenarios / 31,028,940 test flows** and **2,191 validation scenarios**, in exactly the original T8 scenario order. Predictions are finite and nonnegative. Validation pooled MAPE **10.281098880092%** matches `best.json` **10.281098880092%** (difference 1.78e-15 points; tolerance 0.01): **PASS**.
+
+Final controlled-study table (all selected by validation, reference input order):
+
+| Run | Validation MAPE (%) | Test MAPE (%) | Test MAE (ms) | Best epoch / epochs run | Training + validation hours |
+|---|---:|---:|---:|---:|---:|
+| scratch_s1 | 10.153210530 | 11.434581472 | 6.649702 | 21 / 26 | 10.17 |
+| kdrel_s1 | 9.851046374 | 10.879031757 | 6.399950 | 30 / 30 | 12.27 |
+| scratch_s2 | 10.014834048 | 11.162406582 | 6.972258 | 15 / 20 | 7.77 |
+| kdrel_s2 | 11.918671162 | 13.263121811 | 7.373957 | 4 / 9 | 3.65 |
+| scratch_s3 | 10.162595209 | 11.091398643 | 6.654270 | 28 / 30 | 11.66 |
+| kdrel_s3 | 9.958502915 | 11.047944969 | 6.679723 | 30 / 30 | 12.22 |
+| kdmse_s1 | 10.281098880 | 11.355698164 | 6.897061 | 10 / 15 | 6.19 |
+
+MSE seed-1 test difference from scratch: **-0.078883308 points** (a small improvement); from MAPE KD: **+0.476666408 points** (worse). Validation differences are **+0.127888350** versus scratch and **+0.430052507** versus MAPE KD (both worse). This one MSE run does not establish repeatability or a better distillation loss. Its best-epoch hard loss was **7.616189480**, soft MSE **0.176013827**: alpha 0.5 does not make the two terms equal in magnitude, and switching loss changes the effective balance. No tuning or extra runs were performed based on test results.
+
+MSE test MAPE by topology size:
+
+| 200 nodes | 240 nodes | 260 nodes | 280 nodes | 300 nodes |
+|---:|---:|---:|---:|---:|
+| 11.321431% | 10.075367% | 11.794976% | 12.137347% | 12.010471% |
+
+**Final interpretation:** retain the three-pair MAPE KD finding: test KD − scratch **−0.555549716 / +2.100715229 / −0.043453674 points**, mean **+0.500570613 points**. KD improved two seeds but was worse on average; **no consistent KD benefit is shown**. The single MSE run does not change this conclusion. No significance claim. Compression/forward-speed findings remain supported separately by T3, not attributed to KD.
+
+**Problems/deviations and report impact:** execution was sequential (six-run T8, then MSE training/evaluation) at the user's request, rather than parallel as the reviewer proposed. Training/evaluation finished normally; no MSE restart or protocol change. MSE is included despite its unfavorable comparisons. Historical single-run findings remain separate from the controlled study. Update the report with all seven rows, three paired MAPE-KD differences, the single-seed MSE result and its scale/replication limitation. The execution agent did not modify report files.
+
+**Final review request:** verify the seven-run evidence, interpretation, and closure of T6/T8 execution; integrate final results into the report. Evidence: `eval_v2_kdmse_checks.json`, MSE test/validation JSONL, metadata and summary files, `eval_v2_kdmse.log`, and `runs/kdmse_s1/{config.json,history.json,best.json,train.log}`. Existing `eval_v2_checks.json` and six-run artifacts remain unchanged. Commit/push JSON/log/documentation evidence only; checkpoint binaries/shared init stay local and ignored. No commit or push was made by the execution agent.

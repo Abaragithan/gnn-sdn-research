@@ -517,3 +517,7 @@ and Git-ignored; an agent using only GitHub cannot claim to have inspected them.
 ### Controlled KD test evaluation — 26 Nov 2026
 
 All six seed-1/2/3 scratch and MAPE-KD models completed T8 test and validation evaluation; every validation reproduction gate passed. KD had lower test MAPE in two seeds but higher mean test MAPE, so no consistent benefit is established. See [the T8 results and per-size tables](../results/dec1/SUMMARY.md) and [validation/coverage checks](../results/dec1/eval_v2_checks.json). The planned seed-1 MSE experiment remains pending; the user chose to run it after T8. Historical timing and emulation evidence are unchanged.
+
+### Final MSE evaluation and execution hand-off — 26 Nov 2026
+
+All seven trained students completed test and validation evaluation; every validation reproduction gate passed. MSE seed 1 selected epoch 10, with test MAPE 11.355698164% and validation MAPE 10.281098880%. It slightly improves test MAPE over scratch seed 1 but is worse on validation and worse than MAPE KD seed 1; one run cannot establish repeatability. The three-pair finding remains no consistent KD benefit. See the [final seven-run hand-off](../results/dec1/SUMMARY.md) and [MSE checks/provenance](../results/dec1/eval_v2_kdmse_checks.json). Planned execution is complete; T7 is dropped, and final reviewer/report integration and user commit/push remain.

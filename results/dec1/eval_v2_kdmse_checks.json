@@ -1,0 +1,108 @@
+{
+  "status": "MSE_training_and_T8_evaluation_complete_all_gates_pass_pending_final_review",
+  "date": "2026-11-26",
+  "coverage": {
+    "test": {
+      "n_scenarios": 478,
+      "unique_scenarios": 478,
+      "matches_original_scenario_sequence": true,
+      "checkpoint_provenance_passed": true,
+      "nonfinite_predictions": 0,
+      "negative_predictions": 0
+    },
+    "val": {
+      "n_scenarios": 2191,
+      "unique_scenarios": 2191,
+      "matches_original_scenario_sequence": true,
+      "checkpoint_provenance_passed": true,
+      "nonfinite_predictions": 0,
+      "negative_predictions": 0
+    }
+  },
+  "training": {
+    "config": {
+      "mode": "kd",
+      "soft_loss": "mse",
+      "alpha": 0.5,
+      "seed": 1,
+      "data_seed": 1,
+      "out_dir": "/home/abaragithan/gnn-sdn-research/runs/kdmse_s1",
+      "epochs": 30,
+      "patience": 5,
+      "steps_per_epoch": 9972,
+      "resume_from": null,
+      "max_steps": null,
+      "val_take": null,
+      "git_commit": "b15df99d3e1ff8dfea6763c62248b8774d011207",
+      "tensorflow": "2.6.5",
+      "started_unix": 1795669201.9749603,
+      "init_weights": "/home/abaragithan/gnn-sdn-research/runs/init/student_init_s1",
+      "init_status": "loaded",
+      "init_sha256": {
+        "student_init_s1.data-00000-of-00001": "f5d6afac7e8bf35102dc38fff40ee0728e379871fc28c299a56bb58588dd5005",
+        "student_init_s1.index": "b966495e1fd5a32f8112f8db20d6c4f059ee79d88559a516932614d454e943d7"
+      },
+      "teacher_checkpoint": "/home/abaragithan/gnn-sdn-research/all_mixed/ckpt_dirs_teacher/ckpt_dir_0_9972/ckpt-26",
+      "teacher_sha256": {
+        "ckpt-26.data-00000-of-00001": "816e84df9e03289ed9a377ff37f3a9bed9db8985748ba8c0b60d9ce8a6bdcc4d",
+        "ckpt-26.index": "6865cf0087899d075da7b1df5aaaac5616fe27e701b0bce8cad867be35e102f6"
+      },
+      "selection_metric": "val_mape_flow (flow-weighted)"
+    },
+    "best": {
+      "epoch": 10,
+      "time_unix": 1795684063.2899592,
+      "loss": 3.8961071968078613,
+      "hard": 7.616189479827881,
+      "soft": 0.17601382732391357,
+      "val_mape_flow": 10.281098880091587,
+      "val_mape_unweighted": 10.36075210571289,
+      "checkpoint": "/home/abaragithan/gnn-sdn-research/runs/kdmse_s1/ckpt-10"
+    },
+    "epochs_completed": 15,
+    "stop_reason": "early_stopping",
+    "elapsed_hours": 6.18579964697361,
+    "first_step_hard_loss": 33.599453,
+    "same_seed1_init_and_first_hard_loss": true,
+    "teacher_hashes_match": true,
+    "training_source_sha256": "74b92775edd915fbf2b0418a6e283524cb0a7da492152600b533e19b2825812e",
+    "same_training_source_as_paired_runs": true,
+    "all_history_metrics_finite": true,
+    "selected_checkpoint_sha256": {
+      "ckpt-10.index": "0271784d5e4410c417624b866ab1132d3515c5ce42c8102b14824408fefe405b",
+      "ckpt-10.data-00000-of-00001": "74f1adb89698a864f922fb5bfc0281df85c1060ed574a6f0b7ec591b3e15739c"
+    },
+    "started_local": "2026-11-26T10:30:01.974960+05:30",
+    "finished_local": "2026-11-26T16:41:10.853689+05:30"
+  },
+  "validation_gate": {
+    "expected": 10.281098880091587,
+    "obtained": 10.281098880091589,
+    "absolute_difference_points": 1.7763568394002505e-15,
+    "tolerance_points": 0.01,
+    "passed": true
+  },
+  "comparison": {
+    "test_mape": 11.355698164159651,
+    "validation_mape": 10.281098880091589,
+    "test_mae_ms": 6.8970611967706565,
+    "test_mse_kd_minus_scratch_s1_points": -0.07888330819497824,
+    "test_mse_kd_minus_mape_kd_s1_points": 0.4766664075614173,
+    "validation_mse_kd_minus_scratch_s1_points": 0.127888349998738,
+    "validation_mse_kd_minus_mape_kd_s1_points": 0.430052506536974
+  },
+  "interpretation": "Single-seed MSE KD slightly improves test MAPE over scratch seed 1, but has worse validation MAPE and worse test/validation MAPE than MAPE KD seed 1. Exploratory, no consistent or significant MSE benefit established. Alpha 0.5 does not equate the effective weights across losses of different scales.",
+  "artifact_sha256": {
+    "runs/kdmse_s1/config.json": "a883a7da91b25c8daf0c4765b48ce527ee41ab9c88b23cbc82380f64aca312d4",
+    "runs/kdmse_s1/history.json": "c37538f916d74995445b25365a3154175d2b3d47a76940cda097d7c13fdc5d7e",
+    "runs/kdmse_s1/best.json": "8239ce76f1f911a35c8a1cd111d9bfef65ea10a4d5389754001a29a578661e29",
+    "runs/kdmse_s1/train.log": "c2eee9831c9989bc6af9236c10c2f0bb8fc7be598de10b6861455f85a0026fb5",
+    "results/dec1/eval_v2_kdmse.log": "e75f5f0cc32373f7c5292addce16dab73f5ab5484aba102e20bf29a0756f040d",
+    "results/dec1/eval_v2_kdmse_test.jsonl": "9e82a73e2db54dd9f9cdbe44ae155d1cd92a083405e5a7676a9d092459e1c7bb",
+    "results/dec1/eval_v2_kdmse_test.meta.json": "b7fa4b05d476a31a23ff875e4a67876248e2b7c8b96052081fbf9ad38a099eed",
+    "results/dec1/eval_v2_kdmse_test_summary.json": "79f9eb9a1a775bc1c2b4ea5670822111e242ef6cfe26299e5b02e48d067bc2f6",
+    "results/dec1/eval_v2_kdmse_val.jsonl": "3967171c35cbcd65f2036682343c556f5d0591822930d9e9fc489daa87ed41a9",
+    "results/dec1/eval_v2_kdmse_val.meta.json": "e36df02e4f77d7e1a6656927a99e47f7da8c8690cafd921d7471d48daee95858",
+    "results/dec1/eval_v2_kdmse_val_summary.json": "8e87ad48dca7e56517aed0a5776db66264e48728eaf84d61e1c286378d141f67"
+  }
+}
