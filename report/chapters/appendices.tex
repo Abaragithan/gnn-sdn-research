@@ -40,7 +40,7 @@ sudo python mininet_experiment/run.py --method shortest \
 \paragraph{Notes on the files.}
 \begin{itemize}
   \item As committed, \path{validation_all.py} evaluates the original test split and writes \path{results_all.json} (8.22\%). The held-out result in \path{results_baseline_ood.json} (8.40\%) was produced by running the same script with \path{TEST_PATH} set to \path{data/all_mixed_v1/test} and the output file renamed; the console output of that run is in \path{all_mixed/baseline_ood.log}.
-  \item The emulation's raw outputs (\path{mininet_experiment/outputs/}, including \path{six_validation_summary.json}, \path{six_validation_predictions.json} and \path{author_real_traffic/}) are excluded from the Git repository. They are kept with the research data backups, and their contents are summarised in \path{mininet_experiment/README.md}.
+  \item The emulation's raw outputs (\path{mininet_experiment/outputs/}, including \path{six_validation_summary.json} and \path{six_validation_predictions.json}) are excluded from the Git repository. They are kept with the research data backups, and their contents are summarised in \path{mininet_experiment/README.md}.
   \item The console log of the first scratch student's training run was not kept; only its checkpoints and evaluation log remain.
   \item The earlier \path{inference_benchmark.py} result (5.2 times) is superseded by \path{latency_v2.json}; \path{results/dec1/SUMMARY.md} records every check and deviation of the final evaluation.
 \end{itemize}
