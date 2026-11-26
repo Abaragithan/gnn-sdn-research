@@ -104,10 +104,14 @@ $^{c}$From the project's running notes; the console log of this run was not kept
 
 In every run the checkpoint with the best validation value was kept. The baseline follows the reference few-shot training script. Its validation split contains 100- to 300-node topologies, so it was selected on larger topologies than the other models.
 
+\paragraph{Controlled distillation runs.} The re-test of \cref{sec:kd} trained six further students with one script: scratch and distilled (\cref{eq:kdrel}, $\alpha = 0.5$) for seeds 1, 2 and 3. Every run used the re-split training data, 9,972 steps per epoch, at most 30 epochs, early stopping with patience 5 on flow-weighted validation MAPE, and the learning rate above. Within each seed both runs loaded the same saved initial weights and the same shuffling seed; identical first-step losses confirmed this (33.599, 34.022 and 32.871 for seeds 1--3). Each run recorded its configuration, the hashes of its initial weights and teacher checkpoint, and its per-epoch history.
+
 \subsection{Offline evaluation}
 \label{sec:metrics}
 
-Every model is evaluated with its selected checkpoint on the same 478 test scenarios; the test set was never used for selection. Keras weights each scenario by its number of flows, so the reported MAPE equals the MAPE over all flows pooled together. Efficiency is measured by trainable parameters, weight size (four bytes per parameter), message-passing stages, and the latency of one forward pass on one validation scenario (5 warm-up calls, then 30 timed calls; graph construction excluded; TensorFlow's default thread settings). The size of the benchmark scenario was not recorded. This benchmark covered the baseline, teacher and student-scratch; student-KD has the same architecture but was not timed separately.
+Every model is evaluated with its selected checkpoint on the same 478 test scenarios; the test set was never used for selection. Keras weights each scenario by its number of flows, so the reported MAPE equals the MAPE over all flows pooled together. All final numbers come from one evaluation script that reads each scenario once, builds its input graph with the reference converter, and runs every model on it. It reproduced the earlier Keras results exactly (8.40, 5.37, 11.92 and 9.83\%), and it also reports the error by topology size and the MAPE with the true hop order (\cref{sec:emulation-method}).
+
+Efficiency is measured by trainable parameters, weight size (four bytes per parameter), message-passing stages and latency. Latency was measured for all four models in a fresh process per model on six scenarios: the first validation scenario (100 nodes, 9,900 flows) and the first test scenario of each size from 200 to 300 nodes (39,800 to 89,700 flows). For each, the input-graph construction was timed three times and the forward pass 30 times after 5 warm-up calls, with TensorFlow's default threads and with a single thread. Reading and parsing the raw files was timed separately during the full test evaluation.
 
 \subsection{SDN emulation}
 \label{sec:emulation-setup}

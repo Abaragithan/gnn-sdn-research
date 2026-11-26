@@ -7,31 +7,33 @@ This project asked whether a lightweight GNN, distilled from a topology-diverse 
 
 \textbf{Objective 1.} RouteNet-Fermi trained on 10- to 170-node topologies reached 5.37\% MAPE on held-out 200- to 300-node topologies, against 8.40\% when trained on 10-node topologies only, a 36\% relative reduction. Part of this gain may come from the teacher's longer training.
 
-\textbf{Objective 2.} The Queue-Link Fusion student merges each link with its queues, reducing the graph to two entity types, the message passing from 24 to 8 stages, and the parameters from 27,025 to 4,505, while keeping the capacity-based delay readout. Its forward pass was about 5.2 times faster offline.
+\textbf{Objective 2.} The Queue-Link Fusion student merges each link with its queues, reducing the graph to two entity types, the message passing from 24 to 8 stages, and the parameters from 27,025 to 4,505, while keeping the capacity-based delay readout. Its forward pass was 4.4 to 7.9 times faster on a CPU, with the gain growing with network size. End to end, however, it saved only about 8\%, because building the input graph took about 90\% of the time.
 
-\textbf{Objective 3.} The student reached 11.92\% test MAPE from scratch and 9.83\% with distillation, remaining less accurate than both full-size models. With single runs, a different selection metric and a numerically small soft loss, the improvement cannot yet be attributed to the teacher's signal. In a six-switch Mininet/Ryu emulation, the frozen teacher and both students ranked three candidate paths in the measured order of mean delay, chose a path with 8.8\% lower delay than the hop-count default, and predicted the measured delays within about 5--7\%; the students scored the candidates about twice as fast as the teacher. This shows that the models can work as route scorers in a controller, but not that they choose better than simple rules, since a least-loaded rule would have made the same choice. An Abilene emulation with traffic far outside the training range produced invalid predictions, which led to physical checks that block such predictions before routes are installed.
+\textbf{Objective 3.} The student reached 11.92\% test MAPE from scratch, about twice the teacher's error. A first distillation run lowered this to 9.83\%, but that comparison was not controlled. In a controlled re-test with three paired seeds, identical initial weights and a relative soft loss, distillation was better in two pairs and worse in one on validation, \pending{test result from T8}, and showed no consistent benefit. The student's training error already exceeded the teacher's validation error, so its limit is capacity rather than guidance. In a six-switch Mininet/Ryu emulation, the frozen teacher and both students ranked three candidate paths in the measured order of mean delay, chose a path with 8.8\% lower delay than the hop-count default, and predicted the measured delays within about 5--7\%; the students scored the candidates about twice as fast as the teacher. This shows that the models can work as route scorers in a controller, but not that they choose better than simple rules, since a least-loaded rule would have made the same choice. An Abilene emulation with traffic far outside the training range produced invalid predictions, which led to physical checks that block such predictions before routes are installed.
 
-Overall, diverse training topologies improved accuracy on larger networks, but compressing the model cost more accuracy than that diversity gained: the small model on diverse data remained less accurate than the full-size model on 10-node data. The distilled student recovered part of the accuracy lost by compression, although the cause of that gain is not yet isolated. Separately, traffic outside the training range made each of this project's models unusable, so coverage of the deployment conditions is a precondition for any of these models.
+Overall, diverse training topologies improved accuracy on larger networks, but compressing the model cost more accuracy than that diversity gained: the small model on diverse data remained less accurate than the full-size model on 10-node data. Under controlled conditions, distillation did not recover that accuracy. The compressed model cut the model's own cost by 4 to 8 times, but in this pipeline building the input graph, not the model, dominated the end-to-end cost. Separately, traffic outside the training range made each of this project's models unusable, so coverage of the deployment conditions is a precondition for any of these models.
 
 \section{Research Contributions}
 
 \begin{enumerate}
-  \item An out-of-distribution evaluation of RouteNet-Fermi using a documented topology-level re-split of the all-mixed dataset.
-  \item The Queue-Link Fusion student, a bipartite GNN for per-flow delay prediction with 83\% fewer parameters and one third of the message-passing stages, with its information loss stated explicitly.
-  \item An empirical study of response-based distillation for a network-modelling regression task with a structurally different student, including an analysis of why the observed gain cannot yet be attributed to the teacher.
+  \item An out-of-distribution evaluation of RouteNet-Fermi using a documented topology-level re-split of the all-mixed dataset, with errors broken down by topology size.
+  \item The Queue-Link Fusion student, a bipartite GNN for per-flow delay prediction with 83\% fewer parameters and one third of the message-passing stages, with its information loss stated explicitly and its accuracy--speed trade-off measured across network sizes.
+  \item A controlled, paired study of response-based distillation for a network-modelling regression task, showing no consistent benefit and explaining why: the student is limited by capacity, and the reference training setup is noisy.
+  \item An end-to-end cost analysis showing that input-graph construction, not the model, dominates the cost of one prediction in this pipeline.
   \item A controlled Mininet/Ryu integration in which frozen GNN models score candidate routes, with physical prediction checks, together with a documented negative result on out-of-range traffic.
+  \item A check of the reference converter's hop ordering, measured as negligible both offline and in the emulation.
 \end{enumerate}
 
 \section{Future Work}
 \label{sec:future}
 
 \begin{itemize}
-  \item Train each model with several random seeds, with identical student initialisation for the scratch and distilled runs, to confirm the distillation gain.
+  \item Pass each flow's ToS class into the student's path update to recover per-class queue information, and ablate the student (iterations, state size, fusion).
+  \item Reduce training noise with scenario-level shuffling, a decaying learning rate and a per-topology validation average, then repeat the paired distillation study with more seeds.
+  \item Try richer distillation: match the teacher's per-hop queue occupancies, or train the student on extra scenarios labelled by the teacher.
+  \item Build the input graph once per network and update it incrementally, so that the student's speed-up reaches the end-to-end cost when many configurations are evaluated.
   \item Train the 10-node baseline with the same budget as the teacher to separate the effects of data and training length.
-  \item Break offline errors down by topology size, scheduling policy and traffic model.
-  \item Ablate the student (iterations, state size, fusion) and pass each flow's ToS class into the path update to recover per-class queue information.
-  \item Compare other distillation losses, such as relative errors on teacher predictions, other values of $\alpha$, and a distillation run that selects its checkpoint with the same flow-weighted metric as the other models.
-  \item Measure the effect of the hop-order difference between the reference and emulation converters on the full test set and on the emulation's predictions.
+  \item Break offline errors down by scheduling policy and traffic model.
   \item Repeat the emulation under several pre-declared traffic loads, topologies and packet phase offsets, compare the models with simple rules such as least-loaded routing, and measure total decision-to-install time.
   \item Adapt the models to real traffic with labelled real-traffic data, as the RouteNet-Fermi authors did, and extend them to jitter and loss.
   \item Apply pruning and quantisation, alone and with distillation.

@@ -552,6 +552,26 @@ If approved, freeze MSE settings before T8 and run it regardless of whether the 
 
 **Evidence for user commit/push:** this plan, `results/dec1/SUMMARY.md`, `results/dec1/t6_three_pair_validation_review.json`, and the seed-3 run folders' `config.json`, `history.json`, `best.json`, `train.log`. Keep checkpoint binaries and shared init files local and uncommitted. No commit/push was made by the execution agent.
 
+### Three-pair review result (user/reviewer, 26 Nov): approved; start T8 now, run `kdmse_s1` in parallel
+- **Accepted.** All pair checks pass; nothing is excluded.
+- **Interpretation (fixed wording for `SUMMARY.md`):**
+  - On validation, KD was better in 2 of 3 pairs by small margins (−0.30, −0.20 points) and worse in 1 (+1.90; that run stopped early at epoch 9). The mean is +0.47 points.
+  - Both KD runs that trained the full 30 epochs reached their best at epoch 30, the cap.
+  - The differences are within the run-to-run spread of scratch-like runs (≈ 1.6 points). **No consistent KD benefit is shown.** No significance claims.
+- **T8 now**, from the repo root. Test first, then validation, in one background job:
+  ```bash
+  PY=/home/abaragithan/miniconda3/envs/routenet-fermi/bin/python
+  M="scratch_s1:student:runs/scratch_s1/ckpt-21 kdrel_s1:student:runs/kdrel_s1/ckpt-30 scratch_s2:student:runs/scratch_s2/ckpt-15 kdrel_s2:student:runs/kdrel_s2/ckpt-04 scratch_s3:student:runs/scratch_s3/ckpt-28 kdrel_s3:student:runs/kdrel_s3/ckpt-30"
+  nohup sh -c "$PY all_mixed/evaluation/eval_multi.py --orders ref --models $M --out results/dec1/eval_v2_test.jsonl && $PY all_mixed/evaluation/eval_multi.py --split data/all_mixed_v1/validation --orders ref --models $M --out results/dec1/eval_v2_val.jsonl" > results/dec1/eval_v2.log 2>&1 &
+  ```
+  Then aggregate both: `aggregate_eval.py --input results/dec1/eval_v2_test.jsonl --out results/dec1/eval_v2_test_summary.json`, and the same for `eval_v2_val`.
+- **Gate:** each model's pooled validation MAPE from `eval_v2_val` must equal its `best.json` `val_mape_flow` within 0.01. That proves the right checkpoint was evaluated. Expected ≈ 3–4 h on test plus ≈ 20–30 min on validation.
+- **`kdmse_s1` in parallel, starting now** (settings frozen; T8's timing fields are not reported, so sharing the CPU is fine):
+  `mkdir -p runs/kdmse_s1 && nohup $PY all_mixed/student/train_student_v2.py --mode kd --soft-loss mse --alpha 0.5 --seed 1 --out-dir runs/kdmse_s1 > runs/kdmse_s1/train.log 2>&1 &`
+  - Check that its first-step hard loss equals `scratch_s1`'s (33.599453).
+  - If it finishes by **27 Nov, 20:00**, evaluate its `best.json` checkpoint the same way (test and validation, `--orders ref`) into `results/dec1/eval_v2_kdmse_test.jsonl` and `_val.jsonl`, and add it to the summary. Otherwise report it as a deferred follow-up. Include it whatever the result.
+- **`SUMMARY.md` for T8:** a table of test MAPE, MAE and validation MAPE for all six runs (plus `kdmse_s1` if done); the paired KD − scratch test difference per seed, with the mean; per-size test MAPE; and the fixed interpretation above, updated with the test numbers. Report every run, favourable or not. Push as soon as the six-run results are in; don't wait for `kdmse_s1`.
+
 ---
 
 ## T7. Dropped by 25 Nov review (original instructions retained below)

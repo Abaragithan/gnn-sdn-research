@@ -1,7 +1,7 @@
 \chapter{Results and Discussion}
 \label{ch:results}
 
-The offline results (\cref{sec:overall,sec:efficiency}) and the emulation results (\cref{sec:emulation,sec:abilene}) come from separate experiments with different inputs and must not be compared directly. The teacher and the two students were each trained once, and the baseline twice, so differences between models are differences between single runs.
+The offline results (\cref{sec:overall,sec:efficiency}) and the emulation results (\cref{sec:emulation,sec:abilene}) come from separate experiments with different inputs and must not be compared directly. The baseline was trained twice, and the teacher and the first two students once, so differences between those models are differences between single runs. The controlled distillation study (\cref{sec:kdstudy}) uses three paired seeds.
 
 \section{Offline Accuracy}
 \label{sec:overall}
@@ -44,7 +44,28 @@ $^{b}$From evaluating the saved checkpoint with the same flow-weighted metric as
 
 \paragraph{Compression.} Trained on the same data as the teacher, the scratch student reaches 11.92\%, 2.22 times the teacher's error.
 
-\paragraph{Distillation.} With distillation, the student's test MAPE falls to 9.83\%, a reduction of 2.10 points (17.6\% relative); validation MAPE falls from 10.65\% to 9.04\%. The distilled student is still 4.45 points behind the teacher and 1.43 points behind the baseline. Its gap between validation and test error (0.78 points) is closer to the teacher's (0.66) than to the scratch student's (1.28).
+\paragraph{Distillation, first run.} In the first, uncontrolled comparison, the distilled student's test MAPE was 9.83\%, 2.10 points (17.6\%) lower than the scratch student's; validation MAPE fell from 10.65\% to 9.04\%. The distilled student was still 4.46 points behind the teacher and 1.43 points behind the baseline. Because the two students differed in more than the teacher's signal (\cref{sec:kd}), this gain was re-tested under controlled conditions in \cref{sec:kdstudy}.
+
+\paragraph{Accuracy by topology size.} \Cref{tab:bysize} breaks the test MAPE down by topology size. All four models rank in the same order at every size. Error rises only slightly from 200 to 300 nodes, and the 240-node topologies, the largest group with 160 scenarios, are the easiest for every model. The larger test networks therefore do not cause a sudden failure; the gap between the models is stable across sizes.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Test MAPE (\%) by topology size (number of test scenarios in brackets).}
+\label{tab:bysize}
+\begin{tabular}{@{}l c c c c c@{}}
+\toprule
+\textbf{Model} & \textbf{200 (80)} & \textbf{240 (160)} & \textbf{260 (79)} & \textbf{280 (79)} & \textbf{300 (80)} \\
+\midrule
+Baseline        & 8.25  & 7.74  & 8.64  & 8.71  & 8.87  \\
+Teacher         & 5.32  & 4.98  & 5.54  & 5.60  & 5.58  \\
+Student-scratch & 11.83 & 10.70 & 12.37 & 12.65 & 12.57 \\
+Student-KD      & 9.79  & 8.76  & 10.13 & 10.53 & 10.38 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Hop order.} \label{sec:hoporder} With each flow's hops in true path order (\cref{sec:emulation-method}), the test MAPE changed by at most 0.2 points: baseline 8.40 to 8.30\%, teacher 5.37 to 5.33\%, scratch student 11.92 to 12.12\%, and distilled student 9.83 to 9.92\%. In the emulation, all three models still ranked the candidates in the same order and chose the same path with either order; their foreground predictions moved by at most 0.21~ms. The ordering issue in the reference converter is therefore real but has a negligible effect on these results.
 
 \Cref{fig:curves} shows the training curves. The teacher's validation MAPE fluctuates between 4.71\% and 6.76\% after epoch 10, because the validation split holds only one topology per size. The distillation run is smoother and levels off after about epoch 15.
 
@@ -55,27 +76,74 @@ $^{b}$From evaluating the saved checkpoint with the same flow-weighted metric as
 \label{fig:curves}
 \end{figure}
 
-\section{Offline Model Size and Latency}
-\label{sec:efficiency}
+\section{Controlled Distillation Study}
+\label{sec:kdstudy}
 
-\Cref{tab:efficiency} gives the efficiency results. The student has 83.3\% fewer parameters than RouteNet-Fermi, one third of the message-passing stages, and a forward pass about 5.2 times faster (34.2~ms against 178.5~ms) on the benchmark scenario. This benchmark excludes graph construction. Evaluating the 478 test scenarios took 2.5--2.7~h for every model (18.7 to 20.2~s per scenario), so most of the end-to-end time in this pipeline is spent preparing inputs rather than running the model.
+\Cref{tab:kdstudy} gives the six controlled runs. Within each seed, the scratch and distilled students started from the same weights and saw the data in the same order, so the teacher's signal is the only difference.
 
 \begin{table}[ht]
 \centering
 \small
-\caption{Model size and single-forward-pass latency (CPU, 30 timed runs, one validation scenario).}
-\label{tab:efficiency}
-\begin{tabular}{@{}l C{22mm} C{14mm} C{14mm} C{26mm} C{16mm}@{}}
+\caption{Controlled distillation study: best flow-weighted validation MAPE and test MAPE of the selected checkpoint (\%). $\Delta$ is distilled minus scratch; negative means distillation helped.}
+\label{tab:kdstudy}
+\begin{tabular}{@{}c l c c c@{}}
 \toprule
-\textbf{Model} & \textbf{Parameters} & \textbf{Size (KB)} & \textbf{MP stages} & \textbf{Latency (ms) mean $\pm$ SD} & \textbf{Speed-up} \\
+\textbf{Seed} & \textbf{Run} & \textbf{Best epoch / epochs run} & \textbf{Val. MAPE} & \textbf{Test MAPE} \\
 \midrule
-Baseline        & 27,025 & 105.6 & 24 & 177.5 $\pm$ 13.0 & 1.0$\times$ \\
-Teacher         & 27,025 & 105.6 & 24 & 178.5 $\pm$ 9.4  & 1.0$\times$ \\
-Student-scratch & 4,505  & 17.6  & 8  & 34.2 $\pm$ 1.8   & 5.2$\times$ \\
-Student-KD      & 4,505  & 17.6  & 8  & not measured     & --- \\
+1 & Scratch   & 21 / 26 & 10.15 & \pending{T8} \\
+  & Distilled & 30 / 30 & 9.85  & \pending{T8} \\
+  & $\Delta$  &         & $-0.30$ & \pending{T8} \\
+\midrule
+2 & Scratch   & 15 / 20 & 10.01 & \pending{T8} \\
+  & Distilled & 4 / 9   & 11.92 & \pending{T8} \\
+  & $\Delta$  &         & $+1.90$ & \pending{T8} \\
+\midrule
+3 & Scratch   & 28 / 30 & 10.16 & \pending{T8} \\
+  & Distilled & 30 / 30 & 9.96  & \pending{T8} \\
+  & $\Delta$  &         & $-0.20$ & \pending{T8} \\
+\midrule
+\multicolumn{2}{@{}l}{Mean $\Delta$} & & $+0.47$ & \pending{T8} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+On validation, distillation helped slightly in two pairs ($-0.30$ and $-0.20$ points) and hurt in one ($+1.90$ points); the mean difference is $+0.47$ points. In seed 2 the distilled run stopped at epoch 9, after five epochs without improvement, while its scratch partner survived a three-epoch rise and continued to epoch 20. Both distilled runs that trained for the full 30 epochs reached their best validation score at the last epoch. \pending{Test results and their interpretation from T8.} The controlled study therefore shows \textbf{no consistent benefit} from distillation, and it does not reproduce the 2.10-point gain of the first run.
+
+\paragraph{Why the effect is not visible.} Three properties of the setup make a small effect hard to detect, and none of them is specific to the student:
+\begin{itemize}
+  \item \emph{Noisy training.} Every model is trained on one scenario per step with a constant learning rate, and the reference data loader shuffles archive files rather than scenarios, so up to 25 consecutive scenarios come from the same topology, in the same order every epoch. The weights at the end of an epoch lean towards the last topologies seen.
+  \item \emph{Noisy selection.} The flow-weighted validation MAPE is dominated by the largest of the six validation topologies. Across the six runs, it changed by 0.19--0.53 points per epoch on average, and by up to 2.4 points, against 0.12--0.39 points for the unweighted mean. Early stopping with patience 5 reacts to this noise.
+  \item \emph{A weak teacher signal.} On the training data the teacher's error is about 3.7\%, so its predictions are close to the labels: in the first training steps the soft and hard terms were almost equal (23.51 against 23.48). Distillation therefore only nudges training, and the nudge is amplified into different trajectories by the noise above.
+\end{itemize}
+Runs that are in effect trained without a useful teacher already span 9.04 to 10.65\% validation MAPE: the two first-run students and the three controlled scratch runs. This spread of about 1.6 points is larger than any distillation effect observed.
+
+\section{Offline Model Size and Latency}
+\label{sec:efficiency}
+
+The student has 83.3\% fewer parameters than RouteNet-Fermi (4,505 against 27,025; 17.6 against 105.6~KB) and one third of the message-passing stages (8 against 24). \Cref{tab:efficiency} gives the measured latency. The baseline and the teacher, which share an architecture, ran within 5\% of each other, as did the scratch and distilled students; the table shows the teacher and the scratch student.
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Latency on one CPU with TensorFlow's default threads: input-graph construction (median of 3) and forward pass (mean of 30). End to end is construction plus forward pass.}
+\label{tab:efficiency}
+\begin{tabular}{@{}l r C{20mm} C{14mm} C{14mm} C{16mm} C{18mm}@{}}
+\toprule
+\textbf{Scenario} & \textbf{Flows} & \textbf{Construction (s)} & \textbf{Teacher (ms)} & \textbf{Student (ms)} & \textbf{Forward speed-up} & \textbf{End-to-end speed-up} \\
+\midrule
+Val., 100 nodes       & 9,900  & 1.63  & 182   & 41  & 4.4$\times$ & 1.08$\times$ \\
+Test, 200 nodes       & 39,800 & 8.87  & 1,021 & 165 & 6.2$\times$ & 1.09$\times$ \\
+Test, 240 nodes       & 57,360 & 16.89 & 2,071 & 363 & 5.7$\times$ & 1.10$\times$ \\
+Test, 260 nodes       & 67,340 & 17.05 & 1,841 & 235 & 7.9$\times$ & 1.09$\times$ \\
+Test, 280 nodes       & 78,120 & 20.82 & 2,184 & 344 & 6.3$\times$ & 1.09$\times$ \\
+Test, 300 nodes       & 89,700 & 24.67 & 2,749 & 406 & 6.8$\times$ & 1.09$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The student's forward pass was 4.4 to 7.9 times faster, and the gain grew with network size. With a single thread, the forward pass was 5.6 to 7.5 times faster. End to end, however, the student saved only 8 to 10\% (20 to 28\% with one thread), because building the input graph took far longer than either model: up to 24.7~s on a 300-node scenario, plus about 2.5~s to read and parse it. The forward pass was about 9\% of the teacher's end-to-end time and under 2\% of the student's. Peak process memory was 3.1 to 3.6~GiB with the default threads, and the student used only 0.2 to 0.4~GiB less, since input tensors and the TensorFlow runtime dominate it rather than the model weights.
+
+An earlier single measurement gave 34.2~ms for the student on the same 100-node scenario and a 5.2-times speed-up. The repeated benchmark measured 41.2~ms (4.4 times); the new value is used throughout. The construction step is the reference Python and NetworkX code, which rebuilds the whole graph for every scenario. A controller that evaluates many candidate configurations on the same network would build the graph once and update only the changed paths; there the model's cost would dominate. That case was not measured.
 
 \section{Controlled SDN Emulation}
 \label{sec:emulation}
@@ -118,7 +186,7 @@ Student-KD      & 6.77 & 3.62 & 0.23 & 4.05 \\
 \end{tabular}
 \end{table}
 
-\Cref{tab:mininet-models} shows that all three models predicted the foreground delays within about 5--7\% in this scenario. The scratch student's lower error here is a single-scenario result and does not show that it is generally more accurate than the teacher. The students scored the three candidates 1.85 and 2.09 times faster than the teacher. This speed-up is smaller than the offline 5.2 times. The two figures are not directly comparable: the emulation input is very small (30 flows), so fixed per-call costs are likely to dominate, and the model worker runs TensorFlow on a single thread while the offline benchmark used the default thread settings. Scratch and KD share an architecture, so their timing difference is not a KD effect. Since all models chose the same path, the emulation shows no routing advantage for KD.
+\Cref{tab:mininet-models} shows that all three models predicted the foreground delays within about 5--7\% in this scenario. The scratch student's lower error here is a single-scenario result and does not show that it is generally more accurate than the teacher. The students scored the three candidates 1.85 and 2.09 times faster than the teacher. This speed-up is smaller than the offline 4.4 to 7.9 times. The two figures are not directly comparable: the emulation input is very small (30 flows), so fixed per-call costs are likely to dominate, and the model worker runs TensorFlow on a single thread while the offline benchmark used the default thread settings. Scratch and KD share an architecture, so their timing difference is not a KD effect. Since all models chose the same path, the emulation shows no routing advantage for KD.
 
 \paragraph{How strong is this evidence?} The emulation shows that the frozen models can be used as route scorers inside an SDN controller, but it is weak evidence of their accuracy, for four reasons. First, 100~ms of the roughly 113~ms measured on candidate 1 comes from the fixed transmission term of \cref{eq:readout} (see the worked example in \cref{sec:discussion}); only about 13~ms is learned queueing. Second, a 5--7\% error corresponds to roughly 6 to 14~ms, which is about the same size as the 10.9~ms gap between candidates 0 and 1. Third, candidate 1 has the lower load on both of its hops, so a simple least-loaded rule would also choose it; the only baseline compared here is the hop-count tie-break. Fourth, the traffic senders reuse the same packet phase offsets in every trial, so the five repetitions are near-identical replays, which explains the very small standard deviations.
 
@@ -140,7 +208,7 @@ The supported conclusion is that our checkpoints are incompatible with this inpu
 
 \paragraph{Coverage of the deployment conditions.} The Abilene diagnostic makes a separate point. Its failure was most likely caused by traffic rates far outside the training range, not by topology size, and with such inputs none of this project's checkpoints produced usable predictions. Coverage of the conditions a model will meet in operation is a precondition for using it at all; without it, neither model size nor topology diversity helps.
 
-\paragraph{Why the student loses accuracy.} Several features of the design may contribute, and these experiments do not separate them: the loss of per-queue information described in \cref{sec:student}, half as many message-passing iterations (which limits how far information travels in large networks), smaller hidden states, and earlier stopping (best epoch 8, against 26 for the teacher).
+\paragraph{Why the student loses accuracy.} The student is limited by its capacity, not by a lack of guidance. Its error on its own training data stayed at about 7.1 to 7.4\% in all six controlled runs, which is already higher than the teacher's validation error (4.7\%) and about twice the teacher's training error (3.7\%). Several features of the design may contribute, and these experiments do not separate them: the loss of per-queue information described in \cref{sec:student}, half as many message-passing iterations (which limits how far information travels in large networks), and smaller hidden states.
 
 \paragraph{Worked example: one flow through the student.} The foreground flow of the emulation on candidate 1 ($s_0 \to s_4 \to s_5$) shows what the student computes and why the candidates are ranked as they are.
 \begin{enumerate}
@@ -152,14 +220,7 @@ The supported conclusion is that our checkpoints are incompatible with this inpu
 \end{enumerate}
 The measured mean delay on this path was 112.9~ms, so 100~ms comes from the physical formula and the network only has to learn the remaining queueing part, about 13~ms. The same reasoning explains the ranking. Candidate 0 also has two hops (100~ms transmission) but more heavily loaded links (0.600 and 0.487), so it should have more queueing delay. Candidate 2 has three hops, giving 150~ms of transmission delay alone, on links loaded at 0.675. The capacity-based readout thus makes the ranking of candidate 2 almost automatic, and the learned part decides between candidates 0 and 1. This example also shows a limit of the emulation as a test of the student: with one queue per link, the queue fusion loses no information, so the emulation does not exercise the student's main weakness described in \cref{sec:student}.
 
-\paragraph{The effect of distillation.} The distilled student was more accurate than the scratch student on both the validation and test splits, but the evidence does not show that the teacher's signal caused the gain. Several other explanations remain open:
-\begin{itemize}
-  \item The soft term was numerically small: about 2.3\% of the total loss at the selected epoch. Because Adam rescales its updates, multiplying the MAPE term by $\alpha = 0.5$ changes training very little, so the KD run was close to a scratch run with a small extra term.
-  \item The soft term is a mean squared error on raw delays, so it is dominated by the few flows with the longest delays. The test set is in the opposite regime, with mean delays about ten times smaller than in training.
-  \item The two students started from different random weights, trained for different lengths (best epochs 8 and 19), and selected their checkpoints with different metrics (\cref{tab:settings}).
-  \item The two baseline runs differed by about one point of MAPE, the same order as the 2.10-point gain.
-\end{itemize}
-The result should therefore be read as ``the distillation run was better, but the cause is not isolated''. Paired runs with several seeds, identical starting weights and a relative (percentage) soft loss would be needed to establish a distillation effect.
+\paragraph{The effect of distillation.} The first comparison suggested a 2.10-point gain, but it differed in more than the teacher's signal: the students started from different weights, they were selected with different metrics, and the MSE soft term was only about 2\% of the loss. Once these differences were removed and the soft term put on the same scale as the hard term, distillation gave no consistent benefit over three paired seeds (\cref{sec:kdstudy}). Two reasons explain this. In regression, the teacher's output is a slightly noisier copy of the label, so it carries little extra information, unlike the softened class probabilities that make distillation effective in classification. And the student cannot represent what the teacher knows: its training error already exceeds the teacher's validation error. Distillation can only help a student that has the inputs and capacity to use the teacher's knowledge, and it cannot restore the traffic-class information removed by the fusion. Richer forms of distillation, such as matching the teacher's per-hop queue occupancies or training the student on extra scenarios labelled by the teacher, are left for future work.
 
 \paragraph{Practical trade-off.} The teacher is the right choice when accuracy on large unseen networks matters most. The distilled student is cheaper to run, and in the emulation all models ranked the candidate paths correctly. Ranking candidates correctly is what a controller needs, and a model with moderate absolute error can still do this. However, the emulation covers only one scenario, and in it a simple least-loaded rule would have made the same choice.
 
@@ -167,11 +228,12 @@ The result should therefore be read as ``the distillation run was better, but th
 \label{sec:threats}
 
 \begin{itemize}
-  \item \textbf{Single runs.} The teacher and students were trained once and the baseline twice. The fixed seed did not make training deterministic, and the two baseline runs differed by about one point, so run-to-run variation may be as large as some of the differences reported.
-  \item \textbf{Input order.} In the reference converter used for training, a flow's hops do not always reach the path GRU in path order, and links and queues can collect the path state from the wrong hop; the emulation's converter uses true hop order (\cref{sec:emulation-method}). The effect of this difference was checked on one sample only.
-  \item \textbf{Unverifiable log.} The console log of the scratch student's training run was not kept; its epoch counts and training time come from project notes.
+  \item \textbf{Few runs.} The baseline was trained twice, the teacher once, and the controlled students with three paired seeds. Run-to-run variation is about 1--1.6 points of MAPE, as large as some of the differences reported, and three pairs do not support a statistical test.
+  \item \textbf{Noisy training and selection.} The reference training setup (one scenario per step, archive-level shuffling, a constant learning rate) and a validation split with one topology per size make the selected checkpoint sensitive to noise (\cref{sec:kdstudy}). All models share this setup.
+  \item \textbf{Epoch cap.} Two of the three controlled distilled runs reached their best validation score at the 30-epoch limit, so longer training might change their results. The limit was fixed in advance for all runs.
+  \item \textbf{Unverifiable log.} The console log of the first scratch student's training run was not kept; its epoch counts and training time come from project notes. All controlled runs saved their full per-epoch history.
   \item \textbf{Baseline confounds.} The baseline differs from the teacher in training steps and validation data as well as training topologies.
-  \item \textbf{Aggregate metrics.} Offline errors were not broken down by topology size, scheduling policy or traffic model.
+  \item \textbf{Aggregate metrics.} Offline errors were broken down by topology size but not by scheduling policy or traffic model.
   \item \textbf{Target shift.} Test delays are about ten times smaller than training delays, and MAPE is sensitive to small targets.
   \item \textbf{Limited emulation.} One six-switch topology, one load level, FIFO queues, deterministic CBR traffic, fixed background routes and shared laptop resources. Repeated trials measure repeatability, not robustness. Total decision-to-install time was not measured repeatedly.
   \item \textbf{Evidence location.} The emulation's raw outputs are stored outside the Git repository with the other research data.

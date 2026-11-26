@@ -17,8 +17,11 @@ Teacher         & \path{train_teacher.py}, \path{test_teacher.py} (\path{all_mix
 Student-scratch & \path{train_scratch.py} (\path{all_mixed/student/}) & \path{ckpt_dirs_scratch/ckpt-08} \\
 Student-KD      & \path{train_kd.py} (\path{all_mixed/student/}) & \path{ckpt_dirs_kd_alpha0.5/ckpt-19} \\
 Student tests   & \path{evaluate.py} (\path{all_mixed/student/}) & \path{results_student.json} \\
-Latency         & \path{inference_benchmark.py} (\path{all_mixed/evaluation/}) & \path{inference_benchmark_results.json} \\
+Controlled students & \path{train_student_v2.py} (\path{all_mixed/student/}) & \path{runs/<mode>_s<seed>/} with \path{config.json}, \path{history.json}, \path{best.json} \\
+Final evaluation & \path{eval_multi.py}, \path{aggregate_eval.py} (\path{all_mixed/evaluation/}) & \path{results/dec1/eval_v0_test_summary.json}, \path{eval_v2_test_summary.json} \\
+Latency         & \path{latency_v2.py}, \path{run_latency_v2.sh} (\path{all_mixed/evaluation/}) & \path{results/dec1/latency_v2.json} \\
 Emulation       & \path{run.py} (\path{mininet_experiment/}) & \path{outputs/six_validation_summary.json} \\
+Hop-order check & \path{rescore_hop_order.py} (\path{mininet_experiment/}) & \path{results/dec1/emulation_hop_order.json} \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -38,5 +41,6 @@ sudo python mininet_experiment/run.py --method shortest \
 \begin{itemize}
   \item As committed, \path{validation_all.py} evaluates the original test split and writes \path{results_all.json} (8.22\%). The held-out result in \path{results_baseline_ood.json} (8.40\%) was produced by running the same script with \path{TEST_PATH} set to \path{data/all_mixed_v1/test} and the output file renamed; the console output of that run is in \path{all_mixed/baseline_ood.log}.
   \item The emulation's raw outputs (\path{mininet_experiment/outputs/}, including \path{six_validation_summary.json}, \path{six_validation_predictions.json} and \path{author_real_traffic/}) are excluded from the Git repository. They are kept with the research data backups, and their contents are summarised in \path{mininet_experiment/README.md}.
-  \item The console log of the scratch student's training run was not kept; only its checkpoints and evaluation log remain.
+  \item The console log of the first scratch student's training run was not kept; only its checkpoints and evaluation log remain.
+  \item The earlier \path{inference_benchmark.py} result (5.2 times) is superseded by \path{latency_v2.json}; \path{results/dec1/SUMMARY.md} records every check and deviation of the final evaluation.
 \end{itemize}
