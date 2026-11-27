@@ -596,6 +596,47 @@ Final seven-run table, MSE per-size results, loss-scale caveat, deviations and r
 
 **Request final review:** check evidence and conclusions, then integrate all results into the report. User chose sequential T8 then MSE; neither settings nor inclusion changed based on test results. Commit/push new JSON/log artifacts and documentation, keeping checkpoint/init binaries uncommitted. No commits, pushes or report edits were made by the execution agent.
 
+## Final review and plan closure (user/reviewer, 27 Nov 2026)
+
+**The plan is complete. No further training, evaluation or code changes will be done before 1 December.** All evidence was checked: every pair shares initial weights and first-step loss, every evaluated checkpoint reproduces its training validation score exactly, and all 478 test and 2,191 validation scenarios are covered.
+
+### Task status
+
+| Task | Status | Outcome |
+|---|---|---|
+| T1 Preflight | Done | Sample counts match (9,972 / 2,191 / 478) |
+| T2 Single-pass evaluation | Done (R1) | Reproduces 8.40 / 5.37 / 11.92 / 9.83 exactly; per-size errors; hop order changes MAPE by ≤ 0.2 points; forward pass ≈ 2–9% of per-scenario time |
+| T3 Latency v2 | Done (R2) | Student forward pass 4.4–7.9× faster; end to end ≈ 1.08–1.10×; benchmark scenario is 100 nodes, 9,900 flows; scratch +20% vs the old 34.2 ms, reported |
+| T4 Emulation re-score | Done (R3) | Ranking 1, 0, 2 and choice of path 1 unchanged under either hop order |
+| T5 Training script | Done (R4) | `train_student_v2.py`; smoke gates passed; logging-only change afterwards |
+| T6 Training queue | Done | Three scratch/relative-KD pairs plus `kdmse_s1` |
+| T7 Ablation | Dropped | Not run; not mentioned in the report or slides |
+| T8 Final evaluation | Done | All seven students on test and validation; every gate passes |
+
+### Final results (fixed wording for the report, slides and viva)
+
+| Run | Validation MAPE (%) | Test MAPE (%) |
+|---|---:|---:|
+| scratch_s1 / kdrel_s1 | 10.15 / 9.85 | 11.43 / 10.88 |
+| scratch_s2 / kdrel_s2 | 10.01 / 11.92 | 11.16 / 13.26 |
+| scratch_s3 / kdrel_s3 | 10.16 / 9.96 | 11.09 / 11.05 |
+| kdmse_s1 (original MSE loss, seed-1 weights) | 10.28 | 11.36 |
+
+- **Relative-loss KD:** test difference −0.56, +2.10, −0.04 points (mean +0.50). **No consistent benefit.**
+- **Original MSE KD with matched starting weights:** 11.36% vs 11.43% for its scratch partner, essentially the same student. The first run's 2.10-point gain (11.92 → 9.83) most likely came from its different starting weights, not from the teacher. Single run; consistent with the MSE term being ≈ 2% of the loss.
+- **Explanation:** the student's training error (7.1–7.4%) exceeds the teacher's validation error (4.7%), so its limit is capacity, not guidance; the reference training setup is noisy (run-to-run spread ≈ 1.6 points).
+
+### Integration done (27 Nov)
+- **Report:** Chapters 3–6, abstract and appendix contain the T2–T8 results, including `kdmse_s1` (Ch. 4 controlled runs, Ch. 5 controlled study and distillation discussion). The ablation and the Abilene emulation were removed at the user's request. `report/overleaf_upload.zip` was rebuilt from the current sources.
+- **Slides:** reframed around the compressed model (results order: accuracy → speed → SDN emulation → distillation). Slide 11 shows the three pairs and the `kdmse_s1` rerun.
+- **Presentation script:** a separate Claude doc. It does not yet mention the `kdmse_s1` line on slide 11 (the docs connector was unavailable at closure). Add one sentence by hand: "When I repeated the original method with the same starting weights, the student was no better than one trained alone."
+
+### Remaining (outside this plan)
+1. Commit and push the report, plan, summary and run evidence (not checkpoints or init weights).
+2. Compile the report in Overleaf and check the latency table width and the controlled-study table.
+3. Record the video (white top, face top-right, 6–8 min) and upload it **before 8:00 AM on 1 December**.
+4. Print and submit the report by **3 December**. Bring the research diary and the implementation to the viva.
+
 ---
 
 ## T7. Dropped by 25 Nov review (original instructions retained below)
